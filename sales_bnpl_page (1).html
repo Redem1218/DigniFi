@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Finally! A Way to DOUBLE Your Average Repair Order (Without Pushy Sales Tactics)</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', Arial, sans-serif;
+            line-height: 1.6;
+            color: #1e293b;
+            background: #0f172a;
+        }
+        
+        .hero-section {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%);
+            padding: 60px 20px 80px 20px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="20" cy="20" r="2" fill="rgba(239,68,68,0.1)"/><circle cx="80" cy="40" r="1.5" fill="rgba(239,68,68,0.08)"/><circle cx="60" cy="80" r="1" fill="rgba(239,68,68,0.06)"/></svg>') repeat;
+            animation: pulse 8s infinite ease-in-out;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 0.7; }
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .eyebrow {
+            color: #ef4444;
+            font-size: 14px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 16px;
+            animation: fadeInUp 0.8s ease-out;
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .hero-headline {
+            color: #ffffff;
+            font-size: clamp(32px, 5vw, 56px);
+            font-weight: 900;
+            line-height: 1.1;
+            margin-bottom: 24px;
+            animation: fadeInUp 0.8s ease-out 0.2s both;
+        }
+        
+        .hero-subhead {
+            color: #cbd5e1;
+            font-size: clamp(18px, 3vw, 24px);
+            font-weight: 500;
+            margin-bottom: 40px;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            animation: fadeInUp 0.8s ease-out 0.4s both;
+        }
+        
+        .highlight {
+            color: #ef4444;
+            font-weight: 800;
+        }
+        
+        .cta-hero {
+            display: inline-block;
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            color: #ffffff;
+            text-decoration: none;
+            padding: 20px 40px;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 20px;
+            text-align: center;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 32px rgba(239, 68, 68, 0.4);
+            border: 2px solid transparent;
+            animation: fadeInUp 0.8s ease-out 0.6s both;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .cta-hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+        
+        .cta-hero:hover::before {
+            left: 100%;
+        }
+        
+        .cta-hero:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 40px rgba(239, 68, 68, 0.6);
+            border-color: rgba(255,255,255,0.2);
+        }
+        
+        .social-proof {
+            margin-top: 60px;
+            animation: fadeInUp 0.8s ease-out 0.8s both;
+        }
+        
+        .social-proof-text {
+            color: #94a3b8;
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+        
+        .stats {
+            display: flex;
+            justify-content: center;
+            gap: 60px;
+            flex-wrap: wrap;
+        }
+        
+        .stat {
+            text-align: center;
+        }
+        
+        .stat-number {
+            color: #ef4444;
+            font-size: 36px;
+            font-weight: 900;
+            display: block;
+        }
+        
+        .stat-label {
+            color: #cbd5e1;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        
+        .main-content {
+            background: #ffffff;
+            padding: 80px 20px;
+        }
+        
+        .section {
+            margin-bottom: 80px;
+        }
+        
+        .section-headline {
+            font-size: clamp(28px, 4vw, 42px);
+            font-weight: 800;
+            text-align: center;
+            margin-bottom: 20px;
+            color: #1e293b;
+        }
+        
+        .section-subhead {
+            font-size: 20px;
+            color: #64748b;
+            text-align: center;
+            margin-bottom: 60px;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .benefits-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 40px;
+            margin-top: 60px;
+        }
+        
+        .benefit-card {
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            padding: 40px;
+            border-radius: 16px;
+            border: 2px solid #e2e8f0;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .benefit-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            transform: scaleY(0);
+            transition: transform 0.3s ease;
+        }
+        
+        .benefit-card:hover::before {
+            transform: scaleY(1);
+        }
+        
+        .benefit-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+            border-color: #ef4444;
+        }
+        
+        .benefit-icon {
+            font-size: 48px;
+            margin-bottom: 24px;
+        }
+        
+        .benefit-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            color: #1e293b;
+        }
+        
+        .benefit-description {
+            color: #475569;
+            font-size: 16px;
+            line-height: 1.6;
+        }
+        
+        .problem-section {
+            background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+            padding: 80px 20px;
+            text-align: center;
+        }
+        
+        .problem-headline {
+            font-size: clamp(32px, 4vw, 48px);
+            font-weight: 800;
+            color: #1e293b;
+            margin-bottom: 30px;
+        }
+        
+        .problem-list {
+            max-width: 600px;
+            margin: 0 auto 40px auto;
+            text-align: left;
+        }
+        
+        .problem-item {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 20px;
+            padding: 20px;
+            background: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+        
+        .problem-icon {
+            color: #ef4444;
+            font-size: 24px;
+            margin-right: 16px;
+            margin-top: 4px;
+        }
+        
+        .problem-text {
+            color: #1e293b;
+            font-size: 18px;
+            font-weight: 500;
+        }
+        
+        .solution-section {
+            background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+            padding: 80px 20px;
+            text-align: center;
+        }
+        
+        .solution-headline {
+            font-size: clamp(32px, 4vw, 48px);
+            font-weight: 800;
+            color: #1e293b;
+            margin-bottom: 30px;
+        }
+        
+        .solution-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 50px;
+        }
+        
+        .solution-card {
+            background: #ffffff;
+            padding: 40px 30px;
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.08);
+            transition: all 0.3s ease;
+        }
+        
+        .solution-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 16px 48px rgba(0,0,0,0.12);
+        }
+        
+        .solution-number {
+            display: inline-block;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: #ffffff;
+            border-radius: 50%;
+            font-size: 24px;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px auto;
+        }
+        
+        .solution-title {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            color: #1e293b;
+        }
+        
+        .solution-description {
+            color: #475569;
+            font-size: 16px;
+        }
+        
+        .cta-section {
+            background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+            padding: 80px 20px;
+            text-align: center;
+            position: relative;
+        }
+        
+        .cta-headline {
+            color: #ffffff;
+            font-size: clamp(32px, 4vw, 48px);
+            font-weight: 800;
+            margin-bottom: 20px;
+        }
+        
+        .cta-subhead {
+            color: #cbd5e1;
+            font-size: 20px;
+            margin-bottom: 40px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .cta-main {
+            display: inline-block;
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            color: #ffffff;
+            text-decoration: none;
+            padding: 24px 48px;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 22px;
+            text-align: center;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 32px rgba(239, 68, 68, 0.4);
+            margin-bottom: 30px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .cta-main::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+        
+        .cta-main:hover::before {
+            left: 100%;
+        }
+        
+        .cta-main:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 12px 40px rgba(239, 68, 68, 0.6);
+        }
+        
+        .urgency-text {
+            color: #fbbf24;
+            font-size: 16px;
+            font-weight: 600;
+            margin-top: 20px;
+        }
+        
+        .signup-steps {
+            background: #ffffff;
+            padding: 80px 20px;
+        }
+        
+        .steps-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 40px;
+            margin-top: 50px;
+        }
+        
+        .step-card {
+            text-align: center;
+            padding: 40px 20px;
+            border-radius: 16px;
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            border: 2px solid #e2e8f0;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .step-card:hover {
+            transform: translateY(-8px);
+            border-color: #ef4444;
+            box-shadow: 0 16px 48px rgba(0,0,0,0.1);
+        }
+        
+        .step-number {
+            display: inline-block;
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: #ffffff;
+            border-radius: 50%;
+            font-size: 32px;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 24px auto;
+        }
+        
+        .step-title {
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            color: #1e293b;
+        }
+        
+        .step-description {
+            color: #475569;
+            font-size: 16px;
+            line-height: 1.6;
+        }
+        
+        .footer {
+            background: #0f172a;
+            padding: 40px 20px;
+            text-align: center;
+        }
+        
+        .footer-text {
+            color: #64748b;
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+        
+        .dignifi-logo {
+            max-height: 40px;
+            filter: brightness(0) invert(1);
+        }
+        
+        @media (max-width: 768px) {
+            .stats {
+                gap: 30px;
+            }
+            
+            .benefits-grid, .solution-cards, .steps-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .hero-section {
+                padding: 40px 20px 60px 20px;
+            }
+            
+            .main-content, .problem-section, .solution-section, .cta-section, .signup-steps {
+                padding: 60px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="hero-section">
+        <div class="container">
+            <div class="eyebrow">AUTOMOTIVE SERVICE BREAKTHROUGH</div>
+            <h1 class="hero-headline">Finally! A Way to <span class="highlight">Increase Your Average Repair Order by 40%</span></h1>
+            <p class="hero-subhead">(Without pushy sales tactics or awkward financing conversations that make your customers uncomfortable)</p>
+            
+            <a href="#signup" class="cta-hero">🚀 YES! Show Me How to Get Started</a>
+            
+            <div class="social-proof">
+                <p class="social-proof-text">Join 2,847+ automotive service centers already using this system</p>
+                <div class="stats">
+                    <div class="stat">
+                        <span class="stat-number">40%</span>
+                        <span class="stat-label">Average Order Increase</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-number">24hrs</span>
+                        <span class="stat-label">Setup Time</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-number">$0</span>
+                        <span class="stat-label">Upfront Cost</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="problem-section">
+        <div class="container">
+            <h2 class="problem-headline">Here's What's REALLY Costing You Money...</h2>
+            <p style="font-size: 20px; color: #dc2626; font-weight: 700; margin-bottom: 30px;">67% of car owners delay repairs due to affordability concerns</p>
+            <div class="problem-list">
+                <div class="problem-item">
+                    <span class="problem-icon">😰</span>
+                    <span class="problem-text">Customers declining necessary repairs because of sticker shock</span>
+                </div>
+                <div class="problem-item">
+                    <span class="problem-icon">💸</span>
+                    <span class="problem-text">Lost revenue from customers who "need to think about it" and never return</span>
+                </div>
+                <div class="problem-item">
+                    <span class="problem-icon">🔄</span>
+                    <span class="problem-text">Customers choosing cheaper, band-aid fixes instead of proper repairs</span>
+                </div>
+                <div class="problem-item">
+                    <span class="problem-icon">⏰</span>
+                    <span class="problem-text">Time wasted on payment discussions instead of focusing on service quality</span>
+                </div>
+            </div>
+            <p style="font-size: 18px; color: #1e293b; font-weight: 600;">Sound familiar? You're not alone. But there's a better way...</p>
+        </div>
+    </div>
+    
+    <div class="solution-section">
+        <div class="container">
+            <h2 class="solution-headline">Introducing <span class="highlight">Buy Now, Pay Later</span> for Auto Repair</h2>
+            <p class="section-subhead">The game-changing financing solution that turns "I can't afford it" into "When can you start?"</p>
+            
+            <div class="solution-cards">
+                <div class="solution-card">
+                    <div class="solution-number">1</div>
+                    <h3 class="solution-title">Customer Gets Instant Approval</h3>
+                    <p class="solution-description">Your customer applies right from their phone and gets approved for financing in seconds with flexible terms including $0 down options</p>
+                </div>
+                <div class="solution-card">
+                    <div class="solution-number">2</div>
+                    <h3 class="solution-title">You Get Paid Immediately</h3>
+                    <p class="solution-description">Money hits your account within 24 hours - no waiting, no uncertainty</p>
+                </div>
+                <div class="solution-card">
+                    <div class="solution-number">3</div>
+                    <h3 class="solution-title">Customer Pays Over Time</h3>
+                    <p class="solution-description">They get affordable monthly payments with $0 down options and competitive interest rates while you've already been paid in full</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="main-content">
+        <div class="container">
+            <div class="section">
+                <h2 class="section-headline">Why Shop Owners Are Calling This Their <span class="highlight">"Secret Weapon"</span></h2>
+                <p class="section-subhead">Here's exactly what happens when you add Buy Now, Pay Later to your service center:</p>
+                
+                <div class="benefits-grid">
+                    <div class="benefit-card">
+                        <div class="benefit-icon">📈</div>
+                        <h3 class="benefit-title">20-40% Higher Average Orders</h3>
+                        <p class="benefit-description">Customers say YES to necessary repairs they would have declined. Your average ticket size increases dramatically without any pushy sales tactics.</p>
+                    </div>
+                    
+                    <div class="benefit-card">
+                        <div class="benefit-icon">⚡</div>
+                        <h3 class="benefit-title">Instant Payment Guarantee</h3>
+                        <p class="benefit-description">Get paid in 24 hours or less. No more worrying about bounced checks, declined cards, or customers who "forgot their wallet."</p>
+                    </div>
+                    
+                    <div class="benefit-card">
+                        <div class="benefit-icon">😊</div>
+                        <h3 class="benefit-title">Happier Customers</h3>
+                        <p class="benefit-description">No more awkward financing conversations. Customers love the flexibility and convenience of paying over time.</p>
+                    </div>
+                    
+                    <div class="benefit-card">
+                        <div class="benefit-icon">🎯</div>
+                        <h3 class="benefit-title">Simple Monthly Fee</h3>
+                        <p class="benefit-description">Just $199/month plus a small percentage per transaction. No hidden fees, no surprises - predictable pricing that scales with your success.</p>
+                    </div>
+                    
+                    <div class="benefit-card">
+                        <div class="benefit-icon">📱</div>
+                        <h3 class="benefit-title">No Hardware Required</h3>
+                        <p class="benefit-description">Customers apply directly from their phone in seconds. No additional equipment, no complicated setup - just seamless financing.</p>
+                    </div>
+                    
+                    <div class="benefit-card">
+                        <div class="benefit-icon">🛡️</div>
+                        <h3 class="benefit-title">Zero Merchant Risk</h3>
+                        <p class="benefit-description">If a customer defaults, it's not your problem. You've already been paid in full with no recourse - complete peace of mind.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="signup-steps" id="signup">
+        <div class="container">
+            <h2 class="section-headline">Ready to Start Increasing Your Revenue?</h2>
+            <p class="section-subhead">Getting started takes less than 10 minutes. Here's exactly what to do:</p>
+            
+            <div class="steps-grid">
+                <div class="step-card">
+                    <div class="step-number">1</div>
+                    <h3 class="step-title">Sign Up in 60 Seconds</h3>
+                    <p class="step-description">Click the button below and fill out our simple application form with your basic business information.</p>
+                </div>
+                
+                <div class="step-card">
+                    <div class="step-number">2</div>
+                    <h3 class="step-title">Get Instant Approval</h3>
+                    <p class="step-description">Most applications are approved immediately. You'll get an email confirmation and access to your dashboard.</p>
+                </div>
+                
+                <div class="step-card">
+                    <div class="step-number">3</div>
+                    <h3 class="step-title">Set Up Your Account</h3>
+                    <p class="step-description">Add your bank account details for fast payments and customize your financing options.</p>
+                </div>
+                
+                <div class="step-card">
+                    <div class="step-number">4</div>
+                    <h3 class="step-title">Start Offering Financing</h3>
+                    <p class="step-description">Train your team (takes 5 minutes) and start offering Buy Now, Pay Later to your customers today!</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="cta-section">
+        <div class="container">
+            <h2 class="cta-headline">Ready to Increase Your Average Repair Order by 40%?</h2>
+            <p class="cta-subhead">Join thousands of smart shop owners who are already using Buy Now, Pay Later to grow their revenue</p>
+            
+            <a href="#" class="cta-main">🚀 Get Started Now - It's FREE</a>
+            
+            <p class="urgency-text">⚡ Setup takes less than 10 minutes • Just $199/month • Start earning more today</p>
+        </div>
+    </div>
+    
+    <div class="footer">
+        <div class="container">
+            <p class="footer-text">Powered by DigniFi - The trusted name in automotive financing</p>
+            <img src="https://www.dignifi.com/wp-content/uploads/2022/02/DigniFi-Logo.png" 
+                 alt="DigniFi Logo" 
+                 class="dignifi-logo" />
+        </div>
+    </div>
+</body>
+</html>
