@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome to Buy Now, Pay Later</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            padding: 20px 0;
+        }
+        
+        .email-container {
+            max-width: 750px;
+            margin: 0 auto;
+            background: #ffffff;
+            border-radius: 16px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+            border: 1px solid #e2e8f0;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+            padding: 40px 30px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="2" fill="rgba(255,255,255,0.1)"/><circle cx="20" cy="20" r="1" fill="rgba(255,255,255,0.08)"/><circle cx="80" cy="30" r="1.5" fill="rgba(255,255,255,0.06)"/></svg>') repeat;
+            animation: float 10s infinite ease-in-out;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        .header h1 {
+            color: #ffffff;
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .header .subtitle {
+            color: #cbd5e1;
+            font-size: 16px;
+            font-weight: 400;
+            position: relative;
+            z-index: 2;
+            margin-bottom: 16px;
+        }
+        
+        .partner-logo-placeholder {
+            width: 200px;
+            height: 50px;
+            margin: 0 auto 16px auto;
+            position: relative;
+            z-index: 2;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ffffff;
+            font-weight: 600;
+            font-size: 14px;
+        }
+        
+        .dignifi-logo-placeholder {
+            width: 100px;
+            height: 25px;
+            margin: 8px auto 0 auto;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .content {
+            padding: 32px 40px;
+        }
+        
+        .greeting {
+            font-size: 18px;
+            color: #1e293b;
+            margin-bottom: 24px;
+            font-weight: 500;
+        }
+        
+        .intro {
+            font-size: 16px;
+            color: #475569;
+            margin-bottom: 32px;
+            line-height: 1.7;
+        }
+        
+        .steps-container {
+            background: linear-gradient(135deg, #fef2f2 0%, #fef7f7 100%);
+            border-radius: 12px;
+            padding: 28px;
+            margin-bottom: 32px;
+            border: 1px solid #fecaca;
+        }
+        
+        .steps-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #dc2626;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .step {
+            margin-bottom: 20px;
+            padding: 16px;
+            background: #ffffff;
+            border-radius: 8px;
+            border-left: 4px solid #dc2626;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        
+        .step:last-child {
+            margin-bottom: 0;
+        }
+        
+        .step-title {
+            font-weight: 600;
+            color: #dc2626;
+            margin-bottom: 8px;
+            font-size: 16px;
+        }
+        
+        .step-description {
+            color: #475569;
+            font-size: 14px;
+        }
+        
+        .cta-button {
+            display: inline-block;
+            background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+            color: #ffffff;
+            text-decoration: none;
+            padding: 16px 32px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 16px;
+            text-align: center;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
+            border: none;
+            cursor: pointer;
+            margin: 24px auto;
+            display: block;
+            max-width: 300px;
+        }
+        
+        .cta-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(220, 38, 38, 0.4);
+            background: linear-gradient(135deg, #b91c1c 0%, #991b1b 100%);
+        }
+        
+        .secondary-section {
+            background: #f8fafc;
+            border-radius: 12px;
+            padding: 28px;
+            margin: 32px 0;
+            border: 1px solid #e2e8f0;
+        }
+        
+        .secondary-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 16px;
+        }
+        
+        .secondary-text {
+            color: #475569;
+            margin-bottom: 20px;
+            line-height: 1.7;
+        }
+        
+        .secondary-button {
+            display: inline-block;
+            background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+            color: #ffffff;
+            text-decoration: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            box-shadow: 0 3px 8px rgba(220, 38, 38, 0.25);
+        }
+        
+        .secondary-button:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 16px rgba(220, 38, 38, 0.35);
+        }
+        
+        .support-section {
+            text-align: center;
+            margin: 32px 0;
+            padding: 24px;
+            background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+            border-radius: 12px;
+        }
+        
+        .support-text {
+            color: #475569;
+            margin-bottom: 12px;
+        }
+        
+        .support-email {
+            color: #dc2626;
+            text-decoration: none;
+            font-weight: 600;
+        }
+        
+        .support-email:hover {
+            text-decoration: underline;
+        }
+        
+        .footer {
+            background: #1e293b;
+            padding: 32px;
+            text-align: center;
+            color: #cbd5e1;
+        }
+        
+        .footer-message {
+            font-size: 16px;
+            margin-bottom: 12px;
+            line-height: 1.6;
+        }
+        
+        .footer-signature {
+            font-weight: 600;
+            color: #ffffff;
+            margin-bottom: 4px;
+        }
+        
+        .footer-powered {
+            font-size: 14px;
+            color: #94a3b8;
+            font-style: italic;
+        }
+        
+        .highlight {
+            font-weight: 600;
+            color: #dc2626;
+        }
+        
+        @media (max-width: 750px) {
+            .email-container {
+                margin: 0 10px;
+                border-radius: 12px;
+            }
+            
+            .header, .content {
+                padding: 24px 20px;
+            }
+            
+            .header h1 {
+                font-size: 24px;
+            }
+            
+            .steps-container, .secondary-section {
+                padding: 20px;
+            }
+            
+            .cta-button {
+                padding: 14px 24px;
+                font-size: 15px;
+            }
+            
+            .partner-logo-placeholder {
+                width: 160px;
+                height: 40px;
+                font-size: 12px;
+            }
+            
+            .dignifi-logo-placeholder {
+                width: 80px;
+                height: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="email-container">
+        <div class="header">
+            <div class="partner-logo-placeholder">
+                [PARTNER LOGO]
+            </div>
+            <h1>Buy Now, Pay Later</h1>
+            <div class="subtitle">Powered by</div>
+            <img src="https://www.dignifi.com/wp-content/uploads/2022/02/DigniFi-Logo.png" 
+                 alt="DigniFi Logo" 
+                 class="dignifi-logo" 
+                 style="filter: brightness(0) invert(1);" />
+        </div>
+        
+        <div class="content">
+            <div class="greeting">Hi [First Name],</div>
+            
+            <div class="intro">
+                Welcome aboard! We're excited to have you join <span class="highlight">Buy Now, Pay Later</span>. This program is designed to give your customers more flexibility when paying for their vehicle repairs—while ensuring your business gets paid fast and reliably.
+            </div>
+            
+            <div class="steps-container">
+                <div class="steps-title">Complete Your Onboarding in 2 Quick Steps:</div>
+                
+                <div class="step">
+                    <div class="step-title">Step 1: Sign Your Terms & Conditions</div>
+                    <div class="step-description">Click below to review and sign the program Terms & Conditions.</div>
+                </div>
+                
+                <div class="step">
+                    <div class="step-title">Step 2: Enter Your Banking Information</div>
+                    <div class="step-description">Provide your ACH details so funds from financed repairs can be deposited directly into your account.</div>
+                </div>
+            </div>
+            
+            <a href="#" class="cta-button">🚀 Complete Onboarding Now</a>
+            
+            <div style="text-align: center; color: #64748b; margin: 20px 0; font-style: italic;">
+                That's it—you'll be ready to begin offering Buy Now, Pay Later to your customers right away.
+            </div>
+            
+            <div class="secondary-section">
+                <div class="secondary-title">Learn More</div>
+                <div class="secondary-text">
+                    We've partnered with a leading provider of point-of-sale financing for the automotive industry. This partnership powers the Buy Now, Pay Later solution to help you deliver more payment options, improve customer satisfaction, and grow service revenue.
+                </div>
+                <a href="#" class="secondary-button">📚 Learn More</a>
+            </div>
+            
+            <div class="support-section">
+                <div class="support-text">
+                    If you have any questions along the way, our team is here to help. You can also reach out to 
+                    <a href="mailto:support@dignifi.com" class="support-email">support@dignifi.com</a> for assistance.
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <div class="footer-message">
+                Thank you for partnering with our Buy Now, Pay Later program. We're thrilled to help you drive more service revenue and provide your customers with the payment flexibility they need.
+            </div>
+            <div class="footer-signature">Best regards,<br>The DigniFi Team</div>
+            <div class="footer-powered">Powered by DigniFi</div>
+        </div>
+    </div>
+</body>
+</html>
