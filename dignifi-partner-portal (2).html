@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DigniFi Partner Portal - Customer Referral</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #DC143C 0%, #8B0000 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .portal-container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 600px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .logo {
+            background: linear-gradient(135deg, #DC143C, #8B0000);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-size: 32px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: #666;
+            font-size: 16px;
+            font-weight: 300;
+        }
+
+        .form-section {
+            margin-bottom: 30px;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #555;
+            font-size: 14px;
+        }
+
+        select, input[type="number"], input[type="email"], input[type="tel"] {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        select:focus, input:focus {
+            outline: none;
+            border-color: #DC143C;
+            box-shadow: 0 0 0 3px rgba(220, 20, 60, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .customer-info {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        @media (max-width: 600px) {
+            .customer-info {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .send-invite-btn {
+            width: 100%;
+            background: linear-gradient(135deg, #DC143C, #8B0000);
+            color: white;
+            border: none;
+            padding: 18px;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 30px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .send-invite-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(220, 20, 60, 0.3);
+        }
+
+        .send-invite-btn:active {
+            transform: translateY(-1px);
+        }
+
+        .info-card {
+            background: linear-gradient(135deg, #DC143C 0%, #B22222 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            margin-top: 30px;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .info-card h4 {
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            background: #4CAF50;
+            border-radius: 50%;
+            margin-right: 8px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+
+        .user-info {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 10px 15px;
+            border-radius: 20px;
+            font-size: 12px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="user-info">
+        <span class="status-indicator"></span>
+        CS Rep: Sarah Johnson
+    </div>
+
+    <div class="portal-container">
+        <div class="header">
+            <div class="logo">DigniFi</div>
+            <div class="subtitle">Partner Portal - Customer Referral System</div>
+        </div>
+
+        <form id="referralForm">
+            <div class="form-section">
+                <div class="section-title">Service Center Selection</div>
+                <div class="form-group">
+                    <label for="serviceCenter">Select Approved Service Center</label>
+                    <select id="serviceCenter" required>
+                        <option value="">Choose a service center...</option>
+                        <option value="sc001">Premium Auto Repair - 1234 Main St, Dallas, TX</option>
+                        <option value="sc002">Elite Service Center - 5678 Oak Ave, Houston, TX</option>
+                        <option value="sc003">Advanced Auto Solutions - 9012 Pine Rd, Austin, TX</option>
+                        <option value="sc004">Metro Automotive - 3456 Elm St, San Antonio, TX</option>
+                        <option value="sc005">Precision Auto Care - 7890 Cedar Blvd, Fort Worth, TX</option>
+                        <option value="sc006">Apex Auto Repair - 2468 Maple Dr, Phoenix, AZ</option>
+                        <option value="sc007">Superior Service Solutions - 1357 Birch Way, Denver, CO</option>
+                        <option value="sc008">Master Mechanics - 8642 Willow St, Atlanta, GA</option>
+                        <option value="sc009">Professional Auto Works - 9753 Cherry Ave, Miami, FL</option>
+                        <option value="sc010">Champion Car Care - 4681 Spruce Ln, Seattle, WA</option>
+                        <option value="sc011">Excellence Auto Service - 3579 Poplar Rd, Chicago, IL</option>
+                        <option value="sc012">Reliable Repair Center - 6420 Aspen Ct, Las Vegas, NV</option>
+                        <option value="sc013">Quality Quick Fix - 7531 Hickory Blvd, Nashville, TN</option>
+                        <option value="sc014">Trusted Tech Auto - 8642 Walnut St, Portland, OR</option>
+                        <option value="sc015">First Class Auto Repair - 1975 Magnolia Ave, Charlotte, NC</option>
+                        <option value="sc016">Golden Gate Garage - 5286 Redwood Dr, San Francisco, CA</option>
+                        <option value="sc017">Liberty Auto Solutions - 4173 Pine Valley Rd, Philadelphia, PA</option>
+                        <option value="sc018">Skyline Service Center - 9628 Mountain View Blvd, Salt Lake City, UT</option>
+                        <option value="sc019">Coastal Car Care - 7419 Ocean Drive, Virginia Beach, VA</option>
+                        <option value="sc020">Midwest Motors - 8352 Prairie Ln, Kansas City, MO</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <div class="section-title">Repair Information</div>
+                <div class="form-group">
+                    <label for="repairAmount">Repair Amount (aligned with RO)</label>
+                    <input type="number" id="repairAmount" placeholder="$0.00" min="1" step="0.01" required>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <div class="section-title">Customer Contact Information</div>
+                <div class="customer-info">
+                    <div class="form-group">
+                        <label for="customerEmail">Customer Email</label>
+                        <input type="email" id="customerEmail" placeholder="customer@email.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="customerPhone">Customer Phone (SMS)</label>
+                        <input type="tel" id="customerPhone" placeholder="(555) 123-4567" required>
+                    </div>
+                </div>
+            </div>
+
+            <button type="submit" class="send-invite-btn">
+                Send Prequalification Invite
+            </button>
+        </form>
+
+        <div class="info-card">
+            <h4>Next Steps:</h4>
+            Once the customer completes DigniFi's BNPL process, you'll receive:<br>
+            • Transaction ID<br>
+            • Funded Amount<br>
+            • Merchant/Service Center ID<br><br>
+            Funds will be distributed through your existing payment rails.
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('referralForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const serviceCenter = document.getElementById('serviceCenter').value;
+            const repairAmount = document.getElementById('repairAmount').value;
+            const customerEmail = document.getElementById('customerEmail').value;
+            const customerPhone = document.getElementById('customerPhone').value;
+            
+            if (serviceCenter && repairAmount && customerEmail && customerPhone) {
+                // Simulate form submission
+                const btn = document.querySelector('.send-invite-btn');
+                const originalText = btn.textContent;
+                
+                btn.textContent = 'Sending Invite...';
+                btn.style.background = '#4CAF50';
+                btn.disabled = true;
+                
+                setTimeout(() => {
+                    btn.textContent = '✓ Invite Sent Successfully!';
+                    setTimeout(() => {
+                        btn.textContent = originalText;
+                        btn.style.background = '';
+                        btn.disabled = false;
+                        document.getElementById('referralForm').reset();
+                    }, 3000);
+                }, 2000);
+            }
+        });
+
+        // Format repair amount as currency
+        document.getElementById('repairAmount').addEventListener('input', function(e) {
+            let value = parseFloat(e.target.value);
+            if (!isNaN(value)) {
+                e.target.setAttribute('placeholder', '$' + value.toFixed(2));
+            }
+        });
+
+        // Format phone number
+        document.getElementById('customerPhone').addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            let formattedValue = '';
+            
+            if (value.length >= 6) {
+                formattedValue = `(${value.slice(0, 3)}) ${value.slice(3, 6)}-${value.slice(6, 10)}`;
+            } else if (value.length >= 3) {
+                formattedValue = `(${value.slice(0, 3)}) ${value.slice(3)}`;
+            } else {
+                formattedValue = value;
+            }
+            
+            e.target.value = formattedValue;
+        });
+    </script>
+</body>
+</html>
