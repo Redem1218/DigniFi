@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DigniFi Partner Portal - Denied Warranty Customer Support</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #DC143C 0%, #8B0000 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .portal-container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 700px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .logo {
+            background: linear-gradient(135deg, #DC143C, #8B0000);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-size: 32px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: #666;
+            font-size: 16px;
+            font-weight: 300;
+        }
+
+        .tab-container {
+            margin-bottom: 30px;
+        }
+
+        .tab-buttons {
+            display: flex;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 2px solid #e0e0e0;
+            margin-bottom: 30px;
+        }
+
+        .tab-button {
+            flex: 1;
+            padding: 15px 20px;
+            background: white;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .tab-button.active {
+            background: linear-gradient(135deg, #DC143C, #8B0000);
+            color: white;
+        }
+
+        .tab-button.disabled {
+            background: #f5f5f5;
+            color: #999;
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .form-section {
+            margin-bottom: 30px;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #555;
+            font-size: 14px;
+        }
+
+        .optional-label {
+            color: #999;
+            font-weight: 400;
+            font-size: 12px;
+        }
+
+        input[type="number"], input[type="email"], input[type="tel"], input[type="text"], textarea {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            background: white;
+            font-family: inherit;
+        }
+
+        input:focus, textarea:focus {
+            outline: none;
+            border-color: #DC143C;
+            box-shadow: 0 0 0 3px rgba(220, 20, 60, 0.1);
+            transform: translateY(-2px);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .customer-info {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .merchant-info {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        @media (max-width: 600px) {
+            .customer-info, .merchant-info {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .action-btn {
+            width: 100%;
+            background: linear-gradient(135deg, #DC143C, #8B0000);
+            color: white;
+            border: none;
+            padding: 18px;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .action-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(220, 20, 60, 0.3);
+        }
+
+        .action-btn:active {
+            transform: translateY(-1px);
+        }
+
+        .status-message {
+            padding: 15px;
+            border-radius: 12px;
+            margin-top: 20px;
+            font-size: 14px;
+            font-weight: 500;
+            display: none;
+        }
+
+        .status-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .status-info {
+            background: #cce7ff;
+            color: #004085;
+            border: 1px solid #b3d9ff;
+        }
+
+        .info-card {
+            background: linear-gradient(135deg, #DC143C 0%, #B22222 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            margin-top: 30px;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .info-card h4 {
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            background: #4CAF50;
+            border-radius: 50%;
+            margin-right: 8px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+
+        .user-info {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 10px 15px;
+            border-radius: 20px;
+            font-size: 12px;
+            color: #666;
+        }
+
+        .step-indicator {
+            display: inline-block;
+            background: #DC143C;
+            color: white;
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 25px;
+            font-size: 14px;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="user-info">
+        <span class="status-indicator"></span>
+        CS Rep: Sarah Johnson
+    </div>
+
+    <div class="portal-container">
+        <div class="header">
+            <div class="logo">DigniFi</div>
+            <div class="subtitle">Partner Portal - Denied Warranty Customer Support</div>
+        </div>
+
+        <div class="tab-container">
+            <div class="tab-buttons">
+                <button class="tab-button active" onclick="switchTab(0)">
+                    <span class="step-indicator">A</span>Send Consumer PreQual
+                </button>
+                <button class="tab-button disabled" id="merchantTab" onclick="switchTab(1)">
+                    <span class="step-indicator">B</span>Send Merchant Sign-Up
+                </button>
+            </div>
+
+            <!-- Tab 1: Consumer PreQual -->
+            <div class="tab-content active" id="tab0">
+                <form id="consumerForm">
+                    <div class="form-section">
+                        <div class="section-title">Customer Contact Information</div>
+                        <div class="customer-info">
+                            <div class="form-group">
+                                <label for="customerEmail">Customer Email *</label>
+                                <input type="email" id="customerEmail" placeholder="customer@email.com" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="customerPhone">Customer Phone (SMS) *</label>
+                                <input type="tel" id="customerPhone" placeholder="(555) 123-4567" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <div class="section-title">Repair Information</div>
+                        <div class="form-group">
+                            <label for="repairAmount">
+                                Repair Amount (RO Amount) 
+                                <span class="optional-label">- Optional</span>
+                            </label>
+                            <input type="number" id="repairAmount" placeholder="$0.00" min="1" step="0.01">
+                        </div>
+                    </div>
+
+                    <button type="submit" class="action-btn">
+                        Send PreQualification Invite
+                    </button>
+
+                    <div class="status-message status-success" id="consumerSuccess">
+                        ✓ PreQualification invite sent successfully! Customer approved - you can now proceed to Step B.
+                    </div>
+                </form>
+
+                <div class="info-card">
+                    <h4>Step A: Consumer PreQualification</h4>
+                    Send a BNPL prequalification invite to the denied warranty customer. Once approved, you'll be able to send a merchant sign-up link to the service center in Step B.
+                </div>
+            </div>
+
+            <!-- Tab 2: Merchant Sign-Up -->
+            <div class="tab-content" id="tab1">
+                <form id="merchantForm">
+                    <div class="form-section">
+                        <div class="section-title">Service Center Information</div>
+                        <div class="merchant-info">
+                            <div class="form-group">
+                                <label for="businessName">Business Name *</label>
+                                <input type="text" id="businessName" placeholder="ABC Auto Repair" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="contactName">Primary Signer Contact Name *</label>
+                                <input type="text" id="contactName" placeholder="John Smith" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="merchantEmail">Email Address *</label>
+                            <input type="email" id="merchantEmail" placeholder="contact@abcautorepair.com" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="mailingAddress">Mailing Address *</label>
+                            <textarea id="mailingAddress" placeholder="123 Main Street&#10;Suite 100&#10;City, State 12345" required></textarea>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="action-btn">
+                        Send Merchant Sign-Up Link
+                    </button>
+
+                    <div class="status-message status-success" id="merchantSuccess">
+                        ✓ Merchant sign-up link sent successfully! DigniFi will follow up with training for future transactions.
+                    </div>
+                </form>
+
+                <div class="info-card">
+                    <h4>Step B: Merchant Onboarding</h4>
+                    Send the service center a sign-up link to onboard themselves as a DigniFi merchant. This allows them to receive payment for the approved repair work. DigniFi will conduct follow-up training for future transactions.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let consumerApproved = false;
+
+        function switchTab(tabIndex) {
+            // Don't allow switching to merchant tab if consumer not approved
+            if (tabIndex === 1 && !consumerApproved) {
+                return;
+            }
+
+            // Hide all tabs
+            const tabContents = document.querySelectorAll('.tab-content');
+            const tabButtons = document.querySelectorAll('.tab-button');
+            
+            tabContents.forEach(content => content.classList.remove('active'));
+            tabButtons.forEach(button => button.classList.remove('active'));
+            
+            // Show selected tab
+            document.getElementById(`tab${tabIndex}`).classList.add('active');
+            tabButtons[tabIndex].classList.add('active');
+        }
+
+        document.getElementById('consumerForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const customerEmail = document.getElementById('customerEmail').value;
+            const customerPhone = document.getElementById('customerPhone').value;
+            
+            if (customerEmail && customerPhone) {
+                const btn = this.querySelector('.action-btn');
+                const originalText = btn.textContent;
+                
+                btn.textContent = 'Sending Invite...';
+                btn.style.background = '#FFA500';
+                btn.disabled = true;
+                
+                setTimeout(() => {
+                    btn.textContent = '✓ Consumer Approved!';
+                    btn.style.background = '#4CAF50';
+                    
+                    // Show success message
+                    document.getElementById('consumerSuccess').style.display = 'block';
+                    
+                    // Enable merchant tab
+                    consumerApproved = true;
+                    const merchantTab = document.getElementById('merchantTab');
+                    merchantTab.classList.remove('disabled');
+                    merchantTab.style.cursor = 'pointer';
+                    
+                    setTimeout(() => {
+                        btn.textContent = originalText;
+                        btn.style.background = '';
+                        btn.disabled = false;
+                    }, 3000);
+                }, 2000);
+            }
+        });
+
+        document.getElementById('merchantForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const businessName = document.getElementById('businessName').value;
+            const contactName = document.getElementById('contactName').value;
+            const merchantEmail = document.getElementById('merchantEmail').value;
+            const mailingAddress = document.getElementById('mailingAddress').value;
+            
+            if (businessName && contactName && merchantEmail && mailingAddress) {
+                const btn = this.querySelector('.action-btn');
+                const originalText = btn.textContent;
+                
+                btn.textContent = 'Sending Sign-Up Link...';
+                btn.style.background = '#FFA500';
+                btn.disabled = true;
+                
+                setTimeout(() => {
+                    btn.textContent = '✓ Link Sent Successfully!';
+                    btn.style.background = '#4CAF50';
+                    
+                    // Show success message
+                    document.getElementById('merchantSuccess').style.display = 'block';
+                    
+                    setTimeout(() => {
+                        btn.textContent = originalText;
+                        btn.style.background = '';
+                        btn.disabled = false;
+                        document.getElementById('merchantForm').reset();
+                    }, 3000);
+                }, 2000);
+            }
+        });
+
+        // Format phone number
+        document.getElementById('customerPhone').addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            let formattedValue = '';
+            
+            if (value.length >= 6) {
+                formattedValue = `(${value.slice(0, 3)}) ${value.slice(3, 6)}-${value.slice(6, 10)}`;
+            } else if (value.length >= 3) {
+                formattedValue = `(${value.slice(0, 3)}) ${value.slice(3)}`;
+            } else {
+                formattedValue = value;
+            }
+            
+            e.target.value = formattedValue;
+        });
+
+        // Format repair amount as currency
+        document.getElementById('repairAmount').addEventListener('input', function(e) {
+            let value = parseFloat(e.target.value);
+            if (!isNaN(value)) {
+                e.target.setAttribute('placeholder', '$' + value.toFixed(2));
+            }
+        });
+    </script>
+</body>
+</html>
