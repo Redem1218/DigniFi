@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CDK SimplePay - DigniFi Confirmation</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+            background-color: #f5f5f5;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%);
+            padding: 40px 30px;
+            text-align: center;
+        }
+        
+        .logo {
+            color: white;
+            font-size: 28px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+        
+        .tagline {
+            color: #e0e7ff;
+            font-size: 16px;
+            font-weight: 400;
+            margin-bottom: 20px;
+        }
+        
+        .powered-by {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 8px 16px;
+            border-radius: 20px;
+            display: inline-block;
+            margin-top: 10px;
+        }
+        
+        .powered-text {
+            color: #e0e7ff;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .dignifi-logo {
+            color: white;
+            font-size: 18px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            margin-left: 5px;
+        }
+        
+        .content {
+            padding: 40px 30px;
+        }
+        
+        .greeting {
+            font-size: 18px;
+            color: #1e293b;
+            margin-bottom: 25px;
+        }
+        
+        .success-banner {
+            background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%);
+            border-left: 4px solid #16a34a;
+            padding: 20px 25px;
+            margin-bottom: 30px;
+            border-radius: 6px;
+        }
+        
+        .success-banner h3 {
+            color: #15803d;
+            font-size: 17px;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+        
+        .success-banner p {
+            color: #166534;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+        
+        .message {
+            color: #475569;
+            line-height: 1.8;
+            margin-bottom: 20px;
+            font-size: 15px;
+        }
+        
+        .message strong {
+            color: #1e293b;
+        }
+        
+        .benefits-list {
+            background: #f8fafc;
+            padding: 25px;
+            border-radius: 6px;
+            margin: 25px 0;
+        }
+        
+        .benefits-list ul {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .benefits-list li {
+            color: #475569;
+            font-size: 15px;
+            padding: 10px 0;
+            padding-left: 30px;
+            position: relative;
+            line-height: 1.6;
+        }
+        
+        .benefits-list li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #2563eb;
+            font-weight: bold;
+            font-size: 18px;
+        }
+        
+        .next-steps {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            border-left: 4px solid #f59e0b;
+            padding: 25px;
+            margin: 30px 0;
+            border-radius: 6px;
+        }
+        
+        .next-steps h3 {
+            color: #92400e;
+            font-size: 17px;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+        
+        .next-steps p {
+            color: #78350f;
+            font-size: 14px;
+            line-height: 1.7;
+            margin-bottom: 12px;
+        }
+        
+        .cta-button {
+            display: inline-block;
+            background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+            color: white;
+            text-decoration: none;
+            padding: 16px 40px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 16px;
+            margin: 25px 0;
+            transition: all 0.3s;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(37, 99, 235, 0.2);
+        }
+        
+        .cta-button:hover {
+            background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%);
+            box-shadow: 0 6px 8px rgba(37, 99, 235, 0.3);
+            transform: translateY(-1px);
+        }
+        
+        .info-box {
+            background: #f1f5f9;
+            padding: 25px;
+            border-radius: 6px;
+            margin: 25px 0;
+            border: 1px solid #e2e8f0;
+        }
+        
+        .info-box h4 {
+            color: #1e293b;
+            font-size: 16px;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+        
+        .info-box p {
+            color: #475569;
+            font-size: 14px;
+            line-height: 1.7;
+            margin-bottom: 10px;
+        }
+        
+        .footer {
+            background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%);
+            padding: 35px 30px;
+            text-align: center;
+            color: #cbd5e1;
+            font-size: 13px;
+            line-height: 1.8;
+        }
+        
+        .footer a {
+            color: #60a5fa;
+            text-decoration: none;
+        }
+        
+        .footer-brand {
+            color: white;
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+        
+        .footer-disclaimer {
+            margin-top: 20px;
+            font-size: 11px;
+            color: #94a3b8;
+            font-style: italic;
+        }
+        
+        .divider {
+            height: 1px;
+            background: #e2e8f0;
+            margin: 30px 0;
+        }
+        
+        /* Landing Page Styles */
+        .landing-page {
+            display: none;
+            max-width: 1000px;
+            margin: 40px auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+        
+        .landing-header {
+            background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%);
+            padding: 60px 40px;
+            text-align: center;
+            border-radius: 12px 12px 0 0;
+        }
+        
+        .landing-header .logo {
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+        
+        .landing-content {
+            padding: 60px 50px;
+        }
+        
+        .landing-content h2 {
+            color: #1e293b;
+            font-size: 32px;
+            margin-bottom: 20px;
+            text-align: center;
+            font-weight: 700;
+        }
+        
+        .landing-content .intro {
+            text-align: center;
+            color: #475569;
+            font-size: 17px;
+            line-height: 1.8;
+            margin-bottom: 50px;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .webinar-schedule {
+            background: #f8fafc;
+            padding: 40px;
+            border-radius: 10px;
+            margin: 40px 0;
+            border: 1px solid #e2e8f0;
+        }
+        
+        .webinar-schedule h3 {
+            color: #1e293b;
+            font-size: 24px;
+            margin-bottom: 30px;
+            text-align: center;
+            font-weight: 700;
+        }
+        
+        .webinar-card {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border: 2px solid #e2e8f0;
+            transition: all 0.3s;
+        }
+        
+        .webinar-card:hover {
+            border-color: #2563eb;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.1);
+        }
+        
+        .webinar-date {
+            color: #2563eb;
+            font-size: 19px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+        
+        .webinar-time {
+            color: #64748b;
+            font-size: 15px;
+            margin-bottom: 18px;
+            font-weight: 500;
+        }
+        
+        .webinar-details {
+            color: #64748b;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+        
+        .enroll-button {
+            display: inline-block;
+            background: linear-gradient(135deg, #16a34a 0%, #15803d 100%);
+            color: white;
+            text-decoration: none;
+            padding: 14px 32px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 15px;
+            margin-top: 18px;
+            transition: all 0.3s;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(22, 163, 74, 0.2);
+        }
+        
+        .enroll-button:hover {
+            background: linear-gradient(135deg, #15803d 0%, #166534 100%);
+            box-shadow: 0 6px 8px rgba(22, 163, 74, 0.3);
+            transform: translateY(-1px);
+        }
+        
+        .training-topics {
+            margin: 50px 0;
+        }
+        
+        .training-topics h3 {
+            color: #1e293b;
+            font-size: 24px;
+            margin-bottom: 30px;
+            text-align: center;
+            font-weight: 700;
+        }
+        
+        .topics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin-top: 30px;
+        }
+        
+        .topic-card {
+            background: #f8fafc;
+            padding: 25px;
+            border-radius: 8px;
+            border-left: 4px solid #2563eb;
+            border: 1px solid #e2e8f0;
+            border-left: 4px solid #2563eb;
+        }
+        
+        .topic-card h4 {
+            color: #1e293b;
+            font-size: 17px;
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+        
+        .topic-card p {
+            color: #64748b;
+            font-size: 14px;
+            line-height: 1.7;
+        }
+        
+        .stats-banner {
+            background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%);
+            padding: 30px;
+            border-radius: 10px;
+            border-left: 4px solid #16a34a;
+            margin: 40px 0;
+        }
+        
+        .stats-banner h3 {
+            color: #15803d;
+            font-size: 20px;
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+        
+        .stats-banner p {
+            color: #166534;
+            font-size: 16px;
+            line-height: 1.7;
+        }
+        
+        .toggle-view {
+            text-align: center;
+            margin: 20px 0;
+        }
+        
+        .toggle-button {
+            background: #475569;
+            color: white;
+            border: none;
+            padding: 14px 32px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: background 0.3s;
+        }
+        
+        .toggle-button:hover {
+            background: #334155;
+        }
+    </style>
+</head>
+<body>
+    <!-- EMAIL TEMPLATE -->
+    <div class="container" id="email-view">
+        <div class="header">
+            <div class="logo">CDK SimplePay</div>
+            <div class="tagline">Buy Now, Pay Later</div>
+            <div class="powered-by">
+                <span class="powered-text">Powered by</span>
+                <span class="dignifi-logo">DigniFi</span>
+            </div>
+        </div>
+        
+        <div class="content">
+            <div class="greeting">Hi [First Name],</div>
+            
+            <div class="success-banner">
+                <h3>✓ Your Information Has Been Received!</h3>
+                <p>Thank you for completing your onboarding. We've received your signed Terms & Conditions and banking information, and your account is currently being reviewed for activation.</p>
+            </div>
+            
+            <p class="message">
+                As a CDK SimplePay customer, we're committed to providing you with continuous innovation and value. You're now just one step away from offering <strong>Buy Now, Pay Later, powered by DigniFi</strong> to your customers.
+            </p>
+            
+            <div class="benefits-list">
+                <ul>
+                    <li>Provide your customers with additional, convenient payment options for their vehicle repairs and F&I needs, offering easy access to financing at the point of sale</li>
+                    <li>Further expand your dealership's ability to get paid fast and reliably, with seamless integration of financing options</li>
+                    <li>Deliver increased approval rates allowing you to grow your service revenue</li>
+                </ul>
+            </div>
+            
+            <div class="next-steps">
+                <h3>📚 Complete Your Training to Get Started</h3>
+                <p>
+                    To ensure you're fully prepared to maximize the benefits of offering Buy Now, Pay Later financing, we've prepared a comprehensive training webinar that covers everything you need to know.
+                </p>
+                <p style="margin-top: 12px;">
+                    Our training will show you how to present financing options to customers, process transactions efficiently, and implement best practices that drive approval rates and service revenue growth.
+                </p>
+                <p style="margin-top: 15px; font-weight: 600; color: #92400e;">
+                    Reserve your spot in our next training session today!
+                </p>
+            </div>
+            
+            <div style="text-align: center;">
+                <a href="#" class="cta-button">🎓 Enroll in Training Webinar</a>
+            </div>
+            
+            <p class="message" style="text-align: center; font-style: italic; margin-top: 20px;">
+                In just 45 minutes, you'll be ready to offer Buy Now, Pay Later to your customers, delivering additional payment options and realizing a positive impact to your bottom line.
+            </p>
+            
+            <div class="divider"></div>
+            
+            <div class="info-box">
+                <h4>Why DigniFi</h4>
+                <p>
+                    CDK has partnered with DigniFi, a leading provider of point-of-sale financing for the automotive industry. DigniFi powers the Buy Now, Pay Later solution, giving your customers access to financing through DigniFi, enabling you to offer more payment options, improve customer satisfaction, and grow service revenue that may otherwise be lost.
+                </p>
+            </div>
+            
+            <div class="divider"></div>
+            
+            <p class="message" style="font-size: 14px;">
+                <strong>Need help along the way?</strong> Our team is here for you. Contact us anytime at 
+                <a href="mailto:merchantsupport@dignifi.com" style="color: #2563eb; text-decoration: none;">merchantsupport@dignifi.com</a> 
+                or call <strong>1-855-808-5861</strong>
+            </p>
+            
+            <p class="message" style="font-size: 14px; margin-top: 25px;">
+                Thank you for partnering with CDK SimplePay's Buy Now, Pay Later program. Together, we'll help you capture more service opportunities and make it easier for customers to say "yes" to the repairs they need.
+            </p>
+            
+            <p class="message" style="font-size: 14px; margin-top: 20px;">
+                <strong>Best regards,</strong><br>
+                <strong>The CDK Team</strong>
+            </p>
+        </div>
+        
+        <div class="footer">
+            <div class="footer-brand">CDK SimplePay — Buy Now, Pay Later</div>
+            <div>
+                <span class="powered-text">Powered by</span>
+                <span style="color: white; font-weight: 600; margin-left: 5px;">DigniFi</span>
+            </div>
+            <div class="footer-disclaimer">
+                All DigniFi credit products are issued by WebBank.
+            </div>
+        </div>
+    </div>
+
+    <!-- LANDING PAGE -->
+    <div class="landing-page" id="landing-view">
+        <div class="landing-header">
+            <div class="logo">CDK SimplePay</div>
+            <div class="tagline">Buy Now, Pay Later Training</div>
+            <div class="powered-by">
+                <span class="powered-text">Powered by</span>
+                <span class="dignifi-logo">DigniFi</span>
+            </div>
+        </div>
+        
+        <div class="landing-content">
+            <h2>Welcome to Your DigniFi Training!</h2>
+            <p class="intro">
+                You're almost ready to start offering Buy Now, Pay Later financing to your customers! Our comprehensive training webinar will equip you with everything you need to confidently present financing options, process transactions, and maximize your service revenue opportunities.
+            </p>
+            
+            <div class="webinar-schedule">
+                <h3>Upcoming Training Sessions</h3>
+                
+                <div class="webinar-card">
+                    <div class="webinar-date">📅 Tuesday, October 22, 2025</div>
+                    <div class="webinar-time">⏰ 2:00 PM - 2:45 PM ET</div>
+                    <div class="webinar-details">
+                        Duration: 45 minutes (including Q&A)<br>
+                        Seats Available: 18 remaining
+                    </div>
+                    <button class="enroll-button" onclick="alert('Enrollment confirmed! You will receive a calendar invite and webinar link shortly.')">Enroll Now</button>
+                </div>
+                
+                <div class="webinar-card">
+                    <div class="webinar-date">📅 Tuesday, November 5, 2025</div>
+                    <div class="webinar-time">⏰ 2:00 PM - 2:45 PM ET</div>
+                    <div class="webinar-details">
+                        Duration: 45 minutes (including Q&A)<br>
+                        Seats Available: 24 remaining
+                    </div>
+                    <button class="enroll-button" onclick="alert('Enrollment confirmed! You will receive a calendar invite and webinar link shortly.')">Enroll Now</button>
+                </div>
+                
+                <div class="webinar-card">
+                    <div class="webinar-date">📅 Tuesday, November 19, 2025</div>
+                    <div class="webinar-time">⏰ 2:00 PM - 2:45 PM ET</div>
+                    <div class="webinar-details">
+                        Duration: 45 minutes (including Q&A)<br>
+                        Seats Available: 30 remaining
+                    </div>
+                    <button class="enroll-button" onclick="alert('Enrollment confirmed! You will receive a calendar invite and webinar link shortly.')">Enroll Now</button>
+                </div>
+            </div>
+            
+            <div class="training-topics">
+                <h3>What You'll Learn</h3>
+                <div class="topics-grid">
+                    <div class="topic-card">
+                        <h4>🎯 Present Financing to Customers</h4>
+                        <p>Learn effective techniques to introduce Buy Now, Pay Later options that increase customer acceptance and close more service sales.</p>
+                    </div>
+                    <div class="topic-card">
+                        <h4>💳 Process Transactions</h4>
+                        <p>Step-by-step guidance on processing Buy Now, Pay Later transactions from application to funding.</p>
+                    </div>
+                    <div class="topic-card">
+                        <h4>📈 Maximize Approval Rates</h4>
+                        <p>Proven strategies and best practices to increase financing approval rates and grow your service revenue.</p>
+                    </div>
+                    <div class="topic-card">
+                        <h4>⚡ Fast, Reliable Payments</h4>
+                        <p>Understand how funds are deposited directly to your account and what to expect for payment timelines.</p>
+                    </div>
+                    <div class="topic-card">
+                        <h4>🛠️ Handle Common Scenarios</h4>
+                        <p>Troubleshoot typical situations and learn how to resolve them quickly to keep customers satisfied.</p>
+                    </div>
+                    <div class="topic-card">
+                        <h4>🤝 Access Ongoing Support</h4>
+                        <p>Discover available resources and support channels to help you succeed with Buy Now, Pay Later.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="stats-banner">
+                <h3>✓ Why Training Matters</h3>
+                <p>
+                    Dealerships that complete training see higher financing acceptance rates and smoother customer experiences. Invest 45 minutes now to ensure a successful launch and maximize the value of offering Buy Now, Pay Later to your customers.
+                </p>
+            </div>
+            
+            <div style="text-align: center; margin: 50px 0;">
+                <p style="color: #64748b; margin-bottom: 15px; font-size: 15px;">Questions before enrolling?</p>
+                <a href="mailto:merchantsupport@dignifi.com" style="color: #2563eb; text-decoration: none; font-weight: 600; font-size: 15px;">Contact Support →</a>
+                <p style="color: #64748b; margin-top: 10px; font-size: 14px;">Call us at 1-855-808-5861</p>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <div class="footer-brand">CDK SimplePay — Buy Now, Pay Later</div>
+            <div>
+                <span class="powered-text">Powered by</span>
+                <span style="color: white; font-weight: 600; margin-left: 5px;">DigniFi</span>
+            </div>
+            <div class="footer-disclaimer">
+                All DigniFi credit products are issued by WebBank.
+            </div>
+        </div>
+    </div>
+
+    <!-- VIEW TOGGLE -->
+    <div class="toggle-view">
+        <button class="toggle-button" onclick="toggleView()">
+            Toggle: <span id="view-label">View Landing Page</span>
+        </button>
+    </div>
+
+    <script>
+        let currentView = 'email';
+        
+        function toggleView() {
+            const emailView = document.getElementById('email-view');
+            const landingView = document.getElementById('landing-view');
+            const viewLabel = document.getElementById('view-label');
+            
+            if (currentView === 'email') {
+                emailView.style.display = 'none';
+                landingView.style.display = 'block';
+                viewLabel.textContent = 'View Email Template';
+                currentView = 'landing';
+            } else {
+                emailView.style.display = 'block';
+                landingView.style.display = 'none';
+                viewLabel.textContent = 'View Landing Page';
+                currentView = 'email';
+            }
+        }
+    </script>
+</body>
+</html>
