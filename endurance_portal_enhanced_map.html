@@ -1,0 +1,905 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Endurance Agent Portal - Denied Warranty PreQual</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" />
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+      background: linear-gradient(135deg, #f5f7fa 0%, #e8ecf1 100%);
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+      overflow: hidden;
+    }
+
+    .header {
+      background: linear-gradient(135deg, #1e5a6f 0%, #0f3647 100%);
+      color: white;
+      padding: 30px;
+      text-align: center;
+    }
+
+    .header h1 {
+      font-size: 28px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .header p {
+      font-size: 14px;
+      color: rgba(255, 255, 255, 0.9);
+    }
+
+    .content {
+      padding: 30px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 30px;
+    }
+
+    .form-column {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .map-column {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .form-section {
+      margin-bottom: 30px;
+    }
+
+    .section-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: #1e5a6f;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 15px;
+      display: flex;
+      align-items: center;
+    }
+
+    .section-title::before {
+      content: '';
+      display: inline-block;
+      width: 4px;
+      height: 16px;
+      background: #ff6b4a;
+      margin-right: 12px;
+      border-radius: 2px;
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+    }
+
+    label {
+      display: block;
+      font-size: 12px;
+      font-weight: 600;
+      color: #2c3e50;
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+
+    input[type="text"],
+    input[type="email"],
+    input[type="tel"] {
+      width: 100%;
+      padding: 12px 14px;
+      border: 2px solid #eef2f7;
+      border-radius: 6px;
+      font-size: 14px;
+      font-family: inherit;
+      transition: all 0.2s ease;
+    }
+
+    input[type="text"]:focus,
+    input[type="email"]:focus,
+    input[type="tel"]:focus {
+      outline: none;
+      border-color: #ff6b4a;
+      box-shadow: 0 0 0 3px rgba(255, 107, 74, 0.1);
+    }
+
+    .contact-options {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+    }
+
+    .search-container {
+      position: relative;
+    }
+
+    .search-input-wrapper {
+      display: flex;
+      gap: 10px;
+    }
+
+    input#zipcode {
+      flex: 1;
+    }
+
+    .search-btn {
+      padding: 12px 20px;
+      background: #1e5a6f;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+    }
+
+    .search-btn:hover {
+      background: #0f3647;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(30, 90, 111, 0.2);
+    }
+
+    .search-btn:active {
+      transform: translateY(0);
+    }
+
+    .search-btn.loading {
+      opacity: 0.7;
+      cursor: not-allowed;
+    }
+
+    .location-list {
+      max-height: 400px;
+      overflow-y: auto;
+      border: 2px solid #eef2f7;
+      border-radius: 6px;
+      margin-top: 15px;
+    }
+
+    .location-item {
+      padding: 14px;
+      border-bottom: 1px solid #eef2f7;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+    }
+
+    .location-item:last-child {
+      border-bottom: none;
+    }
+
+    .location-item:hover {
+      background: #f9fafb;
+    }
+
+    .location-radio {
+      width: 18px;
+      height: 18px;
+      min-width: 18px;
+      border: 2px solid #1e5a6f;
+      border-radius: 50%;
+      cursor: pointer;
+      margin-top: 2px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease;
+    }
+
+    .location-item input[type="radio"] {
+      display: none;
+    }
+
+    .location-item input[type="radio"]:checked + .location-details .location-radio {
+      background: #ff6b4a;
+      border-color: #ff6b4a;
+    }
+
+    .location-item input[type="radio"]:checked + .location-details .location-radio::after {
+      content: '✓';
+      color: white;
+      font-size: 12px;
+      font-weight: bold;
+    }
+
+    .location-item input[type="radio"]:checked + .location-details {
+      background: rgba(255, 107, 74, 0.05);
+      padding: 12px;
+      border-radius: 6px;
+      margin: -14px -12px 0 0;
+      padding-right: 14px;
+    }
+
+    .location-details {
+      flex: 1;
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      cursor: pointer;
+    }
+
+    .location-info {
+      flex: 1;
+    }
+
+    .location-name {
+      font-size: 13px;
+      font-weight: 700;
+      color: #1e5a6f;
+      margin-bottom: 4px;
+    }
+
+    .location-address {
+      font-size: 12px;
+      color: #7f8c8d;
+      margin-bottom: 4px;
+    }
+
+    .location-distance {
+      font-size: 11px;
+      color: #ff6b4a;
+      font-weight: 600;
+    }
+
+    .no-results {
+      padding: 20px;
+      text-align: center;
+      color: #7f8c8d;
+      font-size: 13px;
+    }
+
+    .selected-location {
+      background: #f0f8fb;
+      border: 2px solid #1e5a6f;
+      border-radius: 6px;
+      padding: 14px;
+      margin-top: 15px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .selected-location::before {
+      content: '✓';
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 24px;
+      height: 24px;
+      background: #1e5a6f;
+      color: white;
+      border-radius: 50%;
+      font-weight: bold;
+      font-size: 12px;
+      flex-shrink: 0;
+    }
+
+    .selected-location-text {
+      flex: 1;
+    }
+
+    .selected-location-name {
+      font-size: 13px;
+      font-weight: 700;
+      color: #1e5a6f;
+    }
+
+    .selected-location-address {
+      font-size: 12px;
+      color: #7f8c8d;
+      margin-top: 2px;
+    }
+
+    .send-button {
+      width: 100%;
+      padding: 16px;
+      background: linear-gradient(135deg, #ff6b4a 0%, #e55a3a 100%);
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      margin-top: 20px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .send-button:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(255, 107, 74, 0.3);
+    }
+
+    .send-button:active:not(:disabled) {
+      transform: translateY(0);
+    }
+
+    .send-button:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .form-status {
+      margin-top: 20px;
+      padding: 14px;
+      border-radius: 6px;
+      text-align: center;
+      font-size: 13px;
+      display: none;
+    }
+
+    .form-status.error {
+      background: #fadbd8;
+      color: #c0392b;
+      border: 1px solid #f5b7b1;
+      display: block;
+    }
+
+    .form-status.success {
+      background: #d5f4e6;
+      color: #27ae60;
+      border: 1px solid #a9dfbf;
+      display: block;
+    }
+
+    .form-status.info {
+      background: #d6eaf8;
+      color: #1e5a6f;
+      border: 1px solid #aed6f1;
+      display: block;
+    }
+
+    #mapContainer {
+      flex: 1;
+      border-radius: 6px;
+      overflow: hidden;
+      border: 2px solid #eef2f7;
+      min-height: 500px;
+    }
+
+    #map {
+      width: 100%;
+      height: 100%;
+    }
+
+    .map-legend {
+      background: white;
+      padding: 14px;
+      border-radius: 6px;
+      margin-top: 15px;
+      font-size: 12px;
+      border: 2px solid #eef2f7;
+    }
+
+    .map-legend-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .map-legend-item:last-child {
+      margin-bottom: 0;
+    }
+
+    .legend-color {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .legend-blue {
+      background: #3388ff;
+      border: 2px solid #1e5a6f;
+    }
+
+    .legend-orange {
+      background: #ff6b4a;
+      border: 2px solid #e55a3a;
+    }
+
+    @media (max-width: 1024px) {
+      .content {
+        grid-template-columns: 1fr;
+      }
+
+      #mapContainer {
+        min-height: 300px;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .container {
+        border-radius: 0;
+      }
+
+      .header {
+        padding: 20px;
+      }
+
+      .header h1 {
+        font-size: 22px;
+      }
+
+      .contact-options {
+        grid-template-columns: 1fr;
+      }
+
+      .location-list {
+        max-height: 300px;
+      }
+
+      #mapContainer {
+        min-height: 250px;
+      }
+    }
+
+    .leaflet-popup-content-wrapper {
+      background: white;
+      box-shadow: 0 3px 14px rgba(0, 0, 0, 0.2);
+    }
+
+    .leaflet-popup-content {
+      font-family: inherit;
+      font-size: 12px;
+    }
+
+    .popup-title {
+      font-weight: 700;
+      color: #1e5a6f;
+      margin-bottom: 4px;
+    }
+
+    .popup-address {
+      color: #7f8c8d;
+      margin-bottom: 4px;
+    }
+
+    .popup-distance {
+      color: #ff6b4a;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>Endurance Agent Portal</h1>
+      <p>Denied Warranty PreQualification</p>
+    </div>
+
+    <div class="content">
+      <div class="form-column">
+        <form id="prequalForm">
+          <!-- Customer Information Section -->
+          <div class="form-section">
+            <div class="section-title">Customer Information</div>
+
+            <div class="form-group">
+              <label for="customerName">Customer Name *</label>
+              <input type="text" id="customerName" name="customerName" placeholder="John Doe" required>
+            </div>
+
+            <div class="contact-options">
+              <div class="form-group">
+                <label for="customerEmail">Email *</label>
+                <input type="email" id="customerEmail" name="customerEmail" placeholder="john@example.com" required>
+              </div>
+              <div class="form-group">
+                <label for="customerPhone">Phone *</label>
+                <input type="tel" id="customerPhone" name="customerPhone" placeholder="(555) 123-4567" required>
+              </div>
+            </div>
+          </div>
+
+          <!-- Service Center Lookup Section -->
+          <div class="form-section">
+            <div class="section-title">Find Service Center</div>
+
+            <div class="search-container">
+              <div class="search-input-wrapper">
+                <input 
+                  type="text" 
+                  id="zipcode" 
+                  name="zipcode" 
+                  placeholder="Enter zip code (e.g., 37174)" 
+                  maxlength="5"
+                  required
+                >
+                <button type="button" class="search-btn" id="searchBtn">Search</button>
+              </div>
+            </div>
+
+            <div id="locationResults"></div>
+            <div id="selectedLocation"></div>
+          </div>
+
+          <!-- Submit Section -->
+          <div class="form-section">
+            <button type="submit" class="send-button" id="sendBtn" disabled>
+              Send PreQualification Invite
+            </button>
+            <div id="formStatus" class="form-status"></div>
+          </div>
+        </form>
+      </div>
+
+      <div class="map-column">
+        <div class="section-title" style="margin-bottom: 15px;">Service Center Map</div>
+        <div id="mapContainer">
+          <div id="map"></div>
+        </div>
+        <div class="map-legend">
+          <div class="map-legend-item">
+            <div class="legend-color legend-blue"></div>
+            <span>Available Service Centers</span>
+          </div>
+          <div class="map-legend-item">
+            <div class="legend-color legend-orange"></div>
+            <span>Selected Service Center</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+  <script>
+    // Comprehensive DigniFi service centers database across Tennessee
+    const digniFiLocations = {
+      '37174': [
+        { id: 1, name: 'Smitty\'s Auto Repair', address: '123 Main St, Franklin, TN 37174', distance: '0.3 mi', lat: 35.1745, lng: -86.8681 },
+        { id: 2, name: 'Downtown Service Center', address: '456 5th Ave, Franklin, TN 37174', distance: '1.2 mi', lat: 35.1750, lng: -86.8690 },
+        { id: 3, name: 'DigniFi Express', address: '789 Commerce Ave, Franklin, TN 37174', distance: '2.1 mi', lat: 35.1760, lng: -86.8700 }
+      ],
+      '37067': [
+        { id: 4, name: 'Williamson Garage', address: '321 Oak Ln, Brentwood, TN 37067', distance: '0.8 mi', lat: 35.7829, lng: -86.7823 },
+        { id: 5, name: 'Quick Fix Auto', address: '654 Maple Dr, Brentwood, TN 37067', distance: '1.5 mi', lat: 35.7845, lng: -86.7840 },
+        { id: 6, name: 'Elite Service Pros', address: '987 Elm St, Brentwood, TN 37067', distance: '2.0 mi', lat: 35.7860, lng: -86.7860 },
+        { id: 7, name: 'Brentwood Auto Works', address: '234 Concord Ave, Brentwood, TN 37067', distance: '1.1 mi', lat: 35.7835, lng: -86.7850 }
+      ],
+      '37205': [
+        { id: 8, name: 'Nashville Auto Works', address: '111 Broadway, Nashville, TN 37205', distance: '0.5 mi', lat: 36.1627, lng: -86.7816 },
+        { id: 9, name: 'Music City Repairs', address: '222 Music Valley Dr, Nashville, TN 37205', distance: '1.1 mi', lat: 36.1640, lng: -86.7830 },
+        { id: 10, name: 'Broadway Service Center', address: '333 Broadway Ave, Nashville, TN 37205', distance: '0.7 mi', lat: 36.1635, lng: -86.7825 },
+        { id: 11, name: 'East Nashville Auto', address: '444 Main St E, Nashville, TN 37205', distance: '1.8 mi', lat: 36.1655, lng: -86.7800 }
+      ],
+      '37201': [
+        { id: 12, name: 'Downtown Nashville Service', address: '101 Commerce St, Nashville, TN 37201', distance: '0.2 mi', lat: 36.1593, lng: -86.7795 },
+        { id: 13, name: 'Urban Automotive', address: '202 Jefferson St, Nashville, TN 37201', distance: '0.9 mi', lat: 36.1610, lng: -86.7800 },
+        { id: 14, name: 'Premier Auto Care', address: '303 Deaderick St, Nashville, TN 37201', distance: '1.3 mi', lat: 36.1620, lng: -86.7790 }
+      ],
+      '37203': [
+        { id: 15, name: 'South Nashville Auto', address: '551 Stewarts Ferry Pike, Nashville, TN 37203', distance: '0.6 mi', lat: 36.1450, lng: -86.7500 },
+        { id: 16, name: 'Antioch Service Center', address: '662 Stewarts Ferry Pike, Nashville, TN 37203', distance: '1.2 mi', lat: 36.1440, lng: -86.7510 },
+        { id: 17, name: 'Reliable Auto Works', address: '773 Bell Grady Lane, Nashville, TN 37203', distance: '1.8 mi', lat: 36.1460, lng: -86.7520 }
+      ],
+      '37219': [
+        { id: 18, name: 'West Nashville Garage', address: '891 Old Hickory Blvd, Nashville, TN 37219', distance: '0.4 mi', lat: 36.1885, lng: -86.8450 },
+        { id: 19, name: 'Hickory Motors Service', address: '952 Whites Creek Pike, Nashville, TN 37219', distance: '1.3 mi', lat: 36.1900, lng: -86.8460 },
+        { id: 20, name: 'North Nashville Express', address: '847 Jefferson St, Nashville, TN 37219', distance: '2.1 mi', lat: 36.1920, lng: -86.8440 }
+      ],
+      '37214': [
+        { id: 21, name: 'Gallatin Pike Auto', address: '1156 Gallatin Pike N, Nashville, TN 37214', distance: '0.5 mi', lat: 36.2050, lng: -86.7300 },
+        { id: 22, name: 'Northeast Service Hub', address: '1267 Gallatin Pike N, Nashville, TN 37214', distance: '1.0 mi', lat: 36.2065, lng: -86.7310 }
+      ],
+      '37115': [
+        { id: 23, name: 'Murfreesboro Road Auto', address: '2814 Murfreesboro Pike, Nashville, TN 37115', distance: '0.7 mi', lat: 36.0845, lng: -86.6950 },
+        { id: 24, name: 'Southeast Nashville Works', address: '2925 Stewarts Ferry Pike, Nashville, TN 37115', distance: '1.4 mi', lat: 36.0835, lng: -86.6960 },
+        { id: 25, name: 'DigniFi Murfreesboro Center', address: '3036 Lebanon Pike, Nashville, TN 37115', distance: '2.0 mi', lat: 36.0855, lng: -86.6940 }
+      ],
+      '37135': [
+        { id: 26, name: 'Hermitage Auto Service', address: '4112 Lebanon Pike, Hermitage, TN 37135', distance: '0.3 mi', lat: 36.3560, lng: -86.5820 },
+        { id: 27, name: 'Hermitage Express Repair', address: '4223 Gallatin Pike, Hermitage, TN 37135', distance: '0.8 mi', lat: 36.3575, lng: -86.5830 },
+        { id: 28, name: 'Quality Automotive Center', address: '4334 Old Hickory Blvd, Hermitage, TN 37135', distance: '1.5 mi', lat: 36.3590, lng: -86.5840 }
+      ],
+      '37211': [
+        { id: 29, name: 'Green Hills Auto', address: '5051 Hillsboro Pike, Nashville, TN 37211', distance: '0.4 mi', lat: 36.0810, lng: -86.8100 },
+        { id: 30, name: 'Hillsboro Service Center', address: '5162 Hillsboro Pike, Nashville, TN 37211', distance: '1.1 mi', lat: 36.0825, lng: -86.8110 }
+      ],
+      '37220': [
+        { id: 31, name: 'Donelson Auto Works', address: '6601 Briley Parkway, Nashville, TN 37220', distance: '0.6 mi', lat: 36.1075, lng: -86.6500 },
+        { id: 32, name: 'Airport Area Service', address: '6712 Briley Parkway, Nashville, TN 37220', distance: '1.3 mi', lat: 36.1090, lng: -86.6510 },
+        { id: 33, name: 'DigniFi Express Donelson', address: '6823 Stewarts Ferry Pike, Nashville, TN 37220', distance: '1.9 mi', lat: 36.1105, lng: -86.6520 }
+      ],
+      '37013': [
+        { id: 34, name: 'Goodlettsville Auto Center', address: '7104 Main St, Goodlettsville, TN 37013', distance: '0.5 mi', lat: 36.3715, lng: -86.6910 },
+        { id: 35, name: 'North Main Service Hub', address: '7215 Dickerson Pike, Goodlettsville, TN 37013', distance: '1.2 mi', lat: 36.3730, lng: -86.6920 }
+      ],
+      '37122': [
+        { id: 36, name: 'Hendersonville Auto Repair', address: '8301 Indian Lake Blvd, Hendersonville, TN 37122', distance: '0.4 mi', lat: 36.3095, lng: -86.6210 },
+        { id: 37, name: 'Hendersonville Express', address: '8412 Rayon City Rd, Hendersonville, TN 37122', distance: '1.0 mi', lat: 36.3110, lng: -86.6220 },
+        { id: 38, name: 'DigniFi Hendersonville', address: '8523 Volunteer Dr, Hendersonville, TN 37122', distance: '1.6 mi', lat: 36.3125, lng: -86.6230 }
+      ]
+    };
+
+    let map;
+    let selectedLocationId = null;
+    let currentMarkers = [];
+    let selectedMarker = null;
+
+    const form = document.getElementById('prequalForm');
+    const searchBtn = document.getElementById('searchBtn');
+    const sendBtn = document.getElementById('sendBtn');
+    const zipcodeInput = document.getElementById('zipcode');
+    const locationResults = document.getElementById('locationResults');
+    const selectedLocationDiv = document.getElementById('selectedLocation');
+    const formStatus = document.getElementById('formStatus');
+
+    // Initialize map
+    function initializeMap() {
+      const centroidLat = 36.1627;
+      const centroidLng = -86.7816;
+      
+      map = L.map('map').setView([centroidLat, centroidLng], 12);
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap contributors',
+        maxZoom: 19
+      }).addTo(map);
+    }
+
+    // Clear existing markers
+    function clearMarkers() {
+      currentMarkers.forEach(marker => map.removeLayer(marker));
+      currentMarkers = [];
+    }
+
+    // Add markers to map
+    function addMarkersToMap(locations) {
+      clearMarkers();
+
+      locations.forEach(location => {
+        const isSelected = location.id === selectedLocationId;
+        const icon = L.divIcon({
+          className: 'custom-marker',
+          html: `<div style="background: ${isSelected ? '#ff6b4a' : '#3388ff'}; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 3px solid white; box-shadow: 0 2px 8px rgba(0,0,0,0.3); cursor: pointer; font-weight: bold; color: white; font-size: 14px;">📍</div>`,
+          iconSize: [32, 32],
+          iconAnchor: [16, 32],
+          popupAnchor: [0, -32]
+        });
+
+        const marker = L.marker([location.lat, location.lng], { icon: icon })
+          .bindPopup(`
+            <div style="font-family: inherit;">
+              <div class="popup-title">${location.name}</div>
+              <div class="popup-address">${location.address}</div>
+              <div class="popup-distance">📍 ${location.distance} away</div>
+            </div>
+          `)
+          .addTo(map);
+
+        marker.on('click', () => {
+          selectLocation(location);
+        });
+
+        currentMarkers.push(marker);
+      });
+
+      // Fit map bounds to all markers
+      if (currentMarkers.length > 0) {
+        const group = new L.featureGroup(currentMarkers);
+        map.fitBounds(group.getBounds().pad(0.1));
+      }
+    }
+
+    // Select location
+    function selectLocation(location) {
+      selectedLocationId = location.id;
+      
+      // Update radio button
+      const radio = document.querySelector(`input[name="selectedLocation"][value="${location.id}"]`);
+      if (radio) {
+        radio.checked = true;
+      }
+
+      updateSelectedLocationDisplay(location);
+      addMarkersToMap(Object.values(digniFiLocations).flat().filter(loc => 
+        Object.values(digniFiLocations).flat().some(l => l.id === loc.id)
+      ));
+      
+      updateSubmitButton();
+    }
+
+    // Format phone number as user types
+    document.getElementById('customerPhone').addEventListener('input', (e) => {
+      let value = e.target.value.replace(/\D/g, '');
+      if (value.length > 0) {
+        if (value.length <= 3) {
+          value = `(${value}`;
+        } else if (value.length <= 6) {
+          value = `(${value.slice(0, 3)}) ${value.slice(3)}`;
+        } else {
+          value = `(${value.slice(0, 3)}) ${value.slice(3, 6)}-${value.slice(6, 10)}`;
+        }
+      }
+      e.target.value = value;
+    });
+
+    // Only numeric input for zipcode
+    zipcodeInput.addEventListener('input', (e) => {
+      e.target.value = e.target.value.replace(/\D/g, '').slice(0, 5);
+    });
+
+    // Search for locations by zipcode
+    searchBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      const zipcode = zipcodeInput.value.trim();
+
+      if (!zipcode || zipcode.length !== 5) {
+        showStatus('Please enter a valid 5-digit zip code', 'error');
+        return;
+      }
+
+      showStatus('Searching for nearby service centers...', 'info');
+      searchBtn.classList.add('loading');
+      searchBtn.disabled = true;
+
+      // Simulate API delay
+      setTimeout(() => {
+        searchBtn.classList.remove('loading');
+        searchBtn.disabled = false;
+
+        const locations = digniFiLocations[zipcode];
+
+        if (!locations || locations.length === 0) {
+          locationResults.innerHTML = `
+            <div class="location-list">
+              <div class="no-results">
+                No DigniFi service centers found in zip code ${zipcode}. 
+                <br><br>
+                Try a nearby zip code or contact support.
+              </div>
+            </div>
+          `;
+          formStatus.innerHTML = '';
+          formStatus.className = 'form-status';
+          selectedLocationId = null;
+          clearMarkers();
+          updateSubmitButton();
+          return;
+        }
+
+        let html = '<div class="location-list">';
+        locations.forEach((location) => {
+          html += `
+            <label class="location-item">
+              <input type="radio" name="selectedLocation" value="${location.id}">
+              <div class="location-details">
+                <div class="location-radio"></div>
+                <div class="location-info">
+                  <div class="location-name">${location.name}</div>
+                  <div class="location-address">${location.address}</div>
+                  <div class="location-distance">📍 ${location.distance} away</div>
+                </div>
+              </div>
+            </label>
+          `;
+        });
+        html += '</div>';
+
+        locationResults.innerHTML = html;
+        formStatus.innerHTML = '';
+        formStatus.className = 'form-status';
+
+        // Add map markers
+        addMarkersToMap(locations);
+
+        // Add event listeners to radio buttons
+        document.querySelectorAll('input[name="selectedLocation"]').forEach((radio) => {
+          radio.addEventListener('change', (e) => {
+            selectedLocationId = parseInt(e.target.value);
+            const selectedLoc = locations.find(loc => loc.id === selectedLocationId);
+            updateSelectedLocationDisplay(selectedLoc);
+            addMarkersToMap(locations);
+            updateSubmitButton();
+          });
+        });
+      }, 500);
+    });
+
+    function updateSelectedLocationDisplay(location) {
+      if (location) {
+        selectedLocationDiv.innerHTML = `
+          <div class="selected-location">
+            <div class="selected-location-text">
+              <div class="selected-location-name">${location.name}</div>
+              <div class="selected-location-address">${location.address}</div>
+            </div>
+          </div>
+        `;
+      } else {
+        selectedLocationDiv.innerHTML = '';
+      }
+    }
+
+    function updateSubmitButton() {
+      const customerName = document.getElementById('customerName').value.trim();
+      const customerEmail = document.getElementById('customerEmail').value.trim();
+      const customerPhone = document.getElementById('customerPhone').value.trim();
+
+      const isFormValid = customerName && customerEmail && customerPhone && selectedLocationId;
+      sendBtn.disabled = !isFormValid;
+    }
+
+    // Enable/disable submit button based on form completion
+    document.getElementById('customerName').addEventListener('input', updateSubmitButton);
+    document.getElementById('customerEmail').addEventListener('input', updateSubmitButton);
+    document.getElementById('customerPhone').addEventListener('input', updateSubmitButton);
+
+    // Handle form submission
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+
+      const customerName = document.getElementById('customerName').value.trim();
+      const customerEmail = document.getElementById('customerEmail').value.trim();
+      const customerPhone = document.getElementById('customerPhone').value.trim();
+
+      if (!customerName || !customerEmail || !customerPhone || !selectedLocationId) {
+        showStatus('Please complete all fields', 'error');
+        return;
+      }
+
+      // Simulate sending PreQual invite
+      sendBtn.disabled = true;
+      showStatus('Sending PreQualification invite...', 'info');
+
+      setTimeout(() => {
+        const location = Object.values(digniFiLocations)
+          .flat()
+          .find(loc => loc.id === selectedLocationId);
+
+        showStatus(
+          `✓ PreQualification invite sent to ${customerEmail}! Customer will see options from ${location.name}.`,
+          'success'
+        );
+        sendBtn.disabled = false;
+
+        // Reset form after success
+        setTimeout(() => {
+          form.reset();
+          locationResults.innerHTML = '';
+          selectedLocationDiv.innerHTML = '';
+          selectedLocationId = null;
+          clearMarkers();
+          updateSubmitButton();
+        }, 2000);
+      }, 1500);
+    });
+
+    function showStatus(message, type) {
+      formStatus.textContent = message;
+      formStatus.className = `form-status ${type}`;
+    }
+
+    // Initialize map on page load
+    window.addEventListener('load', () => {
+      initializeMap();
+    });
+  </script>
+</body>
+</html>
