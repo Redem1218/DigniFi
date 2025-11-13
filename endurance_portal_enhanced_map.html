@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Endurance Agent Portal - Multi-Select Lead Distribution</title>
+  <title>Endurance Agent Portal - Flexible Lead Distribution</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" />
   <style>
     * {
@@ -128,10 +128,6 @@
       gap: 15px;
     }
 
-    .search-container {
-      position: relative;
-    }
-
     .search-input-wrapper {
       display: flex;
       gap: 10px;
@@ -175,11 +171,6 @@
       color: #1e5a6f;
     }
 
-    .selection-info strong {
-      display: block;
-      margin-bottom: 4px;
-    }
-
     .location-list {
       max-height: 400px;
       overflow-y: auto;
@@ -214,50 +205,7 @@
       background: #fdf5e8;
     }
 
-    .location-item.disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-      background: #f5f5f5;
-    }
-
-    .location-item.disabled:hover {
-      background: #f5f5f5;
-    }
-
-    .checkbox-container {
-      display: flex;
-      gap: 12px;
-      width: 100%;
-    }
-
-    .checkbox-wrapper {
-      position: relative;
-      display: flex;
-      align-items: center;
-    }
-
-    .location-item input[type="checkbox"] {
-      display: none;
-    }
-
-    .location-item input[type="radio"] {
-      display: none;
-    }
-
     .checkbox-indicator {
-      width: 18px;
-      height: 18px;
-      min-width: 18px;
-      border: 2px solid #1e5a6f;
-      border-radius: 4px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: all 0.2s ease;
-      margin-top: 2px;
-    }
-
-    .radio-indicator {
       width: 18px;
       height: 18px;
       min-width: 18px;
@@ -270,36 +218,33 @@
       margin-top: 2px;
     }
 
-    .location-item.enrolled input[type="radio"]:checked + .checkbox-wrapper .radio-indicator {
+    .location-item input[type="radio"],
+    .location-item input[type="checkbox"] {
+      display: none;
+    }
+
+    .location-item.enrolled input[type="radio"]:checked + .location-details .checkbox-indicator {
       background: #27ae60;
       border-color: #27ae60;
     }
 
-    .location-item.enrolled input[type="radio"]:checked + .checkbox-wrapper .radio-indicator::after {
+    .location-item.enrolled input[type="radio"]:checked + .location-details .checkbox-indicator::after {
       content: '✓';
       color: white;
       font-size: 12px;
       font-weight: bold;
     }
 
-    .location-item.non-enrolled input[type="checkbox"]:checked + .checkbox-wrapper .checkbox-indicator {
+    .location-item.non-enrolled input[type="checkbox"]:checked + .location-details .checkbox-indicator {
       background: #ff6b4a;
       border-color: #ff6b4a;
     }
 
-    .location-item.non-enrolled input[type="checkbox"]:checked + .checkbox-wrapper .checkbox-indicator::after {
+    .location-item.non-enrolled input[type="checkbox"]:checked + .location-details .checkbox-indicator::after {
       content: '✓';
       color: white;
       font-size: 12px;
       font-weight: bold;
-    }
-
-    .location-item input:checked + .checkbox-wrapper + .location-details {
-      background: rgba(255, 107, 74, 0.05);
-      padding: 12px;
-      border-radius: 6px;
-      margin: -14px -12px 0 0;
-      padding-right: 14px;
     }
 
     .location-details {
@@ -406,29 +351,46 @@
       background: #ff6b4a;
     }
 
-    .send-button {
-      width: 100%;
-      padding: 16px;
-      background: linear-gradient(135deg, #ff6b4a 0%, #e55a3a 100%);
+    .button-group {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-top: 20px;
+    }
+
+    .action-button {
+      padding: 14px 16px;
       color: white;
       border: none;
       border-radius: 6px;
-      font-size: 14px;
+      font-size: 13px;
       font-weight: 700;
       cursor: pointer;
       transition: all 0.2s ease;
-      margin-top: 20px;
       text-transform: uppercase;
       letter-spacing: 0.5px;
     }
 
-    .send-button:hover:not(:disabled) {
+    .send-prequal-btn {
+      background: linear-gradient(135deg, #27ae60 0%, #1e8449 100%);
+    }
+
+    .send-prequal-btn:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(39, 174, 96, 0.3);
+    }
+
+    .send-outreach-btn {
+      background: linear-gradient(135deg, #ff6b4a 0%, #e55a3a 100%);
+    }
+
+    .send-outreach-btn:hover:not(:disabled) {
       transform: translateY(-2px);
       box-shadow: 0 8px 20px rgba(255, 107, 74, 0.3);
     }
 
-    .send-button:disabled {
-      opacity: 0.6;
+    .action-button:disabled {
+      opacity: 0.5;
       cursor: not-allowed;
     }
 
@@ -527,6 +489,10 @@
         border-radius: 0;
       }
 
+      .button-group {
+        grid-template-columns: 1fr;
+      }
+
       .header {
         padding: 20px;
       }
@@ -553,7 +519,7 @@
   <div class="container">
     <div class="header">
       <h1>Endurance Agent Portal</h1>
-      <p>Select Fulfillment Center + Optional Lead Outreach</p>
+      <p>PreQual Fulfillment + Selective Lead Outreach</p>
     </div>
 
     <div class="content">
@@ -581,8 +547,8 @@
             <div class="section-title">Select Service Centers</div>
             
             <div class="selection-info">
-              <strong>Required:</strong> 1 DigniFi Enrolled center (for PreQual fulfillment)<br>
-              <strong>Optional:</strong> Non-enrolled competitors (to trigger lead outreach)
+              <strong>PreQual Option (Optional):</strong> Select 1 DigniFi Enrolled center<br>
+              <strong>Lead Outreach Option (Optional):</strong> Check non-enrolled competitors to reach out
             </div>
 
             <div class="search-container">
@@ -604,9 +570,14 @@
           </div>
 
           <div class="form-section">
-            <button type="submit" class="send-button" id="sendBtn" disabled>
-              Send PreQualification
-            </button>
+            <div class="button-group">
+              <button type="button" class="action-button send-prequal-btn" id="sendPrequalBtn" disabled>
+                Send PreQualification Invite
+              </button>
+              <button type="button" class="action-button send-outreach-btn" id="sendOutreachBtn" disabled>
+                Send Lead Outreach Only
+              </button>
+            </div>
             <div id="formStatus" class="form-status"></div>
           </div>
         </form>
@@ -620,11 +591,11 @@
         <div class="map-legend">
           <div class="map-legend-item">
             <div class="legend-color legend-primary"></div>
-            <span>Selected for PreQual (Primary)</span>
+            <span>Selected for PreQual (Green)</span>
           </div>
           <div class="map-legend-item">
             <div class="legend-color legend-outreach"></div>
-            <span>Selected for Lead Outreach</span>
+            <span>Selected for Lead Outreach (Orange)</span>
           </div>
         </div>
       </div>
@@ -673,10 +644,12 @@
     let selectedPrimaryCenter = null;
     let selectedOutreachCenters = new Set();
     let currentMarkers = [];
+    let currentLocations = [];
 
     const form = document.getElementById('prequalForm');
     const searchBtn = document.getElementById('searchBtn');
-    const sendBtn = document.getElementById('sendBtn');
+    const sendPrequalBtn = document.getElementById('sendPrequalBtn');
+    const sendOutreachBtn = document.getElementById('sendOutreachBtn');
     const zipcodeInput = document.getElementById('zipcode');
     const locationResults = document.getElementById('locationResults');
     const selectedSummary = document.getElementById('selectedSummary');
@@ -774,9 +747,9 @@
         searchBtn.classList.remove('loading');
         searchBtn.disabled = false;
 
-        const locations = digniFiLocations[zipcode];
+        currentLocations = digniFiLocations[zipcode] || [];
 
-        if (!locations || locations.length === 0) {
+        if (!currentLocations || currentLocations.length === 0) {
           locationResults.innerHTML = `
             <div class="location-list">
               <div class="no-results">
@@ -791,22 +764,19 @@
         }
 
         let html = '<div class="location-list">';
-        locations.forEach((location) => {
+        currentLocations.forEach((location) => {
           const enrolledClass = location.enrolled ? 'enrolled' : 'non-enrolled';
           const badge = location.enrolled 
             ? '<span class="enrollment-badge enrolled">✓ DigniFi</span>'
-            : '<span class="enrollment-badge not-enrolled">Lead Outreach</span>';
+            : '<span class="enrollment-badge not-enrolled">Outreach</span>';
           
           const inputType = location.enrolled ? 'radio' : 'checkbox';
-          const disabled = location.enrolled && selectedPrimaryCenter && selectedPrimaryCenter !== location.id ? 'disabled' : '';
           
           html += `
-            <label class="location-item ${enrolledClass} ${disabled}">
-              <input type="${inputType}" name="${location.enrolled ? 'primaryCenter' : 'outreach'}" value="${location.id}" ${disabled}>
-              <div class="checkbox-wrapper">
-                <div class="${location.enrolled ? 'radio-indicator' : 'checkbox-indicator'}"></div>
-              </div>
+            <label class="location-item ${enrolledClass}">
+              <input type="${inputType}" name="${location.enrolled ? 'primaryCenter' : 'outreach'}" value="${location.id}">
               <div class="location-details">
+                <div class="checkbox-indicator"></div>
                 <div class="location-info">
                   <div class="location-name">${location.name}${badge}</div>
                   <div class="location-address">${location.address}</div>
@@ -822,14 +792,14 @@
         formStatus.innerHTML = '';
         formStatus.className = 'form-status';
 
-        addMarkersToMap(locations);
+        addMarkersToMap(currentLocations);
 
         // Handle radio buttons (primary center - only one)
         document.querySelectorAll('input[name="primaryCenter"]').forEach((radio) => {
           radio.addEventListener('change', (e) => {
             selectedPrimaryCenter = parseInt(e.target.value);
             updateUI();
-            updateSubmitButton();
+            updateButtonStates();
           });
         });
 
@@ -843,14 +813,14 @@
               selectedOutreachCenters.delete(id);
             }
             updateUI();
-            updateSubmitButton();
+            updateButtonStates();
           });
         });
       }, 500);
     });
 
     function updateUI() {
-      addMarkersToMap(Object.values(digniFiLocations).flat());
+      addMarkersToMap(currentLocations);
       updateSelectedSummary();
     }
 
@@ -863,33 +833,37 @@
       let html = '<div class="selected-summary"><div class="selected-summary-title">Selected Centers</div>';
 
       if (selectedPrimaryCenter) {
-        const primaryCenter = Object.values(digniFiLocations).flat().find(l => l.id === selectedPrimaryCenter);
-        html += `<div class="selected-item">${primaryCenter.name} (PreQual Fulfillment)</div>`;
+        const primaryCenter = currentLocations.find(l => l.id === selectedPrimaryCenter);
+        html += `<div class="selected-item">${primaryCenter.name} (PreQual)</div>`;
       }
 
       selectedOutreachCenters.forEach(id => {
-        const center = Object.values(digniFiLocations).flat().find(l => l.id === id);
-        html += `<div class="selected-item outreach">${center.name} (Lead Outreach)</div>`;
+        const center = currentLocations.find(l => l.id === id);
+        html += `<div class="selected-item outreach">${center.name} (Outreach)</div>`;
       });
 
       html += '</div>';
       selectedSummary.innerHTML = html;
     }
 
-    function updateSubmitButton() {
+    function updateButtonStates() {
       const customerName = document.getElementById('customerName').value.trim();
       const customerEmail = document.getElementById('customerEmail').value.trim();
       const customerPhone = document.getElementById('customerPhone').value.trim();
+      const hasCustomerInfo = customerName && customerEmail && customerPhone;
 
-      const isFormValid = customerName && customerEmail && customerPhone && selectedPrimaryCenter;
-      sendBtn.disabled = !isFormValid;
+      // PreQual button: enabled if customer info + enrolled center selected
+      sendPrequalBtn.disabled = !(hasCustomerInfo && selectedPrimaryCenter);
+
+      // Outreach button: enabled if customer info + non-enrolled centers checked
+      sendOutreachBtn.disabled = !(hasCustomerInfo && selectedOutreachCenters.size > 0);
     }
 
-    document.getElementById('customerName').addEventListener('input', updateSubmitButton);
-    document.getElementById('customerEmail').addEventListener('input', updateSubmitButton);
-    document.getElementById('customerPhone').addEventListener('input', updateSubmitButton);
+    document.getElementById('customerName').addEventListener('input', updateButtonStates);
+    document.getElementById('customerEmail').addEventListener('input', updateButtonStates);
+    document.getElementById('customerPhone').addEventListener('input', updateButtonStates);
 
-    form.addEventListener('submit', (e) => {
+    sendPrequalBtn.addEventListener('click', (e) => {
       e.preventDefault();
 
       const customerName = document.getElementById('customerName').value.trim();
@@ -897,24 +871,19 @@
       const customerPhone = document.getElementById('customerPhone').value.trim();
 
       if (!customerName || !customerEmail || !customerPhone || !selectedPrimaryCenter) {
-        showStatus('Please complete all required fields', 'error');
+        showStatus('Please complete customer info and select a PreQual center', 'error');
         return;
       }
 
-      sendBtn.disabled = true;
+      sendPrequalBtn.disabled = true;
       showStatus('Sending PreQualification invite...', 'info');
 
       setTimeout(() => {
-        const primaryCenter = Object.values(digniFiLocations).flat().find(l => l.id === selectedPrimaryCenter);
-        let successMessage = `✓ PreQualification sent to ${customerEmail} via ${primaryCenter.name}!`;
-        
-        if (selectedOutreachCenters.size > 0) {
-          const count = selectedOutreachCenters.size;
-          successMessage += ` "You Missed a Lead" emails sent to ${count} competitor${count > 1 ? 's' : ''}.`;
-        }
+        const primaryCenter = currentLocations.find(l => l.id === selectedPrimaryCenter);
+        const successMessage = `✓ PreQualification sent to ${customerEmail} via ${primaryCenter.name}!`;
 
         showStatus(successMessage, 'success');
-        sendBtn.disabled = false;
+        sendPrequalBtn.disabled = false;
 
         setTimeout(() => {
           form.reset();
@@ -922,8 +891,42 @@
           selectedSummary.innerHTML = '';
           selectedPrimaryCenter = null;
           selectedOutreachCenters.clear();
+          currentLocations = [];
           clearMarkers();
-          updateSubmitButton();
+          updateButtonStates();
+        }, 2000);
+      }, 1500);
+    });
+
+    sendOutreachBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+
+      const customerEmail = document.getElementById('customerEmail').value.trim();
+
+      if (!customerEmail || selectedOutreachCenters.size === 0) {
+        showStatus('Please enter customer email and select outreach centers', 'error');
+        return;
+      }
+
+      sendOutreachBtn.disabled = true;
+      showStatus('Sending lead outreach emails...', 'info');
+
+      setTimeout(() => {
+        const count = selectedOutreachCenters.size;
+        const successMessage = `✓ "You Missed a Lead" email${count > 1 ? 's' : ''} sent to ${count} service center${count > 1 ? 's' : ''}!`;
+
+        showStatus(successMessage, 'success');
+        sendOutreachBtn.disabled = false;
+
+        setTimeout(() => {
+          form.reset();
+          locationResults.innerHTML = '';
+          selectedSummary.innerHTML = '';
+          selectedPrimaryCenter = null;
+          selectedOutreachCenters.clear();
+          currentLocations = [];
+          clearMarkers();
+          updateButtonStates();
         }, 2000);
       }, 1500);
     });
