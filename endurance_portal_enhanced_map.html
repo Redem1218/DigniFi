@@ -369,6 +369,29 @@
       transition: all 0.2s ease;
       text-transform: uppercase;
       letter-spacing: 0.5px;
+      width: 100%;
+      margin-top: 20px;
+    }
+
+    .send-action-btn {
+      background: linear-gradient(135deg, #1e5a6f 0%, #0f3647 100%);
+    }
+
+    .send-action-btn.prequal-only {
+      background: linear-gradient(135deg, #27ae60 0%, #1e8449 100%);
+    }
+
+    .send-action-btn.outreach-only {
+      background: linear-gradient(135deg, #ff6b4a 0%, #e55a3a 100%);
+    }
+
+    .send-action-btn.both {
+      background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+    }
+
+    .send-action-btn:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
     }
 
     .send-prequal-btn {
@@ -570,14 +593,9 @@
           </div>
 
           <div class="form-section">
-            <div class="button-group">
-              <button type="button" class="action-button send-prequal-btn" id="sendPrequalBtn" disabled>
-                Send PreQualification Invite
-              </button>
-              <button type="button" class="action-button send-outreach-btn" id="sendOutreachBtn" disabled>
-                Send Lead Outreach Only
-              </button>
-            </div>
+            <button type="button" class="action-button send-action-btn" id="sendActionBtn" disabled>
+              Select Centers to Begin
+            </button>
             <div id="formStatus" class="form-status"></div>
           </div>
         </form>
@@ -648,8 +666,7 @@
 
     const form = document.getElementById('prequalForm');
     const searchBtn = document.getElementById('searchBtn');
-    const sendPrequalBtn = document.getElementById('sendPrequalBtn');
-    const sendOutreachBtn = document.getElementById('sendOutreachBtn');
+    const sendActionBtn = document.getElementById('sendActionBtn');
     const zipcodeInput = document.getElementById('zipcode');
     const locationResults = document.getElementById('locationResults');
     const selectedSummary = document.getElementById('selectedSummary');
@@ -852,83 +869,120 @@
       const customerPhone = document.getElementById('customerPhone').value.trim();
       const hasCustomerInfo = customerName && customerEmail && customerPhone;
 
-      // PreQual button: enabled if customer info + enrolled center selected
-      sendPrequalBtn.disabled = !(hasCustomerInfo && selectedPrimaryCenter);
+      let buttonText = 'Select Centers to Begin';
+      let buttonClass = '';
+      let isEnabled = false;
 
-      // Outreach button: enabled if customer info + non-enrolled centers checked
-      sendOutreachBtn.disabled = !(hasCustomerInfo && selectedOutreachCenters.size > 0);
+      if (hasCustomerInfo) {
+        if (selectedPrimaryCenter && selectedOutreachCenters.size > 0) {
+          // Both actions
+          buttonText = 'Send PreQual + Trigger Lead Outreach';
+          buttonClass = 'both';
+          isEnabled = true;
+        } else if (selectedPrimaryCenter) {
+          // PreQual only
+          buttonText = 'Send PreQualification Invite';
+          buttonClass = 'prequal-only';
+          isEnabled = true;
+        } else if (selectedOutreachCenters.size > 0) {
+          // Outreach only
+          buttonText = 'Send Lead Outreach Only';
+          buttonClass = 'outreach-only';
+          isEnabled = true;
+        }
+      }
+
+      sendActionBtn.textContent = buttonText;
+      sendActionBtn.disabled = !isEnabled;
+      sendActionBtn.className = `action-button send-action-btn ${buttonClass}`;
     }
 
     document.getElementById('customerName').addEventListener('input', updateButtonStates);
     document.getElementById('customerEmail').addEventListener('input', updateButtonStates);
     document.getElementById('customerPhone').addEventListener('input', updateButtonStates);
 
-    sendPrequalBtn.addEventListener('click', (e) => {
+    sendActionBtn.addEventListener('click', (e) => {
       e.preventDefault();
 
       const customerName = document.getElementById('customerName').value.trim();
       const customerEmail = document.getElementById('customerEmail').value.trim();
       const customerPhone = document.getElementById('customerPhone').value.trim();
 
-      if (!customerName || !customerEmail || !customerPhone || !selectedPrimaryCenter) {
-        showStatus('Please complete customer info and select a PreQual center', 'error');
+      if (!customerName || !customerEmail || !customerPhone) {
+        showStatus('Please complete customer information', 'error');
         return;
       }
 
-      sendPrequalBtn.disabled = true;
-      showStatus('Sending PreQualification invite...', 'info');
+      sendActionBtn.disabled = true;
 
-      setTimeout(() => {
-        const primaryCenter = currentLocations.find(l => l.id === selectedPrimaryCenter);
-        const successMessage = `✓ PreQualification sent to ${customerEmail} via ${primaryCenter.name}!`;
-
-        showStatus(successMessage, 'success');
-        sendPrequalBtn.disabled = false;
-
+      if (selectedPrimaryCenter && selectedOutreachCenters.size > 0) {
+        // Both actions
+        showStatus('Sending PreQualification + Lead Outreach...', 'info');
+        
         setTimeout(() => {
-          form.reset();
-          locationResults.innerHTML = '';
-          selectedSummary.innerHTML = '';
-          selectedPrimaryCenter = null;
-          selectedOutreachCenters.clear();
-          currentLocations = [];
-          clearMarkers();
-          updateButtonStates();
-        }, 2000);
-      }, 1500);
-    });
+          const primaryCenter = currentLocations.find(l => l.id === selectedPrimaryCenter);
+          const outreachCount = selectedOutreachCenters.size;
+          const successMessage = `✓ PreQualification sent to ${customerEmail} via ${primaryCenter.name}! "You Missed a Lead" email${outreachCount > 1 ? 's' : ''} sent to ${outreachCount} competitor${outreachCount > 1 ? 's' : ''}.`;
 
-    sendOutreachBtn.addEventListener('click', (e) => {
-      e.preventDefault();
+          showStatus(successMessage, 'success');
+          sendActionBtn.disabled = false;
 
-      const customerEmail = document.getElementById('customerEmail').value.trim();
+          setTimeout(() => {
+            form.reset();
+            locationResults.innerHTML = '';
+            selectedSummary.innerHTML = '';
+            selectedPrimaryCenter = null;
+            selectedOutreachCenters.clear();
+            currentLocations = [];
+            clearMarkers();
+            updateButtonStates();
+          }, 2000);
+        }, 1500);
+      } else if (selectedPrimaryCenter) {
+        // PreQual only
+        showStatus('Sending PreQualification invite...', 'info');
+        
+        setTimeout(() => {
+          const primaryCenter = currentLocations.find(l => l.id === selectedPrimaryCenter);
+          const successMessage = `✓ PreQualification sent to ${customerEmail} via ${primaryCenter.name}!`;
 
-      if (!customerEmail || selectedOutreachCenters.size === 0) {
-        showStatus('Please enter customer email and select outreach centers', 'error');
-        return;
+          showStatus(successMessage, 'success');
+          sendActionBtn.disabled = false;
+
+          setTimeout(() => {
+            form.reset();
+            locationResults.innerHTML = '';
+            selectedSummary.innerHTML = '';
+            selectedPrimaryCenter = null;
+            selectedOutreachCenters.clear();
+            currentLocations = [];
+            clearMarkers();
+            updateButtonStates();
+          }, 2000);
+        }, 1500);
+      } else if (selectedOutreachCenters.size > 0) {
+        // Outreach only
+        showStatus('Sending lead outreach emails...', 'info');
+        
+        setTimeout(() => {
+          const count = selectedOutreachCenters.size;
+          const successMessage = `✓ "You Missed a Lead" email${count > 1 ? 's' : ''} sent to ${count} service center${count > 1 ? 's' : ''}!`;
+
+          showStatus(successMessage, 'success');
+          sendActionBtn.disabled = false;
+
+          setTimeout(() => {
+            form.reset();
+            locationResults.innerHTML = '';
+            selectedSummary.innerHTML = '';
+            selectedPrimaryCenter = null;
+            selectedOutreachCenters.clear();
+            currentLocations = [];
+            clearMarkers();
+            updateButtonStates();
+          }, 2000);
+        }, 1500);
       }
-
-      sendOutreachBtn.disabled = true;
-      showStatus('Sending lead outreach emails...', 'info');
-
-      setTimeout(() => {
-        const count = selectedOutreachCenters.size;
-        const successMessage = `✓ "You Missed a Lead" email${count > 1 ? 's' : ''} sent to ${count} service center${count > 1 ? 's' : ''}!`;
-
-        showStatus(successMessage, 'success');
-        sendOutreachBtn.disabled = false;
-
-        setTimeout(() => {
-          form.reset();
-          locationResults.innerHTML = '';
-          selectedSummary.innerHTML = '';
-          selectedPrimaryCenter = null;
-          selectedOutreachCenters.clear();
-          currentLocations = [];
-          clearMarkers();
-          updateButtonStates();
-        }, 2000);
-      }, 1500);
     });
 
     function showStatus(message, type) {
