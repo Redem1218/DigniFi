@@ -31,19 +31,6 @@
             background-color: #f8f8f8;
         }
         
-        .logo {
-            font-size: 32px;
-            font-weight: 700;
-            color: #003049;
-            letter-spacing: 2px;
-        }
-        
-        .logo-subtext {
-            color: #F7941D;
-            font-size: 28px;
-            font-weight: 700;
-        }
-        
         .header {
             background: linear-gradient(135deg, #003049 0%, #005f73 100%);
             color: white;
@@ -60,21 +47,6 @@
         .header h2 {
             font-size: 18px;
             font-weight: 400;
-            margin-bottom: 15px;
-        }
-        
-        .header .warning {
-            background-color: rgba(247, 148, 29, 0.2);
-            padding: 12px 20px;
-            border-radius: 5px;
-            margin-top: 15px;
-            border: 2px solid #F7941D;
-        }
-        
-        .header .warning-text {
-            color: #F7941D;
-            font-weight: 700;
-            font-size: 16px;
         }
         
         .content {
@@ -89,237 +61,111 @@
             color: #003049;
         }
         
-        .limited-offer-box {
-            background: linear-gradient(135deg, #F7941D 0%, #e67e00 100%);
-            color: white;
-            padding: 30px;
-            margin: 25px 0;
+        .announcement-box {
+            background: linear-gradient(to right, #e3f2fd, #f1f8e9);
+            padding: 25px;
+            margin: 20px 0;
             border-radius: 10px;
+            border: 3px solid #005f73;
             text-align: center;
-            box-shadow: 0 4px 15px rgba(247, 148, 29, 0.3);
-            border: 3px solid #d87000;
         }
         
-        .offer-badge {
-            background-color: white;
-            color: #F7941D;
+        .announcement-badge {
+            background-color: #005f73;
+            color: white;
             display: inline-block;
             padding: 8px 20px;
             border-radius: 20px;
             font-weight: 700;
-            font-size: 14px;
+            font-size: 13px;
             margin-bottom: 15px;
             letter-spacing: 0.5px;
         }
         
-        .limited-offer-box h3 {
-            font-size: 28px;
+        .announcement-box h3 {
+            font-size: 24px;
             margin-bottom: 15px;
+            color: #003049;
             font-weight: 700;
         }
         
-        .offer-highlight {
-            font-size: 22px;
-            font-weight: 700;
-            margin: 15px 0;
-            line-height: 1.4;
+        .announcement-box p {
+            font-size: 16px;
+            line-height: 1.6;
+            color: #003049;
         }
         
-        .offer-value {
-            font-size: 18px;
-            margin: 10px 0;
-            font-weight: 600;
+        .offer-box {
+            background: linear-gradient(135deg, #F7941D 0%, #e67e00 100%);
+            color: white;
+            padding: 30px;
+            margin: 20px 0;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(247, 148, 29, 0.3);
         }
         
-        .offer-note {
-            font-size: 15px;
-            margin-top: 15px;
-            font-style: italic;
-            opacity: 0.95;
-        }
-        
-        .alert-box {
-            background-color: #fff3e0;
-            border-left: 4px solid #F7941D;
-            padding: 20px;
-            margin: 25px 0;
-            border-radius: 4px;
-        }
-        
-        .alert-box strong {
-            color: #F7941D;
-            font-size: 18px;
-            display: block;
+        .offer-box h3 {
+            font-size: 28px;
             margin-bottom: 10px;
         }
         
-        .alert-box p {
-            color: #003049;
+        .offer-box .big-stat {
+            font-size: 48px;
+            font-weight: 700;
+            margin: 15px 0;
+        }
+        
+        .offer-box p {
+            font-size: 18px;
+            margin: 10px 0;
+        }
+        
+        .deadline {
+            background-color: white;
+            color: #F7941D;
+            display: inline-block;
+            padding: 10px 25px;
+            border-radius: 25px;
+            font-weight: 700;
+            margin-top: 15px;
             font-size: 16px;
+        }
+        
+        .intro-text {
+            font-size: 17px;
+            margin: 20px 0;
             line-height: 1.7;
         }
         
-        .section-title {
-            font-size: 20px;
-            font-weight: 700;
-            color: #003049;
-            margin: 30px 0 15px;
+        .benefits-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin: 25px 0;
         }
         
-        .orange-title {
-            color: #F7941D;
-            font-weight: 700;
-            font-size: 18px;
-            margin-bottom: 10px;
-        }
-        
-        .stat-highlight {
-            background-color: #e3f2fd;
+        .benefit-card {
+            background-color: #f8f9fa;
             padding: 20px;
             border-radius: 8px;
-            margin: 20px 0;
-            border: 2px solid #005f73;
+            border-left: 4px solid #005f73;
         }
         
-        .stat-highlight .main-stat {
-            font-size: 22px;
-            font-weight: 700;
-            color: #003049;
-            text-align: center;
-            margin-bottom: 15px;
-        }
-        
-        .loss-list {
-            margin: 15px 0;
-            padding-left: 0;
-            list-style: none;
-        }
-        
-        .loss-list li {
-            padding: 8px 0 8px 30px;
-            position: relative;
-            font-size: 16px;
-            color: #003049;
-        }
-        
-        .loss-list li:before {
-            content: "•";
-            color: #F7941D;
-            font-weight: 700;
-            position: absolute;
-            left: 0;
-            font-size: 24px;
-        }
-        
-        .urgency-box {
-            background: linear-gradient(135deg, #005f73 0%, #0a9396 100%);
-            color: white;
-            padding: 25px;
-            margin: 30px 0;
-            border-radius: 8px;
-            text-align: center;
-        }
-        
-        .urgency-box h3 {
-            font-size: 22px;
-            margin-bottom: 20px;
-            font-weight: 700;
-        }
-        
-        .urgency-list {
-            text-align: left;
-            max-width: 500px;
-            margin: 0 auto;
-            list-style: none;
-            padding: 0;
-        }
-        
-        .urgency-list li {
-            padding: 10px 0 10px 35px;
-            position: relative;
-            font-size: 16px;
-        }
-        
-        .urgency-list li:before {
-            content: "ℹ";
-            position: absolute;
-            left: 0;
-            font-size: 20px;
-        }
-        
-        .benefits-section {
-            background-color: #003049;
-            color: white;
-            padding: 35px 30px;
-            margin-top: 30px;
-        }
-        
-        .benefits-section h3 {
-            font-size: 22px;
-            margin-bottom: 25px;
-            text-align: center;
-            line-height: 1.4;
-        }
-        
-        .benefit-list {
-            list-style: none;
-            padding: 0;
-            margin: 20px 0;
-        }
-        
-        .benefit-list li {
-            padding: 10px 0 10px 35px;
-            position: relative;
-            font-size: 16px;
-        }
-        
-        .benefit-list li:before {
-            content: "✓";
-            color: #4CAF50;
-            font-weight: 700;
-            position: absolute;
-            left: 0;
-            font-size: 22px;
-        }
-        
-        .stat-boxes {
-            display: flex;
-            gap: 15px;
-            margin: 30px 0;
-            flex-wrap: wrap;
-        }
-        
-        .stat-box {
-            flex: 1;
-            min-width: 150px;
-            background-color: white;
-            padding: 25px 15px;
-            text-align: center;
-            border-radius: 8px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        }
-        
-        .stat-box:before {
-            content: "✓";
-            color: #F7941D;
-            font-size: 36px;
-            display: block;
+        .benefit-card .icon {
+            font-size: 32px;
             margin-bottom: 10px;
-            font-weight: 700;
         }
         
-        .stat-box .stat-number {
-            font-size: 24px;
-            font-weight: 700;
+        .benefit-card h4 {
+            font-size: 16px;
+            margin-bottom: 5px;
             color: #003049;
-            margin-bottom: 8px;
         }
         
-        .stat-box .stat-label {
-            font-size: 15px;
-            color: #003049;
-            font-weight: 600;
-            line-height: 1.3;
+        .benefit-card p {
+            font-size: 14px;
+            color: #555;
         }
         
         .cta-button {
@@ -332,12 +178,14 @@
             font-weight: 700;
             font-size: 18px;
             margin: 20px 0;
-            transition: background-color 0.3s;
-            text-align: center;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(247, 148, 29, 0.4);
         }
         
         .cta-button:hover {
             background-color: #e67e00;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(247, 148, 29, 0.5);
         }
         
         .cta-container {
@@ -345,47 +193,12 @@
             margin: 30px 0;
         }
         
-        .ps-section {
-            background-color: #fff3e0;
-            padding: 25px;
-            margin-top: 30px;
-            border-radius: 8px;
-            border: 2px solid #F7941D;
-        }
-        
-        .ps-section strong {
-            color: #F7941D;
-            font-size: 18px;
-        }
-        
-        .ps-section p {
-            color: #003049;
-            font-size: 16px;
-            line-height: 1.7;
-            margin-top: 10px;
-        }
-        
-        .roi-callout {
-            background: linear-gradient(to right, #e8f5e9, #f1f8e9);
-            padding: 25px;
-            margin-top: 25px;
-            border-radius: 8px;
-            border: 2px solid #4CAF50;
+        .proof-line {
             text-align: center;
-        }
-        
-        .roi-callout h4 {
-            color: #2e7d32;
-            font-size: 20px;
-            margin-bottom: 15px;
-            font-weight: 700;
-        }
-        
-        .roi-callout p {
-            color: #003049;
-            font-size: 16px;
-            margin: 8px 0;
-            line-height: 1.6;
+            color: #005f73;
+            font-size: 15px;
+            font-style: italic;
+            margin: 20px 0;
         }
         
         .footer {
@@ -408,12 +221,8 @@
         }
         
         @media (max-width: 600px) {
-            .stat-boxes {
-                flex-direction: column;
-            }
-            
-            .stat-box {
-                min-width: 100%;
+            .benefits-grid {
+                grid-template-columns: 1fr;
             }
             
             body {
@@ -423,136 +232,97 @@
             .content {
                 padding: 25px 20px;
             }
+            
+            .offer-box .big-stat {
+                font-size: 36px;
+            }
         }
     </style>
 </head>
 <body>
     <div class="email-container">
         <div class="logo-section">
-            <div class="logo">ENDURANCE <span class="logo-subtext">E</span></div>
+            <img src="data:image/webp;base64,UklGRooKAABXRUJQVlA4WAoAAAAwAAAA+gAAFQAASUNDUMgBAAAAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAABimQAAt4UAABjaWFlaIAAAAAAAACSgAAAPhAAAts9YWVogAAAAAAAA9tYAAQAAAADTLXBhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAAACAAAAAcAEcAbwBvAGcAbABlACAASQBuAGMALgAgADIAMAAxADZBTFBIuwQAAA2w6/5/3NjOd55ASj+ANUB6yUDqK96ltwZIPzxLGWDo/i4ykG4bus4yVJ9FrrMMfZB+6Cc49BMc+gmyWCJpnyR1REwA/xeWBP43C5GhB9n0IaGS4A1CRASHCxGyAuPjhADjkVWcCy5k6Jsurul7lyIr6OdK0VQV4IK1U30GaxP6PBbRZthAtbpXLuEBjgbRRpQNzcmO48wChpQWBo9cxDVlc9QmRdQsdVTZrvWYsoDNlFAt000pxGAs8EOGfcLtuyynn5G/3hoTlXshuqW0Z9dcq6UIUaWG3vgYKMxRxUVWhsQHeVBc4U/IeVpxyULfyMsBCzOYK4N600X1QLGVcfD4pvM5GsP5yQVXVWUN8Hijr6DJMfyC6bXLAg/rzmfZ9FNNKZoV8Lw3F7uJaCq5gvboI0QN0C51AvWgbFo5Agz6I+B9OHSq5fDC+UElVAlfpnz4ZP/AvAuZqId+zDHvgnWHsQbdh0vFOm/WLQgboZnsjU+gGPd9kgZOgshRL/sVk8ElpNbA/RhxrYU5qgucezksKO7N9QBWQOXnemDnHym2MgV++LILcVULCOJ1zzXeAsdXYhuhL7aVBTzed+EiBN1DN16VAByzzQpOj+WbBe1SRw1NDe3QuagO2PE5fgNobt9PVXc1XxL5ImI2/dzYDzW0g7QXYeyg3V9PKSRxBpCgDPTGx3j55gEKO+iYBhiztTbqS5vQwOkv/JzIN1yh79YPUIw7fZFQcoX/jJjeMtsD+09gD48UWxlDUDfPwNOdDHMV4LNddgkjt1/PHSXXKW90AU93MlzgsxxeZ6oOTo8A/bqgXeoYMNtxAau1cjOf7xfwLT/lw8RH+0L84GPaOIwZFrDaSPdfZKeZN0DPeVAGeuOjcHKzgnprzJSvoPK5jiaqSmjgA+g1mU1UspObFSzGIV8H7MGKtCbmy6nmCdi8Mq+A00KdMZ4Kiq2MI8jlD1Dom8OEa0DYXD4uVcATtz9m0qZdNsi7J+AhXw9YCCV0Y5qbslPu+AQ/HM1MJYFCEdvemTjo92MBD0xaAQ8Hl9C4qYs2HF/5B5Nv/HWB3o0F2SsDnP4MVoB0LkYBB1L1jx7gebBTmoy6DwlYNdTMulMLVrko+Tjoy92h6Tg/KTI2ZUJwCVi5q7M0ZSNqgB5wp5ZiZ8xMJQtAJyHvVzD27qwjZ7GVKfjuzeMMalNQ7KzxM52Cp509K5sUFyK+OP2F5gPw+htyPjUJB5VCEG8eY37op+a3/wRQm4JCyz2Wsqk4339MQ65ril0XoNTA0kWVvmB1M6aAOuliyultQaHkjXcBQcu50me1Tlm7OYGB/oXPWB1NMZd6VEw6tSuAFsHs7pmMoRsWFLsuYIAt8UEZMCokYcy2nmDUwwJYVE3J7PaFSwucALCfD6Pe1jlOdnxh1nVvVEHkQX8ia5BDQb3pOuD4nMB4s6LYyjScWq8mcN2XqiZ2MFy+4bmCowo57D7DAuweqjicum/B7iOCw38iOmi9bKrmzHrLrDkm4NSX0FZhA68kyztY4Qdo4wjyrpsAo0+iakrABWuZ3OSoIsYDBPeRrNZmAKwlPfSAtRF5rfPuLNr4FNwIYD05gwbwhox6nAFvvQvE9zlijSc7AFZQOCDYAwAAsBEAnQEq+wAWAD5RJI9FI6IhEos2EDgFBLYBjAH6AGclOf6T+GfNFWH6b+Yvsx0x+d/yr9bfkzyUkgeaJyX+dPR36gPMA/vXQA/b71Afrv+13u3fzr9ePcR6AH9v9KL+9+wf6AH8U/4Pp0exx/a/+1+63tbgObyX8YF4Qd3q39qjO22EsucoV6xpMREJ8fb7KvQjTxYAAP746Qzni4sW8dj8bJVuaL0Hd8+bZG1eu4aYbPzFWqSdpCE+7rNTobJh99S1PwjeyBRbzlPdJm5B8b74myfvrjN1wfVPDA5SDsnfyzz+nq6x3uMFfm0IQWOz4yyi+yhRoU5o+cYjcyVQB/aCwVWTNRv0v6iyVSHaM/4X78HeF85BIp/rCpkVoogM+2IyNw3RZAbPx1K+rtVEKPMv/rlNy6KkG0DAeBA0jKkdeovsIwIpiFmLcEGnwfvp1uFdYQbeUu7Pcd+pVlO6mPUtVHeF3aXkr+/szJtsOsYiIopa+OCADkTb9I9uWoFWBRyx7Ui/1RP8laoB4k7iATWsAXlhISNQky+d+S8e83jnqfOETyLHmjKFLDtpQt8K5RAGTtlTY9J0I94SEsAvdLN36CRq9YXX4F8+WxJMARPXGMAXiEToDFRrFQ3QMi0rVOX3xwxUzTKxYCuGYHidpLEry8oXUbl1y/XTzlj+KPsObT8i4lU1evewE2HzEHS5XTkksbCWAR4NK+NY7+bDf8c600kLB7LL//YjbTVQTSCf2k3GG91DGUX/ftsQ6W5/jAaP4eAznVVJpt5lz9DpPPw05v46P+rHdf07SHihOBWe5Zjv24IhMHESss4miLn/m3cVEs2yI0IjbV5zA55h8DY3XWpgZAQPZZuh/jTMLugqJHlemPxMQrbbBFKrThnsCsP+gwbqO13UlkiiMQlBIOIU/Z2jsHTjNIOnAe6sJ1ZqbR5tZg6B62J1A4EQrFzWJ93s22KKhsWpR7E19k6xg9m+fQ5qgkvs9KCFwI6qyIZzgtrc0kB0njmlwvAN32UvoTAnoNrDUVbAocZBDnPnVJnDM8tRGUfcxYgcpAOTTSmiFEFxAPWzexavvocZS8w+Xm2ySh+As1J+WM+oQhrCYtrYujc/P14/buIzbmPwQQynfh5RwPR61GOtDP/5t+HNsjFguEkgnLRKPfDVpwQkLcHVAYiMpns1TAi25LGsIM77O5GSUTKr9z545DTJD8cZn7DtP0VPBZrw80GyzoTfNz2MQR8EenzX9wvNpztdC9NDE3cbleOaUKwqCL7sYEqU/R5GMjesTw1EU/UroPP/9YyMAOQGgAAA" alt="Endurance Warranty" style="max-width: 250px; height: auto;">
         </div>
         
         <div class="header">
             <h1>Endurance Warranty // DigniFi</h1>
-            <h2>Partnership Financing Solutions</h2>
-            <div class="warning">
-                <span class="warning-text">🎯 Be First: Early Endurance Partners Get 12 Months Free ($2,388) - Expires Nov 5th</span>
-            </div>
+            <h2>New Partnership Announcement</h2>
         </div>
         
         <div class="content">
             <div class="greeting">Hi [First Name],</div>
             
-            <div class="limited-offer-box">
-                <div class="offer-badge">⏰ EARLY ENDURANCE PARTNER OFFER</div>
-                <h3>Enroll by November 5th, 2025</h3>
-                <p class="offer-highlight">Get your $199/month platform fee WAIVED for 12 months</p>
-                <p class="offer-value">That's $2,388 in savings for early partners</p>
-                <p class="offer-note">Limited to first wave of Endurance partners - waitlist may be implemented after this date</p>
+            <div class="announcement-box">
+                <div class="announcement-badge">📢 NEW PARTNERSHIP ANNOUNCEMENT</div>
+                <h3>Endurance Warranty Has Partnered with DigniFi</h3>
+                <p>We're excited to announce our new partnership with DigniFi, a leading automotive financing platform serving 2,000+ repair facilities nationwide. As a valued Endurance partner, you now have exclusive early access to this proven customer growth tool.</p>
             </div>
             
-            <div class="alert-box">
-                <strong>Here's the opportunity:</strong>
-                <p>When your Endurance Warranty customers need financing for non-covered repairs, DigniFi-enrolled shops can offer instant Buy Now Pay Later solutions. As this partnership rolls out, <strong>customers will prefer the convenience of enrolled locations.</strong> Be among the first in your market to offer this—before your competition does.</p>
+            <div class="offer-box">
+                <h3>Early Partner Offer</h3>
+                <div class="big-stat">$2,388</div>
+                <p><strong>Platform fees waived for 12 months</strong></p>
+                <p>Enroll by January 15th, 2026</p>
+                <div class="deadline">⏰ Limited Spots Available</div>
             </div>
             
-            <p style="font-size: 16px; margin: 20px 0;">
-                As an Endurance Warranty partner, you know the value of seamless covered repairs. But here's what you might not know: <strong>67% of Endurance customers delay non-covered repairs</strong> (brake pads, tires, routine maintenance) due to affordability concerns.
+            <p class="intro-text">
+                <strong>What this means for you:</strong> DigniFi's Buy Now Pay Later financing helps you attract more customers and convert service opportunities into completed jobs. When customers can't pay upfront, you can still say "yes"—and get paid in 24-48 hours.
             </p>
             
-            <p style="font-size: 16px; margin: 20px 0;">
-                Endurance partnered with DigniFi to solve this with <strong>Buy Now Pay Later</strong> solutions. <strong>DigniFi already serves 2,000+ repair facilities nationwide</strong> with proven results, and now this proven platform is available exclusively to Endurance partners like you.
-            </p>
-            
-            <p style="font-size: 16px; margin: 20px 0; background-color: #e3f2fd; padding: 15px; border-radius: 6px; border-left: 4px solid #005f73;">
-                <strong>The opportunity:</strong> Be among the first Endurance partners in your market to offer this. The Service Center MUST be enrolled with DigniFi to serve these customers—which means early adopters will have a significant competitive advantage.
-            </p>
-            
-            <div class="stat-highlight">
-                <div class="main-stat">Without DigniFi enrollment, you could be missing:</div>
-                <ul class="loss-list">
-                    <li>2-3 Endurance customers weekly who need financing for non-covered repairs</li>
-                    <li>Customers who may choose enrolled shops for convenience</li>
-                    <li>Potential <strong>$62,400+ in annual revenue</strong> from these repair opportunities</li>
-                    <li>The chance to be among the <strong>first Endurance partners</strong> in your market</li>
-                </ul>
-            </div>
-            
-            <div class="urgency-box">
-                <h3>Why Enroll Before November 5th</h3>
-                <ul class="urgency-list">
-                    <li>Lock in $2,388 in savings (12 months free platform access)</li>
-                    <li>Be among the first Endurance partners to offer this in your market</li>
-                    <li>Join DigniFi's proven network of 2,000+ repair facilities nationwide</li>
-                    <li>High demand may trigger a waitlist after the deadline</li>
-                    <li>Early partners in other programs see 20-40% increases in financed repairs</li>
-                    <li>Establish your competitive advantage before others in your area</li>
-                </ul>
-            </div>
-            
-            <div class="section-title">Capture More Revenue Opportunities</div>
-            
-            <div style="background-color: #f8f9fa; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #4CAF50;">
-                <p style="font-size: 16px; margin: 0; color: #003049;"><strong>✓ Proven Platform:</strong> DigniFi currently serves 2,000+ repair facilities across the country with instant financing solutions.</p>
-                <p style="font-size: 16px; margin: 10px 0 0 0; color: #003049;"><strong>✓ New for Endurance:</strong> You have the opportunity to be among the first Endurance partners to leverage this proven technology.</p>
-            </div>
-            <p style="font-size: 16px; margin: 15px 0;">
-                What if your Endurance customers could get non-covered repairs done immediately and pay over time? Complete the <strong>Endurance Experience</strong> with <strong>Buy Now, Pay Later</strong>.
-            </p>
-        </div>
-        
-        <div class="benefits-section">
-            <h3>Extend that same "no financial stress" experience to ALL their automotive needs with instant phone-based financing.</h3>
-            
-            <ul class="benefit-list">
-                <li><strong>$0 monthly fees for 12 months</strong> (enroll by Nov 5th - $2,388 value)</li>
-                <li>Cover non-warranty repairs with instant financing</li>
-                <li>You get paid in 24-48 hours (guaranteed)</li>
-                <li>$0 down payment options for customers</li>
-                <li>20-40% increase in non-covered repair orders</li>
-                <li>No risk to you if customers default</li>
-                <li>Backed by DigniFi's proven platform serving 2,000+ repair facilities</li>
-            </ul>
-            
-            <div class="stat-boxes">
-                <div class="stat-box">
-                    <div class="stat-number">24-48 hrs</div>
-                    <div class="stat-label">Payment Time</div>
+            <div class="benefits-grid">
+                <div class="benefit-card">
+                    <div class="icon">💰</div>
+                    <h4>Get Paid Fast</h4>
+                    <p>24-48 hour payment guarantee</p>
                 </div>
-                <div class="stat-box">
-                    <div class="stat-number">40% Avg</div>
-                    <div class="stat-label">Non-Covered Order Increase</div>
+                <div class="benefit-card">
+                    <div class="icon">📈</div>
+                    <h4>Grow Revenue</h4>
+                    <p>Average 40% service increase</p>
                 </div>
-                <div class="stat-box">
-                    <div class="stat-number">$0</div>
-                    <div class="stat-label">Customer Down Payment</div>
+                <div class="benefit-card">
+                    <div class="icon">🛡️</div>
+                    <h4>Zero Risk</h4>
+                    <p>No liability if customers default</p>
+                </div>
+                <div class="benefit-card">
+                    <div class="icon">👥</div>
+                    <h4>More Customers</h4>
+                    <p>Attract buyers who need financing</p>
                 </div>
             </div>
+            
+            <p class="proof-line">
+                DigniFi serves 2,000+ facilities nationwide • Partners average $40K-$80K annual increase
+            </p>
             
             <div class="cta-container">
-                <a href="#" class="cta-button">Claim Your 12 Months Free ($2,388 Value)</a>
-                <p style="color: white; margin-top: 15px; font-size: 14px;">Offer expires November 5th, 2025</p>
-            </div>
-        </div>
-        
-        <div class="content">
-            <div class="ps-section">
-                <strong>P.S.</strong>
-                <p>This limited-time offer ends November 5th, 2025. After that date, the standard $199/month platform fee applies, and due to anticipated high demand from Endurance partners nationwide, we may need to implement a waitlist. DigniFi's platform has helped similar repair facilities add <strong>$40,000-$80,000 annually</strong> in additional revenue. As one of the first Endurance partners to enroll, you'll establish a competitive advantage in your market before others catch on. The enrollment takes 2 minutes, and you could save $2,388 while being first to capture these opportunities.</p>
-            </div>
-            
-            <div class="roi-callout">
-                <h4>The Math Is Simple:</h4>
-                <p>💰 Save $2,388 in platform fees (first 12 months free)</p>
-                <p>💰 Add $40,000-$80,000 in annual revenue</p>
-                <p>💰 Get paid in 24-48 hours on every transaction</p>
-                <p>💰 Zero risk if customers default</p>
-                <p style="margin-top: 15px; font-weight: 700; font-size: 18px;">Total value: $42,000+ in Year 1</p>
+                <p style="font-size: 20px; font-weight: 700; color: #003049; margin-bottom: 15px;">
+                    👇 Click Below to Schedule Your 2-Minute Enrollment Call
+                </p>
+                <a href="https://calendly.com/d/csk7-f6g-dkx/see-how-dignifi-helps-endurance-service-centers" class="cta-button">Claim Your $2,388 Savings Now</a>
+                <p style="margin-top: 15px; font-size: 15px; color: #d84315; font-weight: 600;">
+                    ⏰ Offer ends January 15th, 2026 • Limited spots available
+                </p>
+                <p style="margin-top: 10px; font-size: 14px; color: #666;">
+                    Choose a time that works for you • Process takes 2 minutes
+                </p>
             </div>
             
-            <p style="text-align: center; margin-top: 25px; font-size: 16px; color: #003049;">
-                <strong>Takes 2 minutes to see how.</strong>
+            <p style="font-size: 15px; color: #666; text-align: center; margin-top: 30px;">
+                Questions? Reply to this email or call us directly.
             </p>
+            
+            <div style="background-color: #fff3e0; padding: 20px; margin-top: 25px; border-radius: 8px; text-align: center; border: 2px solid #F7941D;">
+                <p style="font-size: 16px; color: #003049; margin-bottom: 10px;">
+                    <strong>Don't miss out on $2,388 in savings</strong>
+                </p>
+                <a href="https://calendly.com/d/csk7-f6g-dkx/see-how-dignifi-helps-endurance-service-centers" style="color: #F7941D; font-weight: 700; font-size: 16px; text-decoration: none;">
+                    → Click here to schedule your enrollment call
+                </a>
+            </div>
         </div>
         
         <div class="footer">
@@ -561,7 +331,6 @@
                 <a href="#">Update preferences</a> | <a href="#">Unsubscribe</a>
             </p>
             <div class="footer-note">
-                <p>Sent by:</p>
                 <p>All credit decisions are issued by WebBank.</p>
                 <p>Endurance</p>
                 <p>www.EnduranceWarranty.com</p>
