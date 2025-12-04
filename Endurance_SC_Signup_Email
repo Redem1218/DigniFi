@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Endurance Service Center - Customer Financing Solution</title>
+    <style>
+        body {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.5;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        .email-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #ffffff;
+        }
+        .header {
+            background: linear-gradient(135deg, #003D5C 0%, #005A8B 100%);
+            padding: 30px 20px;
+            text-align: center;
+            border-bottom: 6px solid #FF9500;
+        }
+        .logo-text {
+            font-size: 28px;
+            font-weight: 900;
+            color: #FF9500;
+            letter-spacing: 2px;
+            margin: 0 0 5px 0;
+        }
+        .subheader {
+            color: #FFD700;
+            font-size: 11px;
+            letter-spacing: 1.5px;
+            font-weight: bold;
+            margin: 0;
+        }
+        .content {
+            padding: 0;
+        }
+        .urgency-section {
+            background: linear-gradient(135deg, #FF9500 0%, #FFB84D 100%);
+            padding: 25px 20px;
+            text-align: center;
+            color: white;
+        }
+        .urgency-icon {
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+        .urgency-headline {
+            font-size: 18px;
+            font-weight: 900;
+            margin: 0 0 8px 0;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .urgency-subtext {
+            font-size: 14px;
+            margin: 0;
+            line-height: 1.5;
+            font-weight: 500;
+        }
+        .main-content {
+            padding: 25px 20px;
+        }
+        .greeting {
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #003D5C;
+        }
+        .hero-message {
+            background-color: #F0F7F9;
+            border-left: 5px solid #003D5C;
+            padding: 15px;
+            margin: 15px 0;
+            font-size: 15px;
+            line-height: 1.6;
+            color: #333;
+        }
+        .hero-highlight {
+            color: #FF9500;
+            font-weight: bold;
+            font-size: 16px;
+        }
+        .section-headline {
+            font-size: 14px;
+            font-weight: 900;
+            color: #003D5C;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin: 20px 0 12px 0;
+            border-bottom: 3px solid #FF9500;
+            padding-bottom: 8px;
+        }
+        .benefit-list {
+            margin: 0;
+            padding-left: 0;
+            list-style: none;
+        }
+        .benefit-list li {
+            margin: 10px 0;
+            padding-left: 25px;
+            position: relative;
+            font-size: 14px;
+            line-height: 1.5;
+            color: #333;
+        }
+        .benefit-list li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #FF9500;
+            font-weight: bold;
+            font-size: 18px;
+        }
+        .cta-container {
+            margin: 25px 0;
+            text-align: center;
+        }
+        .cta-primary {
+            display: inline-block;
+            background: linear-gradient(135deg, #FF9500 0%, #FF7A00 100%);
+            color: white;
+            padding: 18px 50px;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 900;
+            font-size: 16px;
+            border: none;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 4px 12px rgba(255, 149, 0, 0.3);
+            transition: all 0.3s ease;
+        }
+        .cta-primary:hover {
+            background: linear-gradient(135deg, #FF7A00 0%, #FF6500 100%);
+            box-shadow: 0 6px 16px rgba(255, 149, 0, 0.4);
+            transform: translateY(-2px);
+        }
+        .cta-secondary {
+            display: inline-block;
+            background-color: transparent;
+            color: #003D5C;
+            padding: 14px 40px;
+            text-decoration: none;
+            border: 3px solid #003D5C;
+            border-radius: 8px;
+            font-weight: 900;
+            font-size: 14px;
+            margin-left: 10px;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+        }
+        .cta-secondary:hover {
+            background-color: #003D5C;
+            color: white;
+        }
+        .secondary-text {
+            color: #666;
+            font-size: 12px;
+            margin-top: 12px;
+            font-weight: 500;
+        }
+        .timeline-card {
+            background: linear-gradient(135deg, #E3F2FD 0%, #F0F7F9 100%);
+            border: 2px solid #FF9500;
+            border-radius: 8px;
+            padding: 18px;
+            margin: 20px 0;
+            font-size: 13px;
+            line-height: 1.7;
+        }
+        .timeline-title {
+            font-weight: 900;
+            color: #003D5C;
+            text-transform: uppercase;
+            font-size: 12px;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+        }
+        .divider {
+            border-top: 3px solid #FF9500;
+            margin: 25px 0;
+        }
+        .closing-text {
+            font-size: 14px;
+            color: #333;
+            line-height: 1.6;
+            margin: 15px 0;
+        }
+        .signature {
+            font-size: 13px;
+            font-weight: bold;
+            color: #003D5C;
+            margin-top: 20px;
+        }
+        .footer {
+            background-color: #003D5C;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            font-size: 11px;
+            line-height: 1.6;
+        }
+        .footer-link {
+            color: #FFD700;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .footer-link:hover {
+            text-decoration: underline;
+        }
+        @media (max-width: 600px) {
+            .main-content {
+                padding: 15px 15px;
+            }
+            .cta-secondary {
+                display: block;
+                margin-left: 0;
+                margin-top: 12px;
+            }
+            .urgency-headline {
+                font-size: 16px;
+            }
+            .urgency-section {
+                padding: 20px 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="email-container">
+        <!-- Header -->
+        <div class="header">
+            <div class="logo-text">ENDURANCE</div>
+            <div class="subheader">PREFERRED PAY OVER TIME FINANCING PARTNER</div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Greeting -->
+            <div class="greeting">Hi {{POC_NAME}},</div>
+
+            <!-- Context -->
+            <p class="section-text" style="margin-bottom: 20px;">
+                We've been notified you have a customer in-store who needs access to Pay-Over-Time financing due to an Endurance Warranty denial. We're here to help.
+            </p>
+
+            <!-- Hero Message -->
+            <div class="hero-message">
+                When a customer's repair isn't covered by warranty, you now have an option: offer them <span class="hero-highlight">financing through Endurance's preferred partner, DigniFi</span>. Help them complete their repair while expanding your service opportunities.
+            </div>
+
+            <!-- What You Get -->
+            <div class="section-headline">Why Offer This to Your Customers</div>
+            <ul class="benefit-list">
+                <li><strong>Give customers payment options</strong> when they need repairs not covered by warranty</li>
+                <li><strong>Payment plans</strong> tailored to their budget (12-36 month terms)</li>
+                <li><strong>Backed by Endurance</strong> — your customers already trust this brand</li>
+                <li><strong>Keep your service flowing</strong> — no operational complexity for you</li>
+            </ul>
+
+            <!-- First CTA -->
+            <div class="cta-container">
+                <a href="{{ENROLL_NOW_LINK}}" class="cta-primary">ENROLL NOW</a>
+            </div>
+
+<div class="divider"></div>
+
+            <!-- Questions Section -->
+            <p class="closing-text">
+                <strong>Questions?</strong> Schedule a quick call with the DigniFi team to see how this works for your service center.
+            </p>
+
+            <!-- Secondary CTA -->
+            <div class="cta-container">
+                <a href="https://calendly.com/d/csk7-f6g-dkx/see-how-dignifi-helps-endurance-service-centers" class="cta-secondary">BOOK A DEMO</a>
+            </div>
+
+            <!-- Closing -->
+            <p class="closing-text">
+                This is a new way to support your customers when warranty claims are denied. Enroll today to start offering this option.
+            </p>
+
+            <div class="signature">
+                — The Endurance Team
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <p style="margin: 0 0 10px 0;">
+                Financing provided by DigniFi, Endurance's preferred Pay Over Time financing partner.
+            </p>
+            <p style="margin: 0 0 12px 0; font-size: 10px;">
+                <a href="{{UNSUBSCRIBE_LINK}}" class="footer-link">Update preferences</a> | <a href="{{UNSUBSCRIBE_LINK}}" class="footer-link">Unsubscribe</a>
+            </p>
+            <p style="margin: 0; font-size: 10px; color: #CCCCCC;">
+                © 2025 Endurance Warranty
+            </p>
+        </div>
+    </div>
+</body>
+</html>
