@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Turn More Customers Into Revenue</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333333;
+            background-color: #f5f5f5;
+        }
+        .email-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #ffffff;
+        }
+        .header {
+            background-color: #003d5c;
+            padding: 30px 20px;
+            text-align: center;
+        }
+        .header h1 {
+            color: #ffffff;
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        .header p {
+            color: #ffffff;
+            font-size: 16px;
+            font-weight: 400;
+        }
+        .content {
+            padding: 30px 20px;
+        }
+        .greeting {
+            font-size: 16px;
+            margin-bottom: 25px;
+            color: #333333;
+        }
+        .stat-box {
+            background: linear-gradient(135deg, #E63946 0%, #c92a2f 100%);
+            color: #ffffff;
+            padding: 30px;
+            margin: 25px 0;
+            border-radius: 6px;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(230, 57, 70, 0.15);
+        }
+        .stat-box .stat-number {
+            font-size: 48px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+        .stat-box .stat-label {
+            font-size: 16px;
+            font-weight: 500;
+        }
+        .scenario-box {
+            background-color: #f0f8ff;
+            border-left: 4px solid #E63946;
+            padding: 20px;
+            margin: 25px 0;
+            border-radius: 4px;
+        }
+        .scenario-box h3 {
+            color: #003d5c;
+            font-size: 16px;
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+        .scenario-box p {
+            color: #333333;
+            font-size: 15px;
+            line-height: 1.8;
+        }
+        .section {
+            margin: 25px 0;
+        }
+        .section h3 {
+            color: #003d5c;
+            font-size: 16px;
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+        .section p {
+            color: #555555;
+            font-size: 15px;
+            line-height: 1.8;
+            margin-bottom: 10px;
+        }
+        .list-item {
+            margin-bottom: 15px;
+            font-size: 15px;
+            color: #333333;
+        }
+        .list-item strong {
+            color: #003d5c;
+            display: block;
+            margin-bottom: 5px;
+        }
+        .list-item-text {
+            color: #555555;
+            margin-left: 0;
+        }
+        .highlight {
+            background-color: #fff3e0;
+            padding: 20px;
+            border-radius: 4px;
+            margin: 20px 0;
+        }
+        .highlight p {
+            color: #333333;
+            font-size: 15px;
+            line-height: 1.8;
+        }
+        .cta-section {
+            text-align: center;
+            margin: 30px 0;
+            padding: 25px 0;
+        }
+        .cta-button {
+            display: inline-block;
+            background-color: #E63946;
+            color: #ffffff;
+            padding: 14px 32px;
+            text-decoration: none;
+            border-radius: 25px;
+            font-weight: 600;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+        }
+        .cta-button:hover {
+            background-color: #d62828;
+        }
+        .footer {
+            background-color: #003d5c;
+            color: #ffffff;
+            padding: 20px;
+            text-align: center;
+            font-size: 12px;
+            line-height: 1.6;
+        }
+        .footer a {
+            color: #E63946;
+            text-decoration: none;
+        }
+        .divider {
+            border-top: 1px solid #e0e0e0;
+            margin: 20px 0;
+        }
+        .risk-statement {
+            font-size: 18px;
+            font-weight: 700;
+            color: #E63946;
+            margin: 20px 0;
+            padding: 15px;
+            background-color: #fff3e0;
+            border-radius: 4px;
+            border-left: 4px solid #E63946;
+        }
+        .list-item-box {
+            background-color: #f9f9f9;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 4px;
+            border-left: 3px solid #E63946;
+        }
+        .list-item-box strong {
+            color: #003d5c;
+            font-size: 15px;
+        }
+        .list-item-box p {
+            color: #555555;
+            font-size: 14px;
+            margin: 8px 0 0 0;
+        }
+        .highlight {
+            background: linear-gradient(135deg, #fff3e0 0%, #ffe8cc 100%);
+            padding: 20px;
+            border-radius: 4px;
+            margin: 20px 0;
+            border-left: 4px solid #E63946;
+        }
+        .highlight p {
+            color: #003d5c;
+            font-size: 16px;
+            line-height: 1.8;
+            font-weight: 600;
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="email-container">
+        <!-- Header -->
+        <div class="header">
+            <h1>Turn 'Can't Afford It' Into 'Yes'</h1>
+            <p>Grow Your Service Revenue with DigniFi Financing</p>
+        </div>
+
+        <!-- Content -->
+        <div class="content">
+            <div class="greeting">
+                Hi [First Name],
+            </div>
+
+            <div class="scenario-box">
+                <h3>The Real Cost of Not Being Ready</h3>
+                <p>Customer walks in. They need a $1,200 repair. They want it done. But they can't pay upfront. In that moment, if you don't have financing available, you lose the job.</p>
+            </div>
+
+            <div class="section">
+                <p><strong>You can't go back and fix that moment. You can't recover that revenue.</strong></p>
+                <p>The service centers that are winning right now are the ones that had DigniFi already live when their customers started asking, "Can I pay this over time?"</p>
+            </div>
+
+            <div class="stat-box">
+                <div class="stat-number">20-40%</div>
+                <div class="stat-label">Average Service Revenue Increase</div>
+            </div>
+
+            <div class="section">
+                <h3>This Isn't Theoretical—It's Happening Now</h3>
+                <p>Service centers across the country are already enrolled and processing customers. Every day that passes without DigniFi in place is a day you're missing potential revenue.</p>
+            </div>
+
+            <div class="section">
+                <h3>What Happens When You're Prepared</h3>
+            </div>
+
+            <div class="list-item-box">
+                <strong>✓ Customer Shows Up Unable to Pay Full Amount</strong>
+                <p>Instead of losing the job, you say "Yes" and offer financing. The job gets done. Your team stays busy.</p>
+            </div>
+
+            <div class="list-item-box">
+                <strong>✓ You Get Paid in 24-48 Hours</strong>
+                <p>Regardless of the customer's payment plan, your facility gets paid fast. No waiting, no collections, no risk.</p>
+            </div>
+
+            <div class="list-item-box">
+                <strong>✓ Your Revenue Grows</strong>
+                <p>Those jobs you would've turned away are now completed jobs and revenue. Over time, this compounds into 20-40% service growth.</p>
+            </div>
+
+            <div class="highlight">
+                <p><strong>The centers that enroll now won't be kicking themselves in March.</strong> They'll have captured revenue that your unprepared competition is still losing.</p>
+            </div>
+
+            <div class="section">
+                <h3>Time to Act</h3>
+                <p>The earlier you enroll, the sooner you start capturing that 20-40% revenue increase. Every day your facility operates without financing in place is another day of missed opportunities.</p>
+            </div>
+
+            <div style="background-color: #f5f5f5; padding: 30px 20px; margin: 30px -20px; text-align: center; border-top: 2px solid #E63946; border-bottom: 2px solid #E63946;">
+                <div class="cta-section" style="margin: 0;">
+                    <a href="https://calendly.com/d/csk7-f6g-dkx/see-how-dignifi-helps-endurance-service-centers" class="cta-button">Schedule Your Demo</a>
+                </div>
+                <p style="font-size: 13px; color: #666666; margin-top: 12px;">See exactly how DigniFi works and what your revenue opportunity looks like</p>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <p style="margin-bottom: 10px;"><strong>DigniFi</strong></p>
+            <p style="margin-bottom: 10px; font-size: 11px;">All DigniFi credit products are issued by WebBank</p>
+            <p>Automotive financing solutions for service centers nationwide</p>
+            <p style="margin-top: 10px;">
+                <a href="[UNSUBSCRIBE_LINK]">Unsubscribe</a> | 
+                <a href="[UPDATE_PREFERENCES_LINK]">Update Preferences</a>
+            </p>
+            <p style="margin-top: 10px; color: #cccccc;">© 2026 DigniFi. All rights reserved.</p>
+        </div>
+    </div>
+</body>
+</html>
