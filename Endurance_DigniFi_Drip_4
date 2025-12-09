@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>See Real Results from DigniFi Partners</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333333;
+            background-color: #f5f5f5;
+        }
+        .email-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #ffffff;
+        }
+        .header {
+            background-color: #003d5c;
+            padding: 30px 20px;
+            text-align: center;
+        }
+        .header h1 {
+            color: #ffffff;
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        .header p {
+            color: #ffffff;
+            font-size: 16px;
+            font-weight: 400;
+        }
+        .content {
+            padding: 30px 20px;
+        }
+        .greeting {
+            font-size: 16px;
+            margin-bottom: 25px;
+            color: #333333;
+        }
+        .section {
+            margin: 25px 0;
+        }
+        .section h3 {
+            color: #003d5c;
+            font-size: 16px;
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+        .section p {
+            color: #555555;
+            font-size: 15px;
+            line-height: 1.8;
+            margin-bottom: 10px;
+        }
+        .case-study-box {
+            background: linear-gradient(135deg, #f0f8ff 0%, #e8f5ff 100%);
+            border-left: 4px solid #E63946;
+            padding: 25px;
+            margin: 25px 0;
+            border-radius: 6px;
+            border-top: 3px solid #E63946;
+        }
+        .case-study-box h3 {
+            color: #E63946;
+            font-size: 16px;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+        .result-box {
+            background-color: #fff3e0;
+            padding: 15px;
+            margin: 12px 0;
+            border-radius: 4px;
+            border-left: 3px solid #E63946;
+        }
+        .result-box p {
+            margin: 0;
+            color: #333333;
+            font-weight: 500;
+            font-size: 14px;
+        }
+        .quote-box {
+            background-color: #f9f9f9;
+            border-left: 4px solid #E63946;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 4px;
+            font-style: italic;
+            color: #003d5c;
+        }
+        .stat-highlight {
+            background: linear-gradient(135deg, #E63946 0%, #c92a2f 100%);
+            color: #ffffff;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 6px;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(230, 57, 70, 0.15);
+        }
+        .stat-highlight .number {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+        .stat-highlight .label {
+            font-size: 14px;
+            font-weight: 500;
+        }
+        .cta-section {
+            text-align: center;
+            margin: 30px 0;
+            padding: 25px 0;
+        }
+        .cta-button {
+            display: inline-block;
+            background-color: #E63946;
+            color: #ffffff;
+            padding: 14px 32px;
+            text-decoration: none;
+            border-radius: 25px;
+            font-weight: 600;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+        }
+        .cta-button:hover {
+            background-color: #d62828;
+        }
+        .footer {
+            background-color: #003d5c;
+            color: #ffffff;
+            padding: 20px;
+            text-align: center;
+            font-size: 12px;
+            line-height: 1.6;
+        }
+        .footer a {
+            color: #E63946;
+            text-decoration: none;
+        }
+        .divider {
+            border-top: 1px solid #e0e0e0;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="email-container">
+        <!-- Header -->
+        <div class="header">
+            <h1>Real Results From Real Partners</h1>
+            <p>See What DigniFi Is Doing for Service Centers Like Yours</p>
+        </div>
+
+        <!-- Content -->
+        <div class="content">
+            <div class="greeting">
+                Hi [First Name],
+            </div>
+
+            <div class="section">
+                <p>A few months ago, service centers across the country made the decision to enroll with DigniFi. Now they're seeing the real-world impact of being prepared when customers need financing.</p>
+                <p>Here's what's actually happening in the field.</p>
+            </div>
+
+            <div class="case-study-box">
+                <h3>The Story: A Midwest Service Center</h3>
+                <p>Before DigniFi, this 8-bay shop was turning away 2-3 customers per week who couldn't pay upfront for repair work. Even when customers wanted the service, financing wasn't an option. Lost revenue was the cost of doing business.</p>
+                <p style="margin-top: 12px;">After enrolling with DigniFi in January, they had financing ready for their first customer within 48 hours.</p>
+            </div>
+
+            <div class="stat-highlight">
+                <div class="number">34%</div>
+                <div class="label">Revenue increase in first quarter</div>
+            </div>
+
+            <div class="section">
+                <h3>Here's How It Played Out</h3>
+            </div>
+
+            <div class="result-box">
+                <p><strong>Month 1:</strong> 12 customers financed. Jobs completed. Revenue captured. Team got comfortable with the process.</p>
+            </div>
+
+            <div class="result-box">
+                <p><strong>Month 2:</strong> 18 customers financed. Word spread internally. Staff naturally offered DigniFi as an option.</p>
+            </div>
+
+            <div class="result-box">
+                <p><strong>Month 3:</strong> 24 customers financed. The center's service manager started asking, "How did we ever operate without this?"</p>
+            </div>
+
+            <div class="quote-box">
+                "Every customer who previously would have said 'Let me think about it' could now say yes. We went from losing them to completing the job and getting paid. The difference is night and day."<br>— Service Manager, Midwest Location
+            </div>
+
+            <div class="section">
+                <h3>The Numbers That Matter</h3>
+                <p>That 34% increase in Q1 revenue wasn't from new customers. It was from customers who were already requesting service—customers who now had a way to pay.</p>
+                <p>For an average service center, that translates to <strong>$40K-$80K in additional annual revenue</strong> from capturing jobs that would otherwise have walked out the door.</p>
+            </div>
+
+            <div class="divider"></div>
+
+            <div class="section">
+                <h3>Is This Your Story Too?</h3>
+                <p>If you've been running DigniFi, you might already be seeing this happening in your own facility. If you haven't enrolled yet, this is what you're waiting for.</p>
+            </div>
+
+            <div style="background-color: #f5f5f5; padding: 30px 20px; margin: 30px -20px; text-align: center; border-top: 2px solid #E63946; border-bottom: 2px solid #E63946;">
+                <div class="cta-section" style="margin: 0;">
+                    <a href="https://calendly.com/d/csk7-f6g-dkx/see-how-dignifi-helps-endurance-service-centers" class="cta-button">Schedule Your Demo</a>
+                </div>
+                <p style="font-size: 13px; color: #666666; margin-top: 12px;">See how DigniFi works and what your revenue opportunity looks like</p>
+            </div>
+
+            <div class="divider"></div>
+
+            <div class="section" style="font-size: 13px; color: #999999;">
+                <p>Real data. Real customers. Real results. That's DigniFi. Want to see how it works in your facility?</p>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <p style="margin-bottom: 10px;"><strong>DigniFi</strong></p>
+            <p style="margin-bottom: 10px; font-size: 11px;">All DigniFi credit products are issued by WebBank</p>
+            <p>Automotive financing solutions for service centers nationwide</p>
+            <p style="margin-top: 10px;">
+                <a href="[UNSUBSCRIBE_LINK]">Unsubscribe</a> | 
+                <a href="[UPDATE_PREFERENCES_LINK]">Update Preferences</a>
+            </p>
+            <p style="margin-top: 10px; color: #cccccc;">© 2026 DigniFi. All rights reserved.</p>
+        </div>
+    </div>
+</body>
+</html>
