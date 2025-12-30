@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Processing - DigniFi BNPL Integration</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lucide/latest/umd/lucide.min.js"></script>
+    <style>
+        .payment-method-btn {
+            transition: all 0.3s ease;
+        }
+        .payment-method-btn.active {
+            background-color: #2563eb;
+            color: white;
+            border-color: #2563eb;
+        }
+        .payment-method-btn:hover {
+            border-color: #2563eb;
+        }
+        .webhook-event {
+            animation: slideIn 0.3s ease-out;
+        }
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            border-radius: 9999px;
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+        .status-approved {
+            background-color: #d1fae5;
+            color: #065f46;
+        }
+        .status-pending {
+            background-color: #fef3c7;
+            color: #92400e;
+        }
+        .status-declined {
+            background-color: #fee2e2;
+            color: #7f1d1d;
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+    <div id="app"></div>
+
+    <script src="https://react.cdn.unstable.dev/umd/react.development.js"></script>
+    <script src="https://react.cdn.unstable.dev/umd/react-dom.development.js"></script>
+    <script src="https://babel.jsdelivr.net/npm/@babel/standalone/babel.min.js"></script>
+
+    <script type="text/babel">
+        const { useState, useRef, useEffect } = React;
+
+        function PaymentProcessorDemo() {
+            const [selectedPaymentMethod, setSelectedPaymentMethod] = useState(null);
+            const [dignifiFlow, setDignifiFlow] = useState('idle'); // idle, decision, checkout, approved, declined
+            const [webhooks, setWebhooks] = useState([]);
+            const [decisionData, setDecisionData] = useState(null);
+            const [customerInfo, setCustomerInfo] = useState({
+                firstName: '',
+                lastName: '',
+                address: '',
+                city: '',
+                state: '',
+                zip: ''
+            });
+            const webhookEndRef = useRef(null);
+
+            const invoiceData = {
+                invoiceNumber: '#510665_TOY-I_2022-05-13',
+                subtotal: 100.00,
+                surcharge: 0.00,
+                taxes: 10.00,
+                total: 110.00
+            };
+
+            const scrollWebhooksToBottom = () => {
+                setTimeout(() => {
+                    webhookEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+                }, 100);
+            };
+
+            const addWebhook = (event, data) => {
+                const timestamp = new Date().toLocaleTimeString();
+                setWebhooks(prev => [...prev, {
+                    id: `webhook_${Date.now()}`,
+                    timestamp,
+                    event,
+                    data,
+                    status: 'success'
+                }]);
+                scrollWebhooksToBottom();
+            };
+
+            const handleSelectPaymentMethod = (method) => {
+                if (method === 'dignifi') {
+                    setSelectedPaymentMethod('dignifi');
+                    setDignifiFlow('decision');
+                    
+                    // Trigger merchant.activated webhook
+                    setTimeout(() => {
+                        addWebhook('merchant.activated', {
+                            merchant_id: 'merchant_cdkglobal_demo',
+                            environment: 'production',
+                            timestamp: new Date().toISOString()
+                        });
+                    }, 300);
+
+                    // Trigger decision API call
+                    setTimeout(() => {
+                        const isApproved = Math.random() > 0.15;
+                        
+                        const decision = {
+                            approved: isApproved,
+                            approval_amount: invoiceData.total,
+                            apr: '8.99%',
+                            term_months: 24,
+                            monthly_payment: (invoiceData.total / 24).toFixed(2),
+                            response_time_ms: 247
+                        };
+
+                        setDecisionData(decision);
+
+                        addWebhook('decision.received', {
+                            decision_id: `dec_${Date.now()}`,
+                            approved: isApproved,
+                            approval_amount: decision.approval_amount,
+                            response_time_ms: 247
+                        });
+
+                        if (isApproved) {
+                            setDignifiFlow('checkout');
+                            
+                            // Trigger checkout.initiated
+                            setTimeout(() => {
+                                addWebhook('checkout.initiated', {
+                                    checkout_id: `checkout_${Date.now()}`,
+                                    transaction_amount: invoiceData.total,
+                                    merchant_id: 'merchant_cdkglobal_demo',
+                                    expires_in_seconds: 7200
+                                });
+
+                                // Simulate customer signing after delay
+                                setTimeout(() => {
+                                    addWebhook('merchant.signed', {
+                                        checkout_id: `checkout_${Date.now()}`,
+                                        merchant_id: 'merchant_cdkglobal_demo',
+                                        customer_signed_at: new Date().toISOString(),
+                                        agreement_version: '2.1'
+                                    });
+
+                                    // Trigger checkout.approved
+                                    setTimeout(() => {
+                                        addWebhook('checkout.approved', {
+                                            checkout_id: `checkout_${Date.now()}`,
+                                            decision_id: `dec_${Date.now()}`,
+                                            approval_amount: invoiceData.total,
+                                            monthly_payment: decision.monthly_payment,
+                                            term_months: 24,
+                                            interest_rate: '8.99%'
+                                        });
+
+                                        // Trigger checkout.completed
+                                        setTimeout(() => {
+                                            addWebhook('checkout.completed', {
+                                                checkout_id: `checkout_${Date.now()}`,
+                                                transaction_id: invoiceData.invoiceNumber,
+                                                loan_id: `loan_${Date.now()}`,
+                                                status: 'completed',
+                                                funding_timestamp: new Date().toISOString()
+                                            });
+
+                                            setDignifiFlow('approved');
+                                        }, 1500);
+                                    }, 1500);
+                                }, 2000);
+                            }, 800);
+                        } else {
+                            setDignifiFlow('declined');
+                        }
+                    }, 1000);
+                } else {
+                    setSelectedPaymentMethod(method);
+                }
+            };
+
+            const handlePayNow = () => {
+                if (selectedPaymentMethod === 'dignifi' && dignifiFlow === 'approved') {
+                    alert(`Payment of $${invoiceData.total.toFixed(2)} processed via DigniFi BNPL!\n\nLoan Details:\n- Monthly Payment: $${(invoiceData.total / 24).toFixed(2)}\n- Term: 24 months\n- APR: 8.99%`);
+                    setSelectedPaymentMethod(null);
+                    setDignifiFlow('idle');
+                    setWebhooks([]);
+                }
+            };
+
+            return (
+                <div class="min-h-screen bg-gray-100 p-6">
+                    <div class="max-w-7xl mx-auto">
+                        {/* Header */}
+                        <div class="mb-6">
+                            <h1 class="text-3xl font-bold text-gray-900">Payment Processing</h1>
+                            <p class="text-gray-600 mt-2">Complete your payment with DigniFi BNPL or other payment methods</p>
+                        </div>
+
+                        <div class="grid grid-cols-3 gap-6">
+                            {/* Left: Invoice Summary */}
+                            <div class="col-span-1">
+                                <div class="bg-white rounded-lg shadow p-6">
+                                    <h2 class="text-lg font-bold text-gray-900 mb-4">Invoice Summary & Payment</h2>
+                                    
+                                    {/* Invoice Details */}
+                                    <div class="border-b border-gray-200 pb-4 mb-4">
+                                        <div class="text-sm text-gray-600 mb-4">
+                                            Invoice <span class="font-mono text-blue-600">{invoiceData.invoiceNumber}</span>
+                                            <a href="#" class="text-blue-600 hover:text-blue-800 ml-2 text-xs">View Details</a>
+                                        </div>
+
+                                        <div class="space-y-2 text-sm">
+                                            <div class="flex justify-between">
+                                                <span class="text-gray-600">Subtotal</span>
+                                                <span class="font-semibold">${invoiceData.subtotal.toFixed(2)}</span>
+                                            </div>
+                                            <div class="flex justify-between">
+                                                <span class="text-gray-600">Surcharge</span>
+                                                <span class="font-semibold">${invoiceData.surcharge.toFixed(2)}</span>
+                                            </div>
+                                            <div class="flex justify-between">
+                                                <span class="text-gray-600">Estimated Taxes</span>
+                                                <span class="font-semibold">${invoiceData.taxes.toFixed(2)}</span>
+                                            </div>
+                                            <div class="flex justify-between font-bold text-base pt-2 border-t border-gray-200">
+                                                <span>Total:</span>
+                                                <span>${invoiceData.total.toFixed(2)}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Payment Status */}
+                                    <div class="grid grid-cols-2 gap-4 mb-4">
+                                        <div class="p-4 border border-gray-200 rounded-lg">
+                                            <div class="text-xs text-gray-600 mb-1">Total Paid</div>
+                                            <div class="text-2xl font-bold text-green-600">$0.00</div>
+                                            <div class="text-xs text-green-700 mt-1">✓</div>
+                                        </div>
+                                        <div class="p-4 border border-blue-300 bg-blue-50 rounded-lg">
+                                            <div class="text-xs text-gray-600 mb-1">Amount to Pay</div>
+                                            <div class="text-2xl font-bold text-blue-600">${invoiceData.total.toFixed(2)}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Middle & Right: Payment Methods and Flow */}
+                            <div class="col-span-2 space-y-6">
+                                {/* Payment Method Selection */}
+                                <div class="bg-white rounded-lg shadow p-6">
+                                    <h2 class="text-lg font-bold text-gray-900 mb-4">Select Payment Method</h2>
+
+                                    {/* Payment Method Buttons */}
+                                    <div class="grid grid-cols-3 gap-3 mb-6">
+                                        <button
+                                            onClick={() => handleSelectPaymentMethod('card')}
+                                            class={`payment-method-btn p-3 border-2 border-gray-300 rounded-lg font-semibold text-sm ${selectedPaymentMethod === 'card' ? 'active' : 'bg-white text-gray-900'}`}
+                                        >
+                                            💳 Enter Card
+                                        </button>
+                                        <button
+                                            onClick={() => handleSelectPaymentMethod('terminal')}
+                                            class={`payment-method-btn p-3 border-2 border-gray-300 rounded-lg font-semibold text-sm ${selectedPaymentMethod === 'terminal' ? 'active' : 'bg-white text-gray-900'}`}
+                                        >
+                                            🖥️ Use Terminal
+                                        </button>
+                                        <button
+                                            onClick={() => handleSelectPaymentMethod('bank')}
+                                            class={`payment-method-btn p-3 border-2 border-gray-300 rounded-lg font-semibold text-sm ${selectedPaymentMethod === 'bank' ? 'active' : 'bg-white text-gray-900'}`}
+                                        >
+                                            🏦 Bank Account
+                                        </button>
+                                        <button
+                                            onClick={() => handleSelectPaymentMethod('cash')}
+                                            class={`payment-method-btn p-3 border-2 border-gray-300 rounded-lg font-semibold text-sm ${selectedPaymentMethod === 'cash' ? 'active' : 'bg-white text-gray-900'}`}
+                                        >
+                                            💵 Cash
+                                        </button>
+                                        <button
+                                            onClick={() => handleSelectPaymentMethod('invite')}
+                                            class={`payment-method-btn p-3 border-2 border-gray-300 rounded-lg font-semibold text-sm ${selectedPaymentMethod === 'invite' ? 'active' : 'bg-white text-gray-900'}`}
+                                        >
+                                            📧 Invite to Pay
+                                        </button>
+                                        <button
+                                            onClick={() => handleSelectPaymentMethod('dignifi')}
+                                            class={`payment-method-btn p-3 border-2 border-gray-300 rounded-lg font-semibold text-sm ${selectedPaymentMethod === 'dignifi' ? 'active' : 'bg-white text-gray-900'}`}
+                                        >
+                                            ⚡ DigniFi BNPL
+                                        </button>
+                                    </div>
+
+                                    {/* DigniFi BNPL Flow */}
+                                    {selectedPaymentMethod === 'dignifi' && (
+                                        <div class="border-t border-gray-200 pt-6">
+                                            {dignifiFlow === 'idle' && (
+                                                <div class="text-center py-8">
+                                                    <p class="text-gray-600">Initializing DigniFi BNPL...</p>
+                                                </div>
+                                            )}
+
+                                            {dignifiFlow === 'decision' && (
+                                                <div class="bg-blue-50 p-6 rounded-lg border border-blue-200">
+                                                    <div class="flex items-center justify-between mb-4">
+                                                        <h3 class="font-bold text-gray-900">⚡ Getting Instant Decision...</h3>
+                                                        <div class="animate-spin">
+                                                            <svg class="w-5 h-5 text-blue-600" fill="none" viewBox="0 0 24 24">
+                                                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                                            </svg>
+                                                        </div>
+                                                    </div>
+                                                    <p class="text-sm text-gray-700">Running real-time credit decision for ${invoiceData.total.toFixed(2)}...</p>
+                                                </div>
+                                            )}
+
+                                            {dignifiFlow === 'checkout' && decisionData && decisionData.approved && (
+                                                <div class="space-y-4">
+                                                    <div class="bg-green-50 p-6 rounded-lg border border-green-200">
+                                                        <div class="flex items-center mb-4">
+                                                            <span class="text-2xl mr-2">✓</span>
+                                                            <h3 class="font-bold text-green-900">Approved!</h3>
+                                                        </div>
+                                                        <div class="grid grid-cols-2 gap-4 mb-4">
+                                                            <div>
+                                                                <div class="text-xs text-green-700 mb-1">Approval Amount</div>
+                                                                <div class="text-2xl font-bold text-green-900">${decisionData.approval_amount.toFixed(2)}</div>
+                                                            </div>
+                                                            <div>
+                                                                <div class="text-xs text-green-700 mb-1">Monthly Payment</div>
+                                                                <div class="text-2xl font-bold text-green-900">${decisionData.monthly_payment}</div>
+                                                            </div>
+                                                            <div>
+                                                                <div class="text-xs text-green-700 mb-1">Term</div>
+                                                                <div class="text-2xl font-bold text-green-900">{decisionData.term_months} mo</div>
+                                                            </div>
+                                                            <div>
+                                                                <div class="text-xs text-green-700 mb-1">APR</div>
+                                                                <div class="text-2xl font-bold text-green-900">{decisionData.apr}</div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="bg-yellow-50 p-4 rounded-lg border border-yellow-200">
+                                                        <p class="text-sm text-yellow-900">⏳ Simulating customer completing checkout...</p>
+                                                        <div class="mt-2 w-full bg-yellow-200 rounded-full h-2">
+                                                            <div class="bg-yellow-600 h-2 rounded-full animate-pulse" style={{width: '60%'}}></div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            )}
+
+                                            {dignifiFlow === 'approved' && (
+                                                <div class="space-y-4">
+                                                    <div class="bg-green-50 p-6 rounded-lg border border-green-200">
+                                                        <div class="flex items-center mb-4">
+                                                            <span class="text-3xl mr-2">✓</span>
+                                                            <div>
+                                                                <h3 class="font-bold text-green-900 text-lg">Checkout Complete</h3>
+                                                                <p class="text-sm text-green-700">Loan is funded and ready</p>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="bg-white p-4 rounded border border-green-200 mb-4">
+                                                            <div class="grid grid-cols-2 gap-4 text-sm">
+                                                                <div>
+                                                                    <span class="text-gray-600">Loan ID</span>
+                                                                    <div class="font-mono text-xs text-blue-600">loan_20250115...</div>
+                                                                </div>
+                                                                <div>
+                                                                    <span class="text-gray-600">First Payment Due</span>
+                                                                    <div class="font-semibold">Feb 15, 2025</div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                        <button
+                                                            onClick={handlePayNow}
+                                                            class="w-full bg-green-600 text-white font-bold py-3 rounded-lg hover:bg-green-700 transition"
+                                                        >
+                                                            Complete Payment
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            )}
+
+                                            {dignifiFlow === 'declined' && (
+                                                <div class="bg-red-50 p-6 rounded-lg border border-red-200">
+                                                    <div class="flex items-center mb-4">
+                                                        <span class="text-2xl mr-2">✗</span>
+                                                        <h3 class="font-bold text-red-900">Application Declined</h3>
+                                                    </div>
+                                                    <p class="text-sm text-red-800 mb-4">Unfortunately, we cannot approve financing at this time. Please try another payment method.</p>
+                                                    <button
+                                                        onClick={() => {
+                                                            setSelectedPaymentMethod(null);
+                                                            setDignifiFlow('idle');
+                                                            setWebhooks([]);
+                                                        }}
+                                                        class="w-full bg-gray-600 text-white font-bold py-2 rounded-lg hover:bg-gray-700 transition"
+                                                    >
+                                                        Try Different Payment Method
+                                                    </button>
+                                                </div>
+                                            )}
+                                        </div>
+                                    )}
+
+                                    {selectedPaymentMethod && selectedPaymentMethod !== 'dignifi' && (
+                                        <div class="bg-blue-50 p-4 rounded-lg border border-blue-200">
+                                            <p class="text-sm text-blue-900">Selected: <span class="font-bold">{
+                                                selectedPaymentMethod === 'card' ? 'Enter Card' :
+                                                selectedPaymentMethod === 'terminal' ? 'Use Terminal' :
+                                                selectedPaymentMethod === 'bank' ? 'Bank Account' :
+                                                selectedPaymentMethod === 'cash' ? 'Cash' :
+                                                'Invite to Pay'
+                                            }</span></p>
+                                        </div>
+                                    )}
+                                </div>
+
+                                {/* Customer Information */}
+                                {selectedPaymentMethod !== 'dignifi' && (
+                                    <div class="bg-white rounded-lg shadow p-6">
+                                        <h3 class="text-lg font-bold text-gray-900 mb-4">Customer Information</h3>
+                                        <div class="grid grid-cols-2 gap-4">
+                                            <input type="text" placeholder="First Name" class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                                            <input type="text" placeholder="Last Name" class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                                            <input type="text" placeholder="Address" class="col-span-2 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                                            <input type="text" placeholder="City" class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                                            <select class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                                <option>State</option>
+                                                <option>CA</option>
+                                                <option>TX</option>
+                                                <option>FL</option>
+                                            </select>
+                                            <input type="text" placeholder="ZIP Code" class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                                            <button class="col-span-2 bg-gray-600 text-white font-bold py-3 rounded-lg hover:bg-gray-700 transition mt-2">
+                                                Pay Now
+                                            </button>
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+
+                        {/* Real-Time Webhook Events */}
+                        {selectedPaymentMethod === 'dignifi' && webhooks.length > 0 && (
+                            <div class="mt-6 bg-white rounded-lg shadow p-6">
+                                <h2 class="text-lg font-bold text-gray-900 mb-4 flex items-center">
+                                    <span class="text-orange-500 mr-2">⚡</span>
+                                    Real-Time API Events
+                                </h2>
+                                <p class="text-sm text-gray-600 mb-4">Watch real-time webhook events fire as the transaction progresses</p>
+
+                                <div class="bg-gray-50 rounded-lg p-4 max-h-80 overflow-y-auto space-y-3">
+                                    {webhooks.map((webhook) => (
+                                        <div key={webhook.id} class="webhook-event bg-white p-4 rounded border-l-4 border-green-500">
+                                            <div class="flex items-center justify-between mb-2">
+                                                <div class="flex items-center gap-2">
+                                                    <span class="text-green-600">✓</span>
+                                                    <span class="font-mono font-bold text-sm text-gray-900">{webhook.event}</span>
+                                                </div>
+                                                <span class="text-xs text-gray-500">{webhook.timestamp}</span>
+                                            </div>
+                                            <details class="cursor-pointer">
+                                                <summary class="text-xs text-gray-600 hover:text-gray-900 font-semibold">View JSON Payload</summary>
+                                                <pre class="mt-2 p-2 bg-gray-900 text-gray-100 rounded text-xs overflow-x-auto">{JSON.stringify(webhook.data, null, 2)}</pre>
+                                            </details>
+                                        </div>
+                                    ))}
+                                    <div ref={webhookEndRef} />
+                                </div>
+
+                                <div class="mt-4 p-4 bg-blue-50 rounded border border-blue-200">
+                                    <p class="text-xs text-blue-900"><strong>API Documentation:</strong> These are the actual webhook events your system would receive. See <a href="#" class="underline">DigniFi API docs</a> for full integration guide.</p>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                </div>
+            );
+        }
+
+        ReactDOM.render(<PaymentProcessorDemo />, document.getElementById('app'));
+    </script>
+</body>
+</html>
