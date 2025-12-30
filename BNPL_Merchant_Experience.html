@@ -755,19 +755,19 @@
 
                         <div class="invoice-detail">
                             <span>Subtotal</span>
-                            <span>$100.00</span>
+                            <span id="invoiceSubtotal">$100.00</span>
                         </div>
                         <div class="invoice-detail">
                             <span>Surcharge</span>
-                            <span>$0.00</span>
+                            <span id="invoiceSurcharge">$0.00</span>
                         </div>
                         <div class="invoice-detail">
                             <span>Estimated Taxes</span>
-                            <span>$10.00</span>
+                            <span id="invoiceTaxes">$10.00</span>
                         </div>
                         <div class="invoice-detail total">
                             <span>Total:</span>
-                            <span>$110.00</span>
+                            <span id="invoiceTotal">$110.00</span>
                         </div>
                     </div>
 
@@ -775,12 +775,12 @@
                     <div class="status-grid">
                         <div class="status-box">
                             <div class="status-label">Total Paid</div>
-                            <div class="status-amount">$0.00</div>
+                            <div class="status-amount" id="totalPaidAmount">$0.00</div>
                             <div class="status-check">✓</div>
                         </div>
                         <div class="status-box active">
                             <div class="status-label">Amount to Pay</div>
-                            <div class="status-amount">$110.00</div>
+                            <div class="status-amount" id="amountToPayAmount">$110.00</div>
                         </div>
                     </div>
                 </div>
@@ -948,6 +948,42 @@
         </div>
     </div>
 
+    <div id="paymentSuccessModal" class="modal">
+        <div class="modal-content" style="max-width: 500px; text-align: center;">
+            <div style="font-size: 64px; margin-bottom: 16px;">✓</div>
+            
+            <h2 style="margin: 0 0 12px 0; color: #15803d;">Payment Successful!</h2>
+            
+            <p style="font-size: 16px; color: #6b7280; margin-bottom: 24px;">
+                BNPL loan has been successfully applied to the transaction.
+            </p>
+
+            <div style="background: #f0fdf4; border: 2px solid #22c55e; border-radius: 8px; padding: 20px; margin-bottom: 24px;">
+                <div style="font-size: 14px; color: #6b7280; margin-bottom: 8px;">Loan Amount Financed:</div>
+                <div style="font-size: 32px; font-weight: 700; color: #15803d;">$<span id="successLoanAmount">0.00</span></div>
+                <div style="font-size: 12px; color: #6b7280; margin-top: 12px; padding-top: 12px; border-top: 1px solid #c6f6d5;">
+                    Loan is now active and customer can begin making payments
+                </div>
+            </div>
+
+            <div style="background: #f9fafb; border-radius: 8px; padding: 16px; margin-bottom: 24px;">
+                <div style="font-size: 12px; color: #6b7280; margin-bottom: 12px; text-align: left;">
+                    <strong>What happens next:</strong>
+                </div>
+                <div style="text-align: left; font-size: 13px; color: #374151; line-height: 1.8;">
+                    <div>✓ Customer receives loan confirmation email</div>
+                    <div>✓ First payment due in 30 days</div>
+                    <div>✓ Monthly payments begin on schedule</div>
+                    <div>✓ Customer can manage account online</div>
+                </div>
+            </div>
+
+            <button class="btn btn-primary" onclick="closePaymentSuccessModal()" style="width: 100%;">
+                Done
+            </button>
+        </div>
+    </div>
+
     <script>
         const invoiceData = {
             total: 110.00
@@ -1100,17 +1136,37 @@
         }
 
         function updateInvoiceDisplay() {
-            const amountToPayElement = document.querySelector('.status-box.active .status-amount');
-            const totalPaidElement = document.querySelector('.status-box:first-child .status-amount');
+            // Calculate amounts
+            const baseSubtotal = invoiceData.total / 1.1; // $100 (remove tax to get base)
+            const combinedSubtotal = baseSubtotal + upsellAmount; // Base + BNPL services
+            const tax = combinedSubtotal * 0.1; // 10% of combined
+            const finalTotal = combinedSubtotal + tax;
+
+            // Update invoice summary section (left side)
+            const subtotalEl = document.getElementById('invoiceSubtotal');
+            const taxesEl = document.getElementById('invoiceTaxes');
+            const totalEl = document.getElementById('invoiceTotal');
             
-            if (amountToPayElement) {
-                const finalAmount = invoiceData.total + upsellAmount;
-                amountToPayElement.textContent = `$${finalAmount.toFixed(2)}`;
+            if (subtotalEl) {
+                subtotalEl.textContent = `$${combinedSubtotal.toFixed(2)}`;
+            }
+            if (taxesEl) {
+                taxesEl.textContent = `$${tax.toFixed(2)}`;
+            }
+            if (totalEl) {
+                totalEl.textContent = `$${finalTotal.toFixed(2)}`;
+            }
+
+            // Update status boxes (left side)
+            const amountToPayEl = document.getElementById('amountToPayAmount');
+            const totalPaidEl = document.getElementById('totalPaidAmount');
+            
+            if (amountToPayEl) {
+                amountToPayEl.textContent = `$${finalTotal.toFixed(2)}`;
             }
             
-            if (totalPaidElement && transactionComplete) {
-                const finalAmount = invoiceData.total + upsellAmount;
-                totalPaidElement.textContent = `$${finalAmount.toFixed(2)}`;
+            if (totalPaidEl && transactionComplete) {
+                totalPaidEl.textContent = `$${finalTotal.toFixed(2)}`;
             }
         }
 
@@ -1170,7 +1226,9 @@
         function sendInviteWithFinalAmount() {
             const email = window.customerEmail || '';
             const phone = window.customerPhone || '';
-            const finalAmount = invoiceData.total + upsellAmount;
+            const baseSubtotal = invoiceData.total / 1.1; // $100 (remove tax)
+            const combinedSubtotal = baseSubtotal + upsellAmount; // $100 + services
+            const finalAmount = combinedSubtotal * 1.1; // Apply 10% tax to combined
 
             // Hide the service selection area
             document.getElementById('dignifi-flow').style.display = 'block';
@@ -1205,6 +1263,11 @@
                 journeySteps.forEach(step => step.completed = false);
                 journeySteps[0].completed = true;
                 
+                // Show journey tracker, hide initialization screen
+                document.getElementById('dignifi-flow').style.display = 'none';
+                document.getElementById('journey-tracker').style.display = 'block';
+                
+                dignifiFlow = 'customer_journey';
                 renderJourneyTracker();
 
                 // Continue with customer journey webhooks
@@ -1433,11 +1496,11 @@
                     <p style="font-size: 13px; color: #6b7280; margin-bottom: 16px;">Add all services you want to include in the financing. The customer will sign for the FINAL amount.</p>
 
                     <div style="background: #f9fafb; border-radius: 8px; padding: 12px; margin-bottom: 16px;">
-                        <div style="font-size: 12px; color: #6b7280; margin-bottom: 8px; font-weight: 600;">Transaction Breakdown:</div>
+                        <div style="font-size: 12px; color: #6b7280; margin-bottom: 8px; font-weight: 600;">Transaction Breakdown (Customer will sign for this):</div>
                         <div id="service-list" style="font-size: 12px; color: #111827;">
                             <div style="display: flex; justify-content: space-between; padding: 4px 0;">
                                 <span>Base Transaction</span>
-                                <span>$${invoiceData.total.toFixed(2)}</span>
+                                <span>$${(invoiceData.total / 1.1).toFixed(2)}</span>
                             </div>
                         </div>
                         ${upsellAmount > 0 ? `
@@ -1451,14 +1514,22 @@
                                 `).join('')}
                             </div>
                             <div style="display: flex; justify-content: space-between; padding: 4px 0; font-weight: 600; color: #15803d; margin-top: 8px; padding-top: 8px; border-top: 1px solid #e5e7eb;">
-                                <span>Services Total</span>
+                                <span>Added Services Total</span>
                                 <span>$${upsellAmount.toFixed(2)}</span>
                             </div>
                         </div>
                         ` : ''}
-                        <div style="display: flex; justify-content: space-between; padding: 8px 0; border-top: 2px solid #111827; margin-top: 8px; font-weight: 700; color: #111827;">
-                            <span>FINAL AMOUNT (Customer will sign for this)</span>
-                            <span>$${(invoiceData.total + upsellAmount).toFixed(2)}</span>
+                        <div style="display: flex; justify-content: space-between; padding: 4px 0; border-top: 1px solid #e5e7eb; margin-top: 8px; font-weight: 600;">
+                            <span>Subtotal</span>
+                            <span>$${((invoiceData.total / 1.1) + upsellAmount).toFixed(2)}</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; padding: 4px 0; color: #6b7280;">
+                            <span>Taxes (10%)</span>
+                            <span>$${(((invoiceData.total / 1.1) + upsellAmount) * 0.1).toFixed(2)}</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; padding: 8px 0; border-top: 2px solid #111827; margin-top: 8px; font-weight: 700; color: #15803d; font-size: 13px;">
+                            <span>FINAL AMOUNT</span>
+                            <span>$${(((invoiceData.total / 1.1) + upsellAmount) * 1.1).toFixed(2)}</span>
                         </div>
                     </div>
 
@@ -1487,7 +1558,7 @@
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
                         <button class="btn btn-secondary" onclick="resetFlow()">Start Over</button>
                         <button class="btn btn-primary" onclick="sendInviteWithFinalAmount()">
-                            📧 Step 3: Send Checkout Invite (Final: $${(invoiceData.total + upsellAmount).toFixed(2)})
+                            📧 Step 3: Send Checkout Invite (Final: $${(((invoiceData.total / 1.1) + upsellAmount) * 1.1).toFixed(2)})
                         </button>
                     </div>
                 `;
@@ -1514,7 +1585,9 @@
                     </div>
                 `;
             } else if (dignifiFlow === 'approved') {
-                const finalAmount = invoiceData.total + upsellAmount;
+                const baseSubtotal = invoiceData.total / 1.1; // $100 (remove tax)
+                const combinedSubtotal = baseSubtotal + upsellAmount; // $100 + services
+                const finalAmount = combinedSubtotal * 1.1; // Apply 10% tax to combined
                 html = `
                     <div class="approval-card">
                         <div class="approval-header">
@@ -1583,7 +1656,9 @@
                     </div>
                 `;
             } else if (dignifiFlow === 'customer_journey') {
-                const finalAmount = invoiceData.total + upsellAmount;
+                const baseSubtotal = invoiceData.total / 1.1; // $100 (remove tax)
+                const combinedSubtotal = baseSubtotal + upsellAmount; // $100 + services
+                const finalAmount = combinedSubtotal * 1.1; // Apply 10% tax to combined
                 html = `
                     <div class="approval-card">
                         <div class="approval-header">
@@ -1773,7 +1848,9 @@
         function applyPayment() {
             if (transactionComplete) return;
 
-            const totalAmount = invoiceData.total + upsellAmount;
+            const baseSubtotal = invoiceData.total / 1.1;
+            const combinedSubtotal = baseSubtotal + upsellAmount;
+            const totalAmount = combinedSubtotal * 1.1;
             addWebhook('checkout.payment_applied', {
                 transaction_id: '#510665_TOY-I_2022-05-13',
                 loan_amount: totalAmount,
@@ -1785,11 +1862,20 @@
             transactionComplete = true;
             updateInvoiceDisplay();
             renderDignifiFlow();
-            alert(`Payment of $${totalAmount.toFixed(2)} has been successfully applied! Loan is now active.`);
+            
+            // Show payment success modal
+            document.getElementById('successLoanAmount').textContent = totalAmount.toFixed(2);
+            document.getElementById('paymentSuccessModal').classList.add('show');
+        }
+
+        function closePaymentSuccessModal() {
+            document.getElementById('paymentSuccessModal').classList.remove('show');
         }
 
         function voidTransaction() {
-            const totalAmount = invoiceData.total + upsellAmount;
+            const baseSubtotal = invoiceData.total / 1.1;
+            const combinedSubtotal = baseSubtotal + upsellAmount;
+            const totalAmount = combinedSubtotal * 1.1;
             document.getElementById('voidAmount').textContent = totalAmount.toFixed(2);
             document.getElementById('voidConfirmModal').classList.add('show');
         }
@@ -1799,7 +1885,9 @@
         }
 
         function confirmVoidTransaction() {
-            const totalAmount = invoiceData.total + upsellAmount;
+            const baseSubtotal = invoiceData.total / 1.1;
+            const combinedSubtotal = baseSubtotal + upsellAmount;
+            const totalAmount = combinedSubtotal * 1.1;
             addWebhook('checkout.voided', {
                 transaction_id: '#510665_TOY-I_2022-05-13',
                 loan_amount: totalAmount,
@@ -1964,12 +2052,16 @@
         window.onclick = function(event) {
             const invoiceModal = document.getElementById('invoiceModal');
             const voidConfirmModal = document.getElementById('voidConfirmModal');
+            const paymentSuccessModal = document.getElementById('paymentSuccessModal');
             
             if (event.target == invoiceModal) {
                 invoiceModal.classList.remove('show');
             }
             if (event.target == voidConfirmModal) {
                 voidConfirmModal.classList.remove('show');
+            }
+            if (event.target == paymentSuccessModal) {
+                paymentSuccessModal.classList.remove('show');
             }
         }
     </script>
