@@ -1468,24 +1468,18 @@
                 html = `
                     <div style="background: #f0fdf4; border: 1px solid #22c55e; border-radius: 8px; padding: 16px; margin-bottom: 16px;">
                         <h3 style="color: #166534; margin-top: 0;">✓ Customer Pre-Qualified!</h3>
-                        <p style="color: #15803d; margin: 8px 0 0 0; font-size: 13px;">Approved Amount: <strong>$${approvedAmount.toFixed(2)}</strong></p>
+                        <p style="color: #15803d; margin: 8px 0 0 0; font-size: 13px;">Pre-Approved Amount: <strong>$${approvedAmount.toFixed(2)}</strong></p>
                     </div>
 
                     <div class="funds-balance" style="margin-bottom: 16px;">
                         <div class="funds-row">
-                            <span class="funds-label">Total Approved Amount</span>
+                            <span class="funds-label">Total Pre-Approved Amount</span>
                             <span class="funds-amount">$${approvedAmount.toFixed(2)}</span>
                         </div>
                         <div class="funds-row">
                             <span class="funds-label">This Transaction (Base)</span>
                             <span class="funds-amount">$${invoiceData.total.toFixed(2)}</span>
                         </div>
-                        ${upsellAmount > 0 ? `
-                        <div class="funds-row">
-                            <span class="funds-label">Services Added</span>
-                            <span class="funds-amount">$${upsellAmount.toFixed(2)}</span>
-                        </div>
-                        ` : ''}
                         <div class="funds-row" style="background-color: rgba(34, 197, 94, 0.1); margin: 8px -16px -16px -16px; padding: 8px 16px 16px 16px; border-radius: 0 0 8px 8px;">
                             <span class="funds-label" style="color: #15803d; font-weight: 600;">Available for Additional Services</span>
                             <span class="funds-amount" style="color: #15803d; font-size: 18px;">$${(approvedAmount - invoiceData.total - upsellAmount).toFixed(2)}</span>
