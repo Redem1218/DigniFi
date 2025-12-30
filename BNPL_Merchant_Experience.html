@@ -934,16 +934,13 @@
         let dignifiFlow = 'idle';
         let webhooks = [];
         let decisionData = null;
-        let approvedAmount = 2100.00;
+        let approvedAmount = 3600.00;
         let upsellAmount = 0;
         let transactionComplete = false;
 
         const journeySteps = [
             { id: 'invite_sent', label: 'Invite Sent', icon: '📧', completed: false },
-            { id: 'link_opened', label: 'Link Opened', icon: '👁️', completed: false },
-            { id: 'viewing_offer', label: 'Viewing Offer', icon: '👀', completed: false },
-            { id: 'prequalification', label: 'Prequalification', icon: '⚡', completed: false },
-            { id: 'approved_declined', label: 'Decision Made', icon: '✅', completed: false },
+            { id: 'link_opened', label: 'Opening Invite', icon: '👁️', completed: false },
             { id: 'reviewing_agreement', label: 'Reviewing Agreement', icon: '📄', completed: false },
             { id: 'signed', label: 'Agreement Signed', icon: '✍️', completed: false },
             { id: 'funded', label: 'Loan Funded', icon: '💰', completed: false }
@@ -972,155 +969,222 @@
             document.getElementById('customer-form-container').style.display = 'none';
             document.getElementById('dignifi-flow').style.display = 'block';
             document.getElementById('journey-tracker').style.display = 'none';
-            document.getElementById('webhook-section').style.display = 'block';
+            document.getElementById('webhook-section').style.display = 'none';
             
             webhooks = [];
-            dignifiFlow = 'invite_form';
+            dignifiFlow = 'prequalification';
             decisionData = null;
             transactionComplete = false;
 
             renderDignifiFlow();
         }
 
-        function handleSendInvite() {
+        let selectedServices = [];
+        let simulateDecline = false;
+        
+        // Map of service name to button ID for tracking
+        const serviceButtonMap = {
+            'Oil Change & Filter': 'btn-oil',
+            'Tire Rotation & Balance': 'btn-tire',
+            'Brake Inspection': 'btn-brake',
+            'Air Filter Replacement': 'btn-air',
+            'Wheel Alignment (4-wheel)': 'btn-alignment',
+            'Battery Replacement': 'btn-battery',
+            'Suspension Repair': 'btn-suspension',
+            'Transmission Service': 'btn-transmission',
+            'Coolant Flush & Refill': 'btn-coolant',
+            'Brake Pad Replacement (Front)': 'btn-brake-pads',
+            'Engine Diagnostics': 'btn-engine',
+            'Paint Protection': 'btn-paint'
+        };
+
+        const serviceList = [
+            { name: 'Oil Change & Filter', price: 85, id: 'btn-oil' },
+            { name: 'Tire Rotation & Balance', price: 120, id: 'btn-tire' },
+            { name: 'Brake Inspection', price: 150, id: 'btn-brake' },
+            { name: 'Air Filter Replacement', price: 65, id: 'btn-air' },
+            { name: 'Wheel Alignment (4-wheel)', price: 280, id: 'btn-alignment' },
+            { name: 'Battery Replacement', price: 180, id: 'btn-battery' },
+            { name: 'Suspension Repair', price: 450, id: 'btn-suspension' },
+            { name: 'Transmission Service', price: 650, id: 'btn-transmission' },
+            { name: 'Coolant Flush & Refill', price: 175, id: 'btn-coolant' },
+            { name: 'Brake Pad Replacement (Front)', price: 420, id: 'btn-brake-pads' },
+            { name: 'Engine Diagnostics', price: 280, id: 'btn-engine' },
+            { name: 'Paint Protection', price: 350, id: 'btn-paint' }
+        ];
+
+        function getPrequalification() {
             const email = document.getElementById('customer-email')?.value || '';
             const phone = document.getElementById('customer-phone')?.value || '';
             
-            sendCheckoutInvite(email, phone);
-        }
-
-        function sendCheckoutInvite(email, phone) {
             if (!email && !phone) {
                 alert('Please enter either email or phone number');
                 return;
             }
 
-            const contactMethod = email ? `email (${email})` : `phone (${phone})`;
-            
-            document.getElementById('journey-tracker').style.display = 'block';
+            // Store contact info for later
+            window.customerEmail = email;
+            window.customerPhone = phone;
+
+            if (simulateDecline) {
+                // Go directly to decline flow
+                dignifiFlow = 'prequalification_initializing_decline';
+            } else {
+                // Normal approval flow - show initialization
+                dignifiFlow = 'prequalification_initializing';
+            }
+
+            // Hide form, show initialization screen
+            document.getElementById('dignifi-flow').style.display = 'block';
+            document.getElementById('webhook-section').style.display = 'block';
             
             webhooks = [];
-            dignifiFlow = 'invite_sent';
+            renderDignifiFlow();
 
-            journeySteps.forEach(step => step.completed = false);
-
+            // Trigger Decision API webhook
             setTimeout(() => {
-                addWebhook('merchant.activated', {
-                    merchant_id: 'merchant_cdkglobal_demo',
-                    environment: 'production',
-                    timestamp: new Date().toISOString()
-                });
-            }, 300);
+                if (simulateDecline) {
+                    addWebhook('decision.received', {
+                        decision_id: `dec_${Date.now()}`,
+                        approved: false,
+                        decline_reason: 'credit_score_below_threshold',
+                        response_time_ms: 247,
+                        note: 'Customer declined - will show adverse action notice'
+                    });
+                } else {
+                    addWebhook('decision.received', {
+                        decision_id: `dec_${Date.now()}`,
+                        approved: true,
+                        approval_amount: approvedAmount,
+                        available_balance: approvedAmount - invoiceData.total,
+                        response_time_ms: 247,
+                        note: 'Customer approved with available funds for upselling'
+                    });
+                }
+            }, 2500);
 
+            // Transition to next screen after 7 seconds
+            setTimeout(() => {
+                if (simulateDecline) {
+                    dignifiFlow = 'decline_prequalification';
+                } else {
+                    dignifiFlow = 'add_services';
+                    upsellAmount = 0;
+                    selectedServices = [];
+                }
+                renderDignifiFlow();
+            }, 7000);
+        }
+
+        function addService(serviceName, servicePrice) {
+            // Check if service is already added to prevent duplicates
+            if (!selectedServices.find(s => s.name === serviceName)) {
+                selectedServices.push({ name: serviceName, price: servicePrice });
+                upsellAmount += servicePrice;
+                renderDignifiFlow();
+            }
+        }
+
+        function sendInviteWithDecline() {
+            const email = window.customerEmail || '';
+            const phone = window.customerPhone || '';
+
+            // Hide the decline form, show initialization
+            document.getElementById('dignifi-flow').style.display = 'block';
+            document.getElementById('journey-tracker').style.display = 'none';
+            document.getElementById('webhook-section').style.display = 'block';
+            
+            webhooks = [];
+            dignifiFlow = 'decline_initializing';
+            transactionComplete = false;
+
+            renderDignifiFlow();
+
+            // Trigger checkout.initiated for decline scenario
             setTimeout(() => {
                 addWebhook('checkout.initiated', {
                     checkout_id: `checkout_${Date.now()}`,
                     transaction_amount: invoiceData.total,
-                    approved_amount: approvedAmount,
                     merchant_id: 'merchant_cdkglobal_demo',
-                    customer_contact: contactMethod,
+                    customer_contact: email ? `email (${email})` : `phone (${phone})`,
                     invite_type: email ? 'email' : 'sms',
-                    expires_in_seconds: 7200
+                    expires_in_seconds: 7200,
+                    note: 'Checkout initiated - decline scenario for demo'
                 });
+            }, 1000);
 
-                journeySteps[0].completed = true;
-                renderJourneyTracker();
-            }, 600);
-
+            // Transition to decline journey
             setTimeout(() => {
-                journeySteps[1].completed = true;
-                renderJourneyTracker();
-            }, 4000);
-
-            setTimeout(() => {
-                journeySteps[2].completed = true;
-                renderJourneyTracker();
-            }, 6000);
-
-            setTimeout(() => {
-                const isApproved = Math.random() > 0.15;
+                document.getElementById('dignifi-flow').style.display = 'none';
+                document.getElementById('journey-tracker').style.display = 'block';
                 
-                decisionData = {
-                    approved: isApproved,
-                    approval_amount: approvedAmount,
-                    transaction_amount: invoiceData.total,
-                    available_balance: approvedAmount - invoiceData.total,
-                    apr: '8.99%',
-                    term_months: 24,
-                    monthly_payment: (invoiceData.total / 24).toFixed(2),
-                    response_time_ms: 247
-                };
-
-                journeySteps[3].completed = true;
+                dignifiFlow = 'decline_journey';
+                
+                journeySteps.forEach(step => step.completed = false);
+                
                 renderJourneyTracker();
 
-                addWebhook('decision.received', {
-                    decision_id: `dec_${Date.now()}`,
-                    approved: isApproved,
-                    approval_amount: decisionData.approval_amount,
-                    available_balance: decisionData.available_balance,
-                    response_time_ms: 247
+                continueDeclineJourney(email, phone);
+            }, 2000);
+        }
+
+        function sendInviteWithFinalAmount() {
+            const email = window.customerEmail || '';
+            const phone = window.customerPhone || '';
+            const finalAmount = invoiceData.total + upsellAmount;
+
+            // Hide the service selection area
+            document.getElementById('dignifi-flow').style.display = 'block';
+            document.getElementById('journey-tracker').style.display = 'none';
+            document.getElementById('webhook-section').style.display = 'block';
+            
+            webhooks = [];
+            dignifiFlow = 'invite_initializing';
+            transactionComplete = false;
+
+            // Show initialization screen with initial API calls
+            renderDignifiFlow();
+
+            // Trigger initial API calls (merchant-side)
+            setTimeout(() => {
+                addWebhook('merchant.activated', {
+                    merchant_id: 'merchant_cdkglobal_demo',
+                    environment: 'production',
+                    timestamp: new Date().toISOString(),
+                    note: 'Merchant initialized for checkout'
                 });
+            }, 500);
 
-                if (isApproved) {
-                    setTimeout(() => {
-                        journeySteps[4].completed = true;
-                        renderJourneyTracker();
+            // Trigger checkout.initiated with FINAL amount locked in
+            setTimeout(() => {
+                addWebhook('checkout.initiated', {
+                    checkout_id: `checkout_${Date.now()}`,
+                    transaction_amount: finalAmount,
+                    approved_amount: approvedAmount,
+                    services: selectedServices,
+                    merchant_id: 'merchant_cdkglobal_demo',
+                    customer_contact: email ? `email (${email})` : `phone (${phone})`,
+                    invite_type: email ? 'email' : 'sms',
+                    expires_in_seconds: 7200,
+                    note: 'Checkout initiated with final transaction amount locked'
+                });
+            }, 1200);
 
-                        setTimeout(() => {
-                            journeySteps[5].completed = true;
-                            renderJourneyTracker();
+            // After initial API calls, transition to customer journey
+            setTimeout(() => {
+                // Reset journey steps - prequalification already happened in Step 1
+                journeySteps.forEach(step => step.completed = false);
+                journeySteps[0].completed = true;
+                
+                renderJourneyTracker();
 
-                            setTimeout(() => {
-                                addWebhook('merchant.signed', {
-                                    checkout_id: `checkout_${Date.now()}`,
-                                    merchant_id: 'merchant_cdkglobal_demo',
-                                    customer_signed_at: new Date().toISOString(),
-                                    agreement_version: '2.1'
-                                });
+                // Continue with customer journey webhooks
+                continueCustomerJourney(email, phone, finalAmount);
+            }, 2000);
+        }
 
-                                journeySteps[6].completed = true;
-                                renderJourneyTracker();
-
-                                setTimeout(() => {
-                                    addWebhook('checkout.approved', {
-                                        checkout_id: `checkout_${Date.now()}`,
-                                        decision_id: `dec_${Date.now()}`,
-                                        approval_amount: approvedAmount,
-                                        transaction_amount: invoiceData.total,
-                                        available_balance: decisionData.available_balance,
-                                        monthly_payment: decisionData.monthly_payment,
-                                        term_months: 24,
-                                        interest_rate: '8.99%'
-                                    });
-
-                                    setTimeout(() => {
-                                        addWebhook('checkout.completed', {
-                                            checkout_id: `checkout_${Date.now()}`,
-                                            transaction_id: '#510665_TOY-I_2022-05-13',
-                                            loan_id: `loan_${Date.now()}`,
-                                            status: 'completed',
-                                            funding_timestamp: new Date().toISOString()
-                                        });
-
-                                        journeySteps[7].completed = true;
-                                        renderJourneyTracker();
-                                        dignifiFlow = 'approved';
-                                        transactionComplete = false;
-                                        renderDignifiFlow();
-                                    }, 1000);
-                                }, 500);
-                            }, 2000);
-                        }, 1500);
-                    }, 1500);
-                } else {
-                    journeySteps[4].completed = true;
-                    journeySteps[4].label = 'Application Declined';
-                    renderJourneyTracker();
-                    dignifiFlow = 'declined';
-                    renderDignifiFlow();
-                }
-            }, 8000);
+        function resetFlow() {
+            reset();
         }
 
         function renderJourneyTracker() {
@@ -1129,15 +1193,27 @@
             let html = journeySteps.map((step, index) => {
                 const isActive = index < journeySteps.length && journeySteps[index].completed;
                 const isNext = index > 0 && journeySteps[index - 1].completed && !step.completed;
+                const isSkipped = step.label === 'Skipped' || step.label === 'Declined';
+                const isDeclined = step.label === 'Declined';
+                
+                let bgColor = isActive ? '#f0fdf4' : isNext ? '#eff6ff' : isSkipped ? '#f3f4f6' : '#f9fafb';
+                let borderColor = isActive ? '#22c55e' : isNext ? '#3b82f6' : isSkipped ? '#d1d5db' : '#d1d5db';
+                let textColor = isActive ? '#166534' : isNext ? '#1e40af' : isSkipped ? '#9ca3af' : '#9ca3af';
+                
+                if (isDeclined) {
+                    bgColor = '#fef2f2';
+                    borderColor = '#ef4444';
+                    textColor = '#991b1b';
+                }
                 
                 return `
-                    <div style="display: flex; align-items: center; gap: 12px; padding: 12px; background-color: ${isActive ? '#f0fdf4' : isNext ? '#eff6ff' : '#f9fafb'}; border-radius: 8px; border-left: 4px solid ${isActive ? '#22c55e' : isNext ? '#3b82f6' : '#d1d5db'};">
-                        <div style="font-size: 20px; opacity: ${isActive ? '1' : isNext ? '0.7' : '0.4'};transition: opacity 0.3s;">${isActive || isNext ? step.icon : '⏳'}</div>
+                    <div style="display: flex; align-items: center; gap: 12px; padding: 12px; background-color: ${bgColor}; border-radius: 8px; border-left: 4px solid ${borderColor};">
+                        <div style="font-size: 20px; opacity: ${isActive || isNext || isSkipped ? '1' : '0.4'};transition: opacity 0.3s;">${isActive || isNext ? step.icon : isSkipped ? '—' : '⏳'}</div>
                         <div style="flex: 1;">
-                            <div style="font-weight: 600; font-size: 14px; color: ${isActive ? '#166534' : isNext ? '#1e40af' : '#9ca3af'};">${step.label}</div>
-                            ${isActive ? '<div style="font-size: 12px; color: #15803d;">✓ Completed</div>' : isNext ? '<div style="font-size: 12px; color: #2563eb;">In progress...</div>' : ''}
+                            <div style="font-weight: 600; font-size: 14px; color: ${textColor};">${step.label}</div>
+                            ${isActive && !isSkipped ? '<div style="font-size: 12px; color: #15803d;">✓ Completed</div>' : isNext ? '<div style="font-size: 12px; color: #2563eb;">In progress...</div>' : isDeclined ? '<div style="font-size: 12px; color: #991b1b;">Application Declined</div>' : ''}
                         </div>
-                        ${isActive ? '<div style="color: #22c55e; font-size: 16px;">✓</div>' : ''}
+                        ${isActive && !isSkipped ? '<div style="color: #22c55e; font-size: 16px;">✓</div>' : isDeclined ? '<div style="color: #ef4444; font-size: 16px;">✗</div>' : ''}
                     </div>
                 `;
             }).join('');
@@ -1149,38 +1225,277 @@
             const container = document.getElementById('dignifi-flow');
             let html = '';
 
-            if (dignifiFlow === 'invite_form') {
+            if (dignifiFlow === 'prequalification_initializing') {
                 html = `
-                    <h3 style="margin-bottom: 16px;">Send Checkout Invite</h3>
-                    <p style="font-size: 13px; color: #6b7280; margin-bottom: 16px;">Enter customer contact information. They'll receive a checkout link via email or SMS.</p>
+                    <h3 style="margin-bottom: 16px;">⚡ Checking Prequalification...</h3>
+                    <p style="font-size: 13px; color: #6b7280; margin-bottom: 20px;">Running instant credit decision for customer...</p>
+                    
+                    <div style="background: #f0f9ff; border-radius: 8px; padding: 20px; border-left: 4px solid #3b82f6;">
+                        <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 16px;">
+                            <div class="spinner" style="width: 24px; height: 24px; border-width: 3px;"></div>
+                            <div>
+                                <div style="font-weight: 600; font-size: 14px; color: #1e40af;">Decision API</div>
+                                <div style="font-size: 12px; color: #0284c7;">Real-time credit decision...</div>
+                            </div>
+                        </div>
+
+                        <div style="background: white; border-radius: 6px; padding: 12px; font-family: 'Courier New', monospace; font-size: 11px; color: #374151; line-height: 1.6;">
+                            <div>POST /api/v1/decisions/prequalify</div>
+                            <div style="color: #22c55e;">✓ decision.received</div>
+                        </div>
+                    </div>
+
+                    <div style="background: #eff6ff; border: 1px solid #3b82f6; border-radius: 8px; padding: 12px; margin-top: 16px; font-size: 12px; color: #1e40af;">
+                        <strong>💡 What's happening:</strong> The Decision API is evaluating the customer's creditworthiness and returning the approved amount in real-time.
+                    </div>
+                `;
+            } else if (dignifiFlow === 'prequalification_initializing_decline') {
+                html = `
+                    <h3 style="margin-bottom: 16px;">⚡ Checking Prequalification...</h3>
+                    <p style="font-size: 13px; color: #6b7280; margin-bottom: 20px;">Running instant credit decision for customer...</p>
+                    
+                    <div style="background: #f0f9ff; border-radius: 8px; padding: 20px; border-left: 4px solid #3b82f6;">
+                        <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 16px;">
+                            <div class="spinner" style="width: 24px; height: 24px; border-width: 3px;"></div>
+                            <div>
+                                <div style="font-weight: 600; font-size: 14px; color: #1e40af;">Decision API</div>
+                                <div style="font-size: 12px; color: #0284c7;">Real-time credit decision...</div>
+                            </div>
+                        </div>
+
+                        <div style="background: white; border-radius: 6px; padding: 12px; font-family: 'Courier New', monospace; font-size: 11px; color: #374151; line-height: 1.6;">
+                            <div>POST /api/v1/decisions/prequalify</div>
+                            <div style="color: #ef4444;">✗ declined (demo)</div>
+                        </div>
+                    </div>
+
+                    <div style="background: #eff6ff; border: 1px solid #3b82f6; border-radius: 8px; padding: 12px; margin-top: 16px; font-size: 12px; color: #1e40af;">
+                        <strong>💡 What's happening:</strong> The Decision API is evaluating the customer's creditworthiness. In this test scenario, they will be declined.
+                    </div>
+                `;
+            } else if (dignifiFlow === 'prequalification') {
+                html = `
+                    <h3 style="margin-bottom: 16px;">⚡ Step 1: Get Instant Decision</h3>
+                    <p style="font-size: 13px; color: #6b7280; margin-bottom: 16px;">Enter customer email/phone and transaction amount to check approval eligibility and available funds.</p>
                     <div style="display: grid; gap: 12px;">
-                        <div>
-                            <label style="display: block; font-size: 13px; font-weight: 600; margin-bottom: 4px; color: #374151;">Customer Email</label>
-                            <input type="email" id="customer-email" placeholder="customer@example.com" class="form-input" style="width: 100%;">
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                            <div>
+                                <label style="display: block; font-size: 13px; font-weight: 600; margin-bottom: 4px; color: #374151;">Customer Email</label>
+                                <input type="email" id="customer-email" placeholder="customer@example.com" class="form-input" style="width: 100%;">
+                            </div>
+                            <div>
+                                <label style="display: block; font-size: 13px; font-weight: 600; margin-bottom: 4px; color: #374151;">Customer Phone</label>
+                                <input type="tel" id="customer-phone" placeholder="(555) 123-4567" class="form-input" style="width: 100%;">
+                            </div>
                         </div>
-                        <div style="display: flex; align-items: center; gap: 8px;">
-                            <div style="flex: 1; height: 1px; background-color: #e5e7eb;"></div>
-                            <span style="font-size: 12px; color: #9ca3af;">or</span>
-                            <div style="flex: 1; height: 1px; background-color: #e5e7eb;"></div>
+                        <button class="btn btn-primary" onclick="getPrequalification()" style="margin-top: 8px;">
+                            ⚡ Send BNPL Invite
+                        </button>
+                        
+                        <div style="display: flex; align-items: center; gap: 8px; margin-top: 12px; padding-top: 12px; border-top: 1px solid #e5e7eb;">
+                            <input type="checkbox" id="decline-checkbox" onchange="simulateDecline = this.checked" style="width: 16px; height: 16px; cursor: pointer;">
+                            <label for="decline-checkbox" style="font-size: 11px; color: #9ca3af; cursor: pointer; margin: 0;">Test decline scenario</label>
                         </div>
-                        <div>
-                            <label style="display: block; font-size: 13px; font-weight: 600; margin-bottom: 4px; color: #374151;">Customer Phone</label>
-                            <input type="tel" id="customer-phone" placeholder="(555) 123-4567" class="form-input" style="width: 100%;">
+                    </div>
+
+                    <div style="background: #fef9e7; border: 1px solid #eab308; border-radius: 8px; padding: 12px; margin-top: 16px; font-size: 12px; color: #713f12;">
+                        <strong>💡 Note:</strong> Decision API returns approval amount. You can then add services up to approved funds BEFORE the customer signs.
+                    </div>
+                `;
+            } else if (dignifiFlow === 'decline_initializing') {
+                html = `
+                    <h3 style="margin-bottom: 16px;">📤 Sending Checkout Invite...</h3>
+                    <p style="font-size: 13px; color: #6b7280; margin-bottom: 20px;">Initializing checkout invite for customer...</p>
+                    
+                    <div style="background: #f0f9ff; border-radius: 8px; padding: 20px; border-left: 4px solid #3b82f6;">
+                        <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 16px;">
+                            <div class="spinner" style="width: 24px; height: 24px; border-width: 3px;"></div>
+                            <div>
+                                <div style="font-weight: 600; font-size: 14px; color: #1e40af;">Initializing Checkout</div>
+                                <div style="font-size: 12px; color: #0284c7;">Backend APIs are being called...</div>
+                            </div>
                         </div>
-                        <button class="btn btn-primary" onclick="handleSendInvite()" style="margin-top: 8px;">
-                            📧 Send Checkout Invite
+
+                        <div style="background: white; border-radius: 6px; padding: 12px; font-family: 'Courier New', monospace; font-size: 11px; color: #374151; line-height: 1.6;">
+                            <div>POST /api/v1/checkouts/initiate</div>
+                            <div style="color: #22c55e;">✓ checkout.initiated</div>
+                        </div>
+                    </div>
+
+                    <div style="background: #eff6ff; border: 1px solid #3b82f6; border-radius: 8px; padding: 12px; margin-top: 16px; font-size: 12px; color: #1e40af;">
+                        <strong>💡 What's happening:</strong> The checkout invite is being sent to the customer. They will receive the adverse action notice.
+                    </div>
+                `;
+            } else if (dignifiFlow === 'decline_journey') {
+                // Journey tracker and webhooks handle the visualization
+                html = '';
+            } else if (dignifiFlow === 'invite_initializing') {
+                html = `
+                    <h3 style="margin-bottom: 16px;">📤 Sending Checkout Invite...</h3>
+                    <p style="font-size: 13px; color: #6b7280; margin-bottom: 20px;">Initializing backend APIs and preparing checkout for customer...</p>
+                    
+                    <div style="background: #f0f9ff; border-radius: 8px; padding: 20px; border-left: 4px solid #3b82f6;">
+                        <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 16px;">
+                            <div class="spinner" style="width: 24px; height: 24px; border-width: 3px;"></div>
+                            <div>
+                                <div style="font-weight: 600; font-size: 14px; color: #1e40af;">Initializing Checkout</div>
+                                <div style="font-size: 12px; color: #0284c7;">Backend APIs are being called...</div>
+                            </div>
+                        </div>
+
+                        <div style="background: white; border-radius: 6px; padding: 12px; font-family: 'Courier New', monospace; font-size: 11px; color: #374151; line-height: 1.6;">
+                            <div>POST /api/v1/checkouts/initiate</div>
+                            <div style="color: #22c55e;">✓ merchant.activated</div>
+                            <div style="color: #22c55e;">✓ checkout.initiated</div>
+                        </div>
+                    </div>
+
+                    <div style="background: #eff6ff; border: 1px solid #3b82f6; border-radius: 8px; padding: 12px; margin-top: 16px; font-size: 12px; color: #1e40af;">
+                        <strong>💡 What's happening:</strong> The merchant interface is preparing the checkout and locking in the final transaction amount. The customer will receive an invite link and the journey tracker will show real-time progress.
+                    </div>
+                `;
+            } else if (dignifiFlow === 'decline_prequalification') {
+                html = `
+                    <div style="background: #fef2f2; border: 1px solid #ef4444; border-radius: 8px; padding: 16px; margin-bottom: 16px;">
+                        <h3 style="color: #991b1b; margin-top: 0;">✗ Prequalification Not Available</h3>
+                        <p style="color: #7f1d1d; margin: 8px 0 0 0; font-size: 13px;">Customer does not currently qualify for financing.</p>
+                    </div>
+
+                    <p style="font-size: 13px; color: #6b7280; margin-bottom: 16px;">When a customer is declined, they receive an adverse action notice explaining the reason.</p>
+
+                    <div class="flow-status error" style="margin-bottom: 16px;">
+                        <p style="margin: 0; font-weight: 600;">Adverse Action Notice</p>
+                        <p style="margin: 8px 0 0 0; font-size: 12px;">The applicant was not approved for the requested financing due to credit decision criteria. The applicant has the right to request a detailed explanation of the adverse action within 60 days by contacting DigniFi at support@dignifi.com or 1-855-DIGNIFI.</p>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                        <button class="btn btn-secondary" onclick="resetFlow()">Start Over</button>
+                        <button class="btn btn-primary" onclick="sendInviteWithDecline()">
+                            📧 Send Decline Notice
                         </button>
                     </div>
                 `;
-            } else if (dignifiFlow === 'approved') {
-                const availableForUpsell = (decisionData.available_balance - upsellAmount).toFixed(2);
+            } else if (dignifiFlow === 'add_services') {
+                html = `
+                    <div style="background: #f0fdf4; border: 1px solid #22c55e; border-radius: 8px; padding: 16px; margin-bottom: 16px;">
+                        <h3 style="color: #166534; margin-top: 0;">✓ Customer Pre-Qualified!</h3>
+                        <p style="color: #15803d; margin: 8px 0 0 0; font-size: 13px;">Approved Amount: <strong>$${approvedAmount.toFixed(2)}</strong></p>
+                    </div>
+
+                    <div class="funds-balance" style="margin-bottom: 16px;">
+                        <div class="funds-row">
+                            <span class="funds-label">Total Approved Amount</span>
+                            <span class="funds-amount">$${approvedAmount.toFixed(2)}</span>
+                        </div>
+                        <div class="funds-row">
+                            <span class="funds-label">This Transaction (Base)</span>
+                            <span class="funds-amount">$${invoiceData.total.toFixed(2)}</span>
+                        </div>
+                        ${upsellAmount > 0 ? `
+                        <div class="funds-row">
+                            <span class="funds-label">Services Added</span>
+                            <span class="funds-amount">$${upsellAmount.toFixed(2)}</span>
+                        </div>
+                        ` : ''}
+                        <div class="funds-row" style="background-color: rgba(34, 197, 94, 0.1); margin: 8px -16px -16px -16px; padding: 8px 16px 16px 16px; border-radius: 0 0 8px 8px;">
+                            <span class="funds-label" style="color: #15803d; font-weight: 600;">Available for Additional Services</span>
+                            <span class="funds-amount" style="color: #15803d; font-size: 18px;">$${(approvedAmount - invoiceData.total - upsellAmount).toFixed(2)}</span>
+                        </div>
+                    </div>
+
+                    <h3 style="margin-bottom: 12px;">📋 Step 2: Add Services?</h3>
+                    <p style="font-size: 13px; color: #6b7280; margin-bottom: 16px;">Add all services you want to include in the financing. The customer will sign for the FINAL amount.</p>
+
+                    <div style="background: #f9fafb; border-radius: 8px; padding: 12px; margin-bottom: 16px;">
+                        <div style="font-size: 12px; color: #6b7280; margin-bottom: 8px; font-weight: 600;">Transaction Breakdown:</div>
+                        <div id="service-list" style="font-size: 12px; color: #111827;">
+                            <div style="display: flex; justify-content: space-between; padding: 4px 0;">
+                                <span>Base Transaction</span>
+                                <span>$${invoiceData.total.toFixed(2)}</span>
+                            </div>
+                        </div>
+                        ${upsellAmount > 0 ? `
+                        <div style="border-top: 1px solid #e5e7eb; padding-top: 8px; margin-top: 8px;">
+                            <div id="added-services" style="font-size: 12px; color: #111827;">
+                                ${selectedServices.map(service => `
+                                    <div style="display: flex; justify-content: space-between; padding: 4px 0;">
+                                        <span>${service.name}</span>
+                                        <span>$${service.price.toFixed(2)}</span>
+                                    </div>
+                                `).join('')}
+                            </div>
+                            <div style="display: flex; justify-content: space-between; padding: 4px 0; font-weight: 600; color: #15803d; margin-top: 8px; padding-top: 8px; border-top: 1px solid #e5e7eb;">
+                                <span>Services Total</span>
+                                <span>$${upsellAmount.toFixed(2)}</span>
+                            </div>
+                        </div>
+                        ` : ''}
+                        <div style="display: flex; justify-content: space-between; padding: 8px 0; border-top: 2px solid #111827; margin-top: 8px; font-weight: 700; color: #111827;">
+                            <span>FINAL AMOUNT (Customer will sign for this)</span>
+                            <span>$${(invoiceData.total + upsellAmount).toFixed(2)}</span>
+                        </div>
+                    </div>
+
+                    <div style="margin-bottom: 16px;">
+                        <p style="font-size: 13px; font-weight: 600; color: #111827; margin-bottom: 8px;">Select services to add (Gray = Already added):</p>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                            ${serviceList.map(service => {
+                                const isAdded = selectedServices.some(s => s.name === service.name);
+                                return `
+                                    <button class="btn btn-warning btn-small" 
+                                        id="${service.id}" 
+                                        onclick="addService('${service.name}', ${service.price})"
+                                        style="${isAdded ? 'opacity: 0.5; background-color: #9ca3af; cursor: not-allowed;' : ''}"
+                                        ${isAdded ? 'disabled' : ''}>
+                                        ${service.name} ($${service.price})
+                                    </button>
+                                `;
+                            }).join('')}
+                        </div>
+                    </div>
+
+                    <div style="background: #fef9e7; border: 1px solid #eab308; border-radius: 8px; padding: 12px; margin-bottom: 16px; font-size: 12px; color: #713f12;">
+                        <strong>✓ API Rule:</strong> Transaction amount must be finalized BEFORE customer signs. Once you send the invite, that's the amount they'll approve.
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                        <button class="btn btn-secondary" onclick="resetFlow()">Start Over</button>
+                        <button class="btn btn-primary" onclick="sendInviteWithFinalAmount()">
+                            📧 Step 3: Send Checkout Invite (Final: $${(invoiceData.total + upsellAmount).toFixed(2)})
+                        </button>
+                    </div>
+                `;
+            } else if (dignifiFlow === 'decline_journey') {
+                // Journey tracker and webhooks handle the visualization
+                html = '';
+            } else if (dignifiFlow === 'declined_complete') {
+                html = `
+                    <div class="flow-status error">
+                        <div style="display: flex; align-items: center; margin-bottom: 12px;">
+                            <span style="font-size: 24px; margin-right: 8px;">✗</span>
+                            <h3 style="margin: 0; color: #991b1b;">Application Declined</h3>
+                        </div>
+                        <p style="margin: 0 0 16px 0; font-size: 14px;">Customer was not approved for financing and received an adverse action notice.</p>
+                        
+                        <div style="background: white; border: 1px solid #fecaca; border-radius: 8px; padding: 12px; margin-bottom: 16px; font-size: 12px; color: #991b1b;">
+                            <strong>Adverse Action Notice Sent</strong>
+                            <p style="margin: 8px 0 0 0; font-size: 11px;">The applicant was not approved for the requested financing due to credit decision criteria. The applicant has the right to request a detailed explanation within 60 days.</p>
+                        </div>
+
+                        <button class="btn btn-gray" onclick="reset()" style="width: 100%;">
+                            Return to Payment Method Selection
+                        </button>
+                    </div>
+                `;
+            } else if (dignifiFlow === 'customer_journey') {
+                const finalAmount = invoiceData.total + upsellAmount;
                 html = `
                     <div class="approval-card">
                         <div class="approval-header">
                             <div class="approval-header-icon">✓</div>
                             <div class="approval-header-text">
                                 <h3>Checkout Complete - Loan Funded!</h3>
-                                <p>Customer approved and transaction is ready</p>
+                                <p>Customer signed and approved for the exact amount</p>
                             </div>
                         </div>
 
@@ -1190,45 +1505,40 @@
                                 <span class="funds-amount">$${approvedAmount.toFixed(2)}</span>
                             </div>
                             <div class="funds-row">
-                                <span class="funds-label">This Transaction</span>
-                                <span class="funds-amount">$${invoiceData.total.toFixed(2)}</span>
+                                <span class="funds-label">Customer Signed For</span>
+                                <span class="funds-amount">$${finalAmount.toFixed(2)}</span>
                             </div>
                             <div class="funds-row" style="background-color: rgba(34, 197, 94, 0.1); margin: 8px -16px -16px -16px; padding: 8px 16px 16px 16px; border-radius: 0 0 8px 8px;">
-                                <span class="funds-label" style="color: #15803d; font-weight: 600;">Available for Upsell</span>
-                                <span class="funds-amount" style="color: #15803d; font-size: 18px;">$${availableForUpsell}</span>
+                                <span class="funds-label" style="color: #15803d; font-weight: 600;">Remaining Approved Balance</span>
+                                <span class="funds-amount" style="color: #15803d; font-size: 18px;">$${(approvedAmount - finalAmount).toFixed(2)}</span>
                             </div>
                         </div>
 
-                        ${availableForUpsell > 50 ? `
-                        <div class="upsell-prompt">
-                            <h4>💡 Upsell Opportunity!</h4>
-                            <p>Customer has $${availableForUpsell} available in approved funds. Offer additional services:</p>
-                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
-                                <button class="btn btn-warning btn-small" onclick="addUpsell(300)">Add $300 Service</button>
-                                <button class="btn btn-warning btn-small" onclick="addUpsell(500)">Add $500 Service</button>
+                        ${selectedServices.length > 0 ? `
+                        <div style="background: #f9fafb; border-radius: 8px; padding: 12px; margin-bottom: 16px; border: 1px solid #e5e7eb;">
+                            <div style="font-size: 12px; font-weight: 600; color: #111827; margin-bottom: 8px;">Services Included in Loan:</div>
+                            <div style="font-size: 12px; color: #6b7280; space: 4px 0;">
+                                ${selectedServices.map(s => `<div style="display: flex; justify-content: space-between; padding: 2px 0;"><span>${s.name}</span><span>$${s.price.toFixed(2)}</span></div>`).join('')}
                             </div>
-                        </div>
-                        ` : ''}
-
-                        ${upsellAmount > 0 ? `
-                        <div class="flow-status success" style="margin-bottom: 16px;">
-                            <p style="margin: 0;">✓ Upsell added: $${upsellAmount.toFixed(2)}</p>
-                            <p style="margin: 8px 0 0 0; font-size: 12px;">New total transaction: $${(invoiceData.total + upsellAmount).toFixed(2)}</p>
                         </div>
                         ` : ''}
 
                         <div class="loan-details">
                             <div class="loan-detail">
+                                <span>Loan Amount</span>
+                                <span>$${finalAmount.toFixed(2)}</span>
+                            </div>
+                            <div class="loan-detail text">
+                                <span>Monthly Payment (24mo)</span>
+                                <span>$${(finalAmount / 24).toFixed(2)}</span>
+                            </div>
+                            <div class="loan-detail text">
                                 <span>Loan ID</span>
                                 <span>loan_20250115...</span>
                             </div>
                             <div class="loan-detail text">
                                 <span>First Payment Due</span>
                                 <span>Feb 15, 2025</span>
-                            </div>
-                            <div class="loan-detail text">
-                                <span>APR</span>
-                                <span>8.99%</span>
                             </div>
                         </div>
 
@@ -1237,11 +1547,18 @@
                                 ${transactionComplete ? '✓ Payment Applied' : '💳 Apply Payment'}
                             </button>
                             <button class="btn btn-danger" onclick="voidTransaction()">
-                                ✗ Void Transaction
+                                ✗ Void & Refund
                             </button>
+                        </div>
+
+                        <div style="background: #fef9e7; border: 1px solid #eab308; border-radius: 8px; padding: 12px; margin-top: 16px; font-size: 12px; color: #713f12;">
+                            <strong>✓ Workflow Complete:</strong> Services added → Final amount locked → Customer signed for exact amount → Loan funded.
                         </div>
                     </div>
                 `;
+            } else if (dignifiFlow === 'customer_journey') {
+                // This state is handled by journey tracker, don't show anything here
+                html = '';
             } else if (dignifiFlow === 'declined') {
                 html = `
                     <div class="flow-status error">
@@ -1260,9 +1577,111 @@
             container.innerHTML = html;
         }
 
-        function addUpsell(amount) {
-            upsellAmount += amount;
-            renderDignifiFlow();
+        function continueDeclineJourney(email, phone) {
+            // Customer opens checkout link
+            setTimeout(() => {
+                journeySteps[0].completed = true;
+                journeySteps[1].completed = true;
+                renderJourneyTracker();
+            }, 3000);
+
+            // Customer viewing agreement - receives adverse action notice
+            setTimeout(() => {
+                addWebhook('checkout.declined', {
+                    checkout_id: `checkout_${Date.now()}`,
+                    decision_id: `dec_${Date.now()}`,
+                    decline_reason: 'credit_score_below_threshold',
+                    decline_message: 'Customer did not meet credit decision criteria',
+                    adverse_action_notice_sent: true,
+                    timestamp: new Date().toISOString()
+                });
+
+                journeySteps[2].completed = true;
+                journeySteps[2].label = 'Declined';
+                journeySteps[2].icon = '✗';
+                renderJourneyTracker();
+
+                // Mark remaining steps as skipped
+                journeySteps[3].completed = false;
+                journeySteps[3].label = 'Skipped';
+                journeySteps[4].completed = false;
+                journeySteps[4].label = 'Skipped';
+                renderJourneyTracker();
+
+                setTimeout(() => {
+                    dignifiFlow = 'declined_complete';
+                    document.getElementById('journey-tracker').style.display = 'none';
+                    document.getElementById('dignifi-flow').style.display = 'block';
+                    renderDignifiFlow();
+                }, 1500);
+            }, 6000);
+        }
+
+        function continueCustomerJourney(email, phone, finalAmount) {
+            // Customer opens checkout link
+            setTimeout(() => {
+                journeySteps[1].completed = true;
+                renderJourneyTracker();
+            }, 3000);
+
+            // Customer reviewing agreement
+            setTimeout(() => {
+                journeySteps[2].completed = true;
+                renderJourneyTracker();
+            }, 6000);
+
+            // Customer signs agreement
+            setTimeout(() => {
+                addWebhook('merchant.signed', {
+                    checkout_id: `checkout_${Date.now()}`,
+                    merchant_id: 'merchant_cdkglobal_demo',
+                    customer_signed_at: new Date().toISOString(),
+                    agreement_version: '2.1',
+                    signed_amount: finalAmount,
+                    note: 'Customer signed agreement for the final amount'
+                });
+
+                journeySteps[3].completed = true;
+                renderJourneyTracker();
+
+                setTimeout(() => {
+                    addWebhook('checkout.approved', {
+                        checkout_id: `checkout_${Date.now()}`,
+                        decision_id: `dec_${Date.now()}`,
+                        approval_amount: approvedAmount,
+                        transaction_amount: finalAmount,
+                        services: selectedServices,
+                        monthly_payment: (finalAmount / 24).toFixed(2),
+                        term_months: 24,
+                        interest_rate: '8.99%',
+                        note: 'Checkout approved with locked transaction amount'
+                    });
+
+                    setTimeout(() => {
+                        addWebhook('checkout.completed', {
+                            checkout_id: `checkout_${Date.now()}`,
+                            transaction_id: '#510665_TOY-I_2022-05-13',
+                            loan_id: `loan_${Date.now()}`,
+                            loan_amount: finalAmount,
+                            status: 'completed',
+                            funding_timestamp: new Date().toISOString(),
+                            note: 'Loan funded and customer checkout complete'
+                        });
+
+                        journeySteps[4].completed = true;
+                        renderJourneyTracker();
+                        dignifiFlow = 'approved';
+                        transactionComplete = false;
+                        
+                        // Show approved card after journey completes
+                        setTimeout(() => {
+                            document.getElementById('journey-tracker').style.display = 'none';
+                            document.getElementById('dignifi-flow').style.display = 'block';
+                            renderDignifiFlow();
+                        }, 1500);
+                    }, 1500);
+                }, 750);
+            }, 9000);
         }
 
         function applyPayment() {
@@ -1271,27 +1690,31 @@
             const totalAmount = invoiceData.total + upsellAmount;
             addWebhook('checkout.payment_applied', {
                 transaction_id: '#510665_TOY-I_2022-05-13',
-                amount: totalAmount,
+                loan_amount: totalAmount,
+                services: selectedServices,
                 timestamp: new Date().toISOString(),
                 status: 'success'
             });
 
             transactionComplete = true;
             renderDignifiFlow();
-            alert(`Payment of $${totalAmount.toFixed(2)} has been successfully applied!`);
+            alert(`Payment of $${totalAmount.toFixed(2)} has been successfully applied! Loan is now active.`);
         }
 
         function voidTransaction() {
-            if (confirm('Are you sure you want to void this transaction? This cannot be undone.')) {
+            if (confirm('Are you sure you want to void this transaction? Customer will be refunded the loan amount.')) {
+                const totalAmount = invoiceData.total + upsellAmount;
                 addWebhook('checkout.voided', {
                     transaction_id: '#510665_TOY-I_2022-05-13',
+                    loan_amount: totalAmount,
                     void_reason: 'merchant_request',
+                    refund_amount: totalAmount,
                     timestamp: new Date().toISOString(),
                     status: 'success'
                 });
 
-                alert('Transaction voided successfully.');
-                reset();
+                alert(`Transaction voided. Customer will be refunded $${totalAmount.toFixed(2)}.`);
+                resetFlow();
             }
         }
 
@@ -1338,11 +1761,37 @@
             decisionData = null;
             upsellAmount = 0;
             transactionComplete = false;
+            selectedServices = [];
+            simulateDecline = false;
+
+            // Reset journey steps to original labels and icons
+            journeySteps[0].label = 'Invite Sent';
+            journeySteps[0].icon = '📧';
+            journeySteps[0].completed = false;
+            journeySteps[1].label = 'Opening Invite';
+            journeySteps[1].icon = '👁️';
+            journeySteps[1].completed = false;
+            journeySteps[2].label = 'Reviewing Agreement';
+            journeySteps[2].icon = '📄';
+            journeySteps[2].completed = false;
+            journeySteps[3].label = 'Agreement Signed';
+            journeySteps[3].icon = '✍️';
+            journeySteps[3].completed = false;
+            journeySteps[4].label = 'Loan Funded';
+            journeySteps[4].icon = '💰';
+            journeySteps[4].completed = false;
 
             document.querySelectorAll('.payment-method-btn').forEach(btn => {
                 btn.classList.remove('active');
             });
 
+            // Uncheck the decline checkbox
+            const declineCheckbox = document.getElementById('decline-checkbox');
+            if (declineCheckbox) {
+                declineCheckbox.checked = false;
+            }
+
+            // Hide all flow sections
             document.getElementById('dignifi-flow').style.display = 'none';
             document.getElementById('journey-tracker').style.display = 'none';
             document.getElementById('webhook-section').style.display = 'none';
