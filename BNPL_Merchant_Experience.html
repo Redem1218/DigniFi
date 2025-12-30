@@ -533,6 +533,24 @@
             50% { opacity: 0.7; }
         }
 
+        .divider {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin: 16px 0;
+        }
+
+        .divider-line {
+            flex: 1;
+            height: 1px;
+            background-color: #e5e7eb;
+        }
+
+        .divider-text {
+            font-size: 12px;
+            color: #9ca3af;
+        }
+
         @media (max-width: 1024px) {
             .grid-3 {
                 grid-template-columns: 1fr;
@@ -652,6 +670,13 @@
                     <div id="other-payment-msg" style="display: none;" class="flow-status loading"></div>
                 </div>
 
+                <!-- Customer Journey Tracker (for DigniFi) -->
+                <div id="journey-tracker" style="display: none;" class="card">
+                    <h3>📊 Customer Journey</h3>
+                    <p style="font-size: 13px; color: #6b7280; margin-bottom: 16px;">Real-time updates as customer completes checkout on their device</p>
+                    <div id="journey-steps" style="display: flex; flex-direction: column; gap: 12px;"></div>
+                </div>
+
                 <!-- Customer Information (for non-DigniFi methods) -->
                 <div id="customer-form-container" style="display: none;" class="card">
                     <h3>Customer Information</h3>
@@ -723,16 +748,53 @@
             }
         }
 
+        const journeySteps = [
+            { id: 'invite_sent', label: 'Invite Sent', icon: '📧', completed: false },
+            { id: 'link_opened', label: 'Link Opened', icon: '👁️', completed: false },
+            { id: 'viewing_offer', label: 'Viewing Offer', icon: '👀', completed: false },
+            { id: 'prequalification', label: 'Prequalification', icon: '⚡', completed: false },
+            { id: 'approved_declined', label: 'Decision Made', icon: '✅', completed: false },
+            { id: 'reviewing_agreement', label: 'Reviewing Agreement', icon: '📄', completed: false },
+            { id: 'signed', label: 'Agreement Signed', icon: '✍️', completed: false },
+            { id: 'funded', label: 'Loan Funded', icon: '💰', completed: false }
+        ];
+
         function handleDignifiFlow() {
             document.getElementById('customer-form-container').style.display = 'none';
             document.getElementById('dignifi-flow').style.display = 'block';
+            document.getElementById('journey-tracker').style.display = 'none';
             document.getElementById('webhook-section').style.display = 'block';
             
             webhooks = [];
-            dignifiFlow = 'decision';
+            dignifiFlow = 'invite_form';
             decisionData = null;
 
             renderDignifiFlow();
+        }
+
+        function handleSendInvite() {
+            const email = document.getElementById('customer-email')?.value || '';
+            const phone = document.getElementById('customer-phone')?.value || '';
+            
+            sendCheckoutInvite(email, phone);
+        }
+
+        function sendCheckoutInvite(email, phone) {
+            if (!email && !phone) {
+                alert('Please enter either email or phone number');
+                return;
+            }
+
+            const contactMethod = email ? `email (${email})` : `phone (${phone})`;
+            
+            document.getElementById('customer-form-container').style.display = 'none';
+            document.getElementById('journey-tracker').style.display = 'block';
+            
+            webhooks = [];
+            dignifiFlow = 'invite_sent';
+
+            // Reset journey steps
+            journeySteps.forEach(step => step.completed = false);
 
             // Trigger merchant.activated webhook
             setTimeout(() => {
@@ -743,7 +805,34 @@
                 });
             }, 300);
 
-            // Trigger decision API call
+            // Trigger checkout.initiated webhook
+            setTimeout(() => {
+                addWebhook('checkout.initiated', {
+                    checkout_id: `checkout_${Date.now()}`,
+                    transaction_amount: invoiceData.total,
+                    merchant_id: 'merchant_cdkglobal_demo',
+                    customer_contact: contactMethod,
+                    invite_type: email ? 'email' : 'sms',
+                    expires_in_seconds: 7200
+                });
+
+                journeySteps[0].completed = true;
+                renderJourneyTracker();
+            }, 600);
+
+            // Simulate customer opening link after 3-5 seconds
+            setTimeout(() => {
+                journeySteps[1].completed = true;
+                renderJourneyTracker();
+            }, 4000);
+
+            // Simulate customer viewing offer after 5-7 seconds
+            setTimeout(() => {
+                journeySteps[2].completed = true;
+                renderJourneyTracker();
+            }, 6000);
+
+            // Trigger decision API - prequalification
             setTimeout(() => {
                 const isApproved = Math.random() > 0.15;
                 
@@ -756,6 +845,9 @@
                     response_time_ms: 247
                 };
 
+                journeySteps[3].completed = true;
+                renderJourneyTracker();
+
                 addWebhook('decision.received', {
                     decision_id: `dec_${Date.now()}`,
                     approved: isApproved,
@@ -764,76 +856,118 @@
                 });
 
                 if (isApproved) {
-                    dignifiFlow = 'checkout';
-                    renderDignifiFlow();
-                    
-                    // Trigger checkout.initiated
+                    // Simulate customer seeing approved decision
                     setTimeout(() => {
-                        addWebhook('checkout.initiated', {
-                            checkout_id: `checkout_${Date.now()}`,
-                            transaction_amount: invoiceData.total,
-                            merchant_id: 'merchant_cdkglobal_demo',
-                            expires_in_seconds: 7200
-                        });
+                        journeySteps[4].completed = true;
+                        renderJourneyTracker();
 
-                        // Simulate customer signing after delay
+                        // Simulate customer reviewing agreement
                         setTimeout(() => {
-                            addWebhook('merchant.signed', {
-                                checkout_id: `checkout_${Date.now()}`,
-                                merchant_id: 'merchant_cdkglobal_demo',
-                                customer_signed_at: new Date().toISOString(),
-                                agreement_version: '2.1'
-                            });
+                            journeySteps[5].completed = true;
+                            renderJourneyTracker();
 
-                            // Trigger checkout.approved
+                            // Simulate customer signing
                             setTimeout(() => {
-                                addWebhook('checkout.approved', {
+                                addWebhook('merchant.signed', {
                                     checkout_id: `checkout_${Date.now()}`,
-                                    decision_id: `dec_${Date.now()}`,
-                                    approval_amount: invoiceData.total,
-                                    monthly_payment: decisionData.monthly_payment,
-                                    term_months: 24,
-                                    interest_rate: '8.99%'
+                                    merchant_id: 'merchant_cdkglobal_demo',
+                                    customer_signed_at: new Date().toISOString(),
+                                    agreement_version: '2.1'
                                 });
 
-                                // Trigger checkout.completed
+                                journeySteps[6].completed = true;
+                                renderJourneyTracker();
+
+                                // Trigger checkout.approved
                                 setTimeout(() => {
-                                    addWebhook('checkout.completed', {
+                                    addWebhook('checkout.approved', {
                                         checkout_id: `checkout_${Date.now()}`,
-                                        transaction_id: '#510665_TOY-I_2022-05-13',
-                                        loan_id: `loan_${Date.now()}`,
-                                        status: 'completed',
-                                        funding_timestamp: new Date().toISOString()
+                                        decision_id: `dec_${Date.now()}`,
+                                        approval_amount: invoiceData.total,
+                                        monthly_payment: decisionData.monthly_payment,
+                                        term_months: 24,
+                                        interest_rate: '8.99%'
                                     });
 
-                                    dignifiFlow = 'approved';
-                                    renderDignifiFlow();
-                                }, 1500);
-                            }, 1500);
-                        }, 2000);
-                    }, 800);
+                                    // Trigger checkout.completed
+                                    setTimeout(() => {
+                                        addWebhook('checkout.completed', {
+                                            checkout_id: `checkout_${Date.now()}`,
+                                            transaction_id: '#510665_TOY-I_2022-05-13',
+                                            loan_id: `loan_${Date.now()}`,
+                                            status: 'completed',
+                                            funding_timestamp: new Date().toISOString()
+                                        });
+
+                                        journeySteps[7].completed = true;
+                                        renderJourneyTracker();
+                                        dignifiFlow = 'approved';
+                                        renderDignifiFlow();
+                                    }, 1000);
+                                }, 500);
+                            }, 2000);
+                        }, 1500);
+                    }, 1500);
                 } else {
+                    journeySteps[4].completed = true;
+                    journeySteps[4].label = 'Application Declined';
+                    renderJourneyTracker();
                     dignifiFlow = 'declined';
                     renderDignifiFlow();
                 }
-            }, 1000);
+            }, 8000);
+        }
+
+        function renderJourneyTracker() {
+            const container = document.getElementById('journey-steps');
+            
+            let html = journeySteps.map((step, index) => {
+                const isActive = index < journeySteps.length && journeySteps[index].completed;
+                const isNext = index > 0 && journeySteps[index - 1].completed && !step.completed;
+                
+                return `
+                    <div style="display: flex; align-items: center; gap: 12px; padding: 12px; background-color: ${isActive ? '#f0fdf4' : isNext ? '#eff6ff' : '#f9fafb'}; border-radius: 8px; border-left: 4px solid ${isActive ? '#22c55e' : isNext ? '#3b82f6' : '#d1d5db'};">
+                        <div style="font-size: 20px; opacity: ${isActive ? '1' : isNext ? '0.7' : '0.4'};transition: opacity 0.3s;">${isActive || isNext ? step.icon : '⏳'}</div>
+                        <div style="flex: 1;">
+                            <div style="font-weight: 600; font-size: 14px; color: ${isActive ? '#166534' : isNext ? '#1e40af' : '#9ca3af'};">${step.label}</div>
+                            ${isActive ? '<div style="font-size: 12px; color: #15803d;">✓ Completed</div>' : isNext ? '<div style="font-size: 12px; color: #2563eb;">In progress...</div>' : ''}
+                        </div>
+                        ${isActive ? '<div style="color: #22c55e; font-size: 16px;">✓</div>' : ''}
+                    </div>
+                `;
+            }).join('');
+
+            container.innerHTML = html;
         }
 
         function renderDignifiFlow() {
             const container = document.getElementById('dignifi-flow');
             let html = '';
 
-            if (dignifiFlow === 'decision') {
+            if (dignifiFlow === 'invite_form') {
                 html = `
-                    <div class="flow-status loading">
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-                            <h3 style="margin: 0; font-size: 16px;">⚡ Getting Instant Decision...</h3>
-                            <div class="spinner"></div>
+                    <h3 style="margin-bottom: 16px;">Send Checkout Invite</h3>
+                    <p style="font-size: 13px; color: #6b7280; margin-bottom: 16px;">Enter customer contact information. They'll receive a checkout link via email or SMS.</p>
+                    <div style="display: grid; gap: 12px;">
+                        <div>
+                            <label style="display: block; font-size: 13px; font-weight: 600; margin-bottom: 4px; color: #374151;">Customer Email</label>
+                            <input type="email" id="customer-email" placeholder="customer@example.com" class="form-input" style="width: 100%;">
                         </div>
-                        <p style="margin: 0; font-size: 14px;">Running real-time credit decision for $${invoiceData.total.toFixed(2)}...</p>
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <div style="flex: 1; height: 1px; background-color: #e5e7eb;"></div>
+                            <span style="font-size: 12px; color: #9ca3af;">or</span>
+                            <div style="flex: 1; height: 1px; background-color: #e5e7eb;"></div>
+                        </div>
+                        <div>
+                            <label style="display: block; font-size: 13px; font-weight: 600; margin-bottom: 4px; color: #374151;">Customer Phone</label>
+                            <input type="tel" id="customer-phone" placeholder="(555) 123-4567" class="form-input" style="width: 100%;">
+                        </div>
+                        <button class="btn btn-primary" onclick="handleSendInvite()" style="margin-top: 8px;">
+                            📧 Send Checkout Invite
+                        </button>
                     </div>
                 `;
-            } else if (dignifiFlow === 'checkout' && decisionData && decisionData.approved) {
+            } else if (dignifiFlow === 'approved') {
                 html = `
                     <div style="margin-bottom: 16px;">
                         <div class="flow-status success">
@@ -967,6 +1101,7 @@
             });
 
             document.getElementById('dignifi-flow').style.display = 'none';
+            document.getElementById('journey-tracker').style.display = 'none';
             document.getElementById('webhook-section').style.display = 'none';
             document.getElementById('customer-form-container').style.display = 'none';
             document.getElementById('other-payment-msg').style.display = 'none';
