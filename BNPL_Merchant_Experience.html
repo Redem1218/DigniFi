@@ -898,30 +898,53 @@
                 <div style="border-top: 2px solid #e5e7eb; padding-top: 16px;">
                     <h3 style="font-size: 14px; font-weight: 700; margin-bottom: 12px;">Line Items</h3>
                     
-                    <div class="invoice-item">
-                        <span class="invoice-item-name">Automotive Repair Services</span>
-                        <span class="invoice-item-price">$65.00</span>
-                    </div>
-                    <div class="invoice-item">
-                        <span class="invoice-item-name">Parts & Materials</span>
-                        <span class="invoice-item-price">$35.00</span>
-                    </div>
-                    <div class="invoice-item total">
-                        <span>Subtotal</span>
-                        <span>$100.00</span>
-                    </div>
-                    <div class="invoice-item">
-                        <span class="invoice-item-name">Tax (10%)</span>
-                        <span class="invoice-item-price">$10.00</span>
-                    </div>
-                    <div class="invoice-item total">
-                        <span>Total Due</span>
-                        <span>$110.00</span>
+                    <div id="invoiceLineItems">
+                        <!-- Dynamically populated -->
                     </div>
                 </div>
             </div>
 
             <button class="btn btn-secondary" onclick="closeInvoiceModal()" style="width: 100%;">Close</button>
+        </div>
+    </div>
+
+    <div id="voidConfirmModal" class="modal">
+        <div class="modal-content" style="max-width: 450px;">
+            <div class="modal-header">
+                <h2>Confirm Void BNPL Transaction</h2>
+                <button class="modal-close" onclick="closeVoidConfirmModal()">&times;</button>
+            </div>
+
+            <div style="margin-bottom: 24px;">
+                <div style="background: #fef2f2; border: 1px solid #fecaca; border-radius: 8px; padding: 16px; margin-bottom: 16px;">
+                    <div style="color: #991b1b; font-weight: 600; margin-bottom: 8px;">⚠️ Warning</div>
+                    <p style="margin: 0; color: #7f1d1d; font-size: 13px;">You are about to void this BNPL transaction. The customer will be refunded the full loan amount and this transaction cannot be recovered.</p>
+                </div>
+
+                <div style="background: #f3f4f6; border-radius: 8px; padding: 12px; margin-bottom: 16px;">
+                    <div style="font-size: 12px; color: #6b7280; margin-bottom: 4px;">Amount to be Refunded:</div>
+                    <div style="font-size: 18px; font-weight: 700; color: #1f2937;">$<span id="voidAmount">0.00</span></div>
+                </div>
+
+                <div style="background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 8px; padding: 12px;">
+                    <div style="font-size: 12px; color: #6b7280; margin-bottom: 8px;">Transaction Details:</div>
+                    <div style="font-size: 13px; color: #374151;">
+                        <div style="display: flex; justify-content: space-between; padding: 4px 0;">
+                            <span>Transaction ID:</span>
+                            <span style="font-weight: 600;">#510665_TOY-I_2022-05-13</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; padding: 4px 0;">
+                            <span>Status:</span>
+                            <span style="font-weight: 600; color: #22c55e;">Active</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                <button class="btn btn-secondary" onclick="closeVoidConfirmModal()">Cancel</button>
+                <button class="btn btn-danger" onclick="confirmVoidTransaction()">Yes, Void Transaction</button>
+            </div>
         </div>
     </div>
 
@@ -1076,11 +1099,27 @@
             }, 7000);
         }
 
+        function updateInvoiceDisplay() {
+            const amountToPayElement = document.querySelector('.status-box.active .status-amount');
+            const totalPaidElement = document.querySelector('.status-box:first-child .status-amount');
+            
+            if (amountToPayElement) {
+                const finalAmount = invoiceData.total + upsellAmount;
+                amountToPayElement.textContent = `$${finalAmount.toFixed(2)}`;
+            }
+            
+            if (totalPaidElement && transactionComplete) {
+                const finalAmount = invoiceData.total + upsellAmount;
+                totalPaidElement.textContent = `$${finalAmount.toFixed(2)}`;
+            }
+        }
+
         function addService(serviceName, servicePrice) {
             // Check if service is already added to prevent duplicates
             if (!selectedServices.find(s => s.name === serviceName)) {
                 selectedServices.push({ name: serviceName, price: servicePrice });
                 upsellAmount += servicePrice;
+                updateInvoiceDisplay();
                 renderDignifiFlow();
             }
         }
@@ -1145,17 +1184,7 @@
             // Show initialization screen with initial API calls
             renderDignifiFlow();
 
-            // Trigger initial API calls (merchant-side)
-            setTimeout(() => {
-                addWebhook('merchant.activated', {
-                    merchant_id: 'merchant_cdkglobal_demo',
-                    environment: 'production',
-                    timestamp: new Date().toISOString(),
-                    note: 'Merchant initialized for checkout'
-                });
-            }, 500);
-
-            // Trigger checkout.initiated with FINAL amount locked in
+            // Trigger checkout API
             setTimeout(() => {
                 addWebhook('checkout.initiated', {
                     checkout_id: `checkout_${Date.now()}`,
@@ -1345,7 +1374,6 @@
 
                         <div style="background: white; border-radius: 6px; padding: 12px; font-family: 'Courier New', monospace; font-size: 11px; color: #374151; line-height: 1.6;">
                             <div>POST /api/v1/checkouts/initiate</div>
-                            <div style="color: #22c55e;">✓ merchant.activated</div>
                             <div style="color: #22c55e;">✓ checkout.initiated</div>
                         </div>
                     </div>
@@ -1487,6 +1515,75 @@
                         </button>
                     </div>
                 `;
+            } else if (dignifiFlow === 'approved') {
+                const finalAmount = invoiceData.total + upsellAmount;
+                html = `
+                    <div class="approval-card">
+                        <div class="approval-header">
+                            <div class="approval-header-icon">✓</div>
+                            <div class="approval-header-text">
+                                <h3>Checkout Complete - Loan Funded!</h3>
+                                <p>Customer signed and approved for the exact amount</p>
+                            </div>
+                        </div>
+
+                        <div class="funds-balance">
+                            <div class="funds-row">
+                                <span class="funds-label">Total Approved Amount</span>
+                                <span class="funds-amount">$${approvedAmount.toFixed(2)}</span>
+                            </div>
+                            <div class="funds-row">
+                                <span class="funds-label">Customer Signed For</span>
+                                <span class="funds-amount">$${finalAmount.toFixed(2)}</span>
+                            </div>
+                            <div class="funds-row" style="background-color: rgba(34, 197, 94, 0.1); margin: 8px -16px -16px -16px; padding: 8px 16px 16px 16px; border-radius: 0 0 8px 8px;">
+                                <span class="funds-label" style="color: #15803d; font-weight: 600;">Remaining Approved Balance</span>
+                                <span class="funds-amount" style="color: #15803d; font-size: 18px;">$${(approvedAmount - finalAmount).toFixed(2)}</span>
+                            </div>
+                        </div>
+
+                        ${selectedServices.length > 0 ? `
+                        <div style="background: #f9fafb; border-radius: 8px; padding: 12px; margin-bottom: 16px; border: 1px solid #e5e7eb;">
+                            <div style="font-size: 12px; font-weight: 600; color: #111827; margin-bottom: 8px;">Services Included in Loan:</div>
+                            <div style="font-size: 12px; color: #6b7280; space: 4px 0;">
+                                ${selectedServices.map(s => `<div style="display: flex; justify-content: space-between; padding: 2px 0;"><span>${s.name}</span><span>$${s.price.toFixed(2)}</span></div>`).join('')}
+                            </div>
+                        </div>
+                        ` : ''}
+
+                        <div class="loan-details">
+                            <div class="loan-detail">
+                                <span>Loan Amount</span>
+                                <span>$${finalAmount.toFixed(2)}</span>
+                            </div>
+                            <div class="loan-detail text">
+                                <span>Monthly Payment (24mo)</span>
+                                <span>$${(finalAmount / 24).toFixed(2)}</span>
+                            </div>
+                            <div class="loan-detail text">
+                                <span>Loan ID</span>
+                                <span>loan_20250115...</span>
+                            </div>
+                            <div class="loan-detail text">
+                                <span>First Payment Due</span>
+                                <span>Feb 15, 2025</span>
+                            </div>
+                        </div>
+
+                        <div class="btn-group">
+                            <button class="btn btn-primary" onclick="applyPayment()" ${transactionComplete ? 'disabled style="opacity: 0.6; cursor: not-allowed;"' : ''}>
+                                ${transactionComplete ? '✓ BNPL Funds Applied' : '💳 Apply BNPL Funds'}
+                            </button>
+                            <button class="btn btn-danger" onclick="voidTransaction()">
+                                ✗ Void BNPL Transaction
+                            </button>
+                        </div>
+
+                        <div style="background: #fef9e7; border: 1px solid #eab308; border-radius: 8px; padding: 12px; margin-top: 16px; font-size: 12px; color: #713f12;">
+                            <strong>✓ Workflow Complete:</strong> Services added → Final amount locked → Customer signed for exact amount → Loan funded.
+                        </div>
+                    </div>
+                `;
             } else if (dignifiFlow === 'customer_journey') {
                 const finalAmount = invoiceData.total + upsellAmount;
                 html = `
@@ -1544,10 +1641,10 @@
 
                         <div class="btn-group">
                             <button class="btn btn-primary" onclick="applyPayment()" ${transactionComplete ? 'disabled style="opacity: 0.6; cursor: not-allowed;"' : ''}>
-                                ${transactionComplete ? '✓ Payment Applied' : '💳 Apply Payment'}
+                                ${transactionComplete ? '✓ BNPL Funds Applied' : '💳 Apply BNPL Funds'}
                             </button>
                             <button class="btn btn-danger" onclick="voidTransaction()">
-                                ✗ Void & Refund
+                                ✗ Void BNPL Transaction
                             </button>
                         </div>
 
@@ -1632,15 +1729,6 @@
 
             // Customer signs agreement
             setTimeout(() => {
-                addWebhook('merchant.signed', {
-                    checkout_id: `checkout_${Date.now()}`,
-                    merchant_id: 'merchant_cdkglobal_demo',
-                    customer_signed_at: new Date().toISOString(),
-                    agreement_version: '2.1',
-                    signed_amount: finalAmount,
-                    note: 'Customer signed agreement for the final amount'
-                });
-
                 journeySteps[3].completed = true;
                 renderJourneyTracker();
 
@@ -1654,7 +1742,7 @@
                         monthly_payment: (finalAmount / 24).toFixed(2),
                         term_months: 24,
                         interest_rate: '8.99%',
-                        note: 'Checkout approved with locked transaction amount'
+                        note: 'Customer signed agreement - checkout approved'
                     });
 
                     setTimeout(() => {
@@ -1697,25 +1785,35 @@
             });
 
             transactionComplete = true;
+            updateInvoiceDisplay();
             renderDignifiFlow();
             alert(`Payment of $${totalAmount.toFixed(2)} has been successfully applied! Loan is now active.`);
         }
 
         function voidTransaction() {
-            if (confirm('Are you sure you want to void this transaction? Customer will be refunded the loan amount.')) {
-                const totalAmount = invoiceData.total + upsellAmount;
-                addWebhook('checkout.voided', {
-                    transaction_id: '#510665_TOY-I_2022-05-13',
-                    loan_amount: totalAmount,
-                    void_reason: 'merchant_request',
-                    refund_amount: totalAmount,
-                    timestamp: new Date().toISOString(),
-                    status: 'success'
-                });
+            const totalAmount = invoiceData.total + upsellAmount;
+            document.getElementById('voidAmount').textContent = totalAmount.toFixed(2);
+            document.getElementById('voidConfirmModal').classList.add('show');
+        }
 
-                alert(`Transaction voided. Customer will be refunded $${totalAmount.toFixed(2)}.`);
-                resetFlow();
-            }
+        function closeVoidConfirmModal() {
+            document.getElementById('voidConfirmModal').classList.remove('show');
+        }
+
+        function confirmVoidTransaction() {
+            const totalAmount = invoiceData.total + upsellAmount;
+            addWebhook('checkout.voided', {
+                transaction_id: '#510665_TOY-I_2022-05-13',
+                loan_amount: totalAmount,
+                void_reason: 'merchant_request',
+                refund_amount: totalAmount,
+                timestamp: new Date().toISOString(),
+                status: 'success'
+            });
+
+            closeVoidConfirmModal();
+            alert(`Transaction voided. Customer will be refunded $${totalAmount.toFixed(2)}.`);
+            resetFlow();
         }
 
         function addWebhook(event, data) {
@@ -1798,9 +1896,72 @@
             document.getElementById('customer-form-container').style.display = 'none';
             document.getElementById('other-payment-msg').style.display = 'none';
             document.getElementById('webhook-log').innerHTML = '';
+
+            // Reset invoice display
+            updateInvoiceDisplay();
+        }
+
+        function populateInvoiceModal() {
+            const lineItemsContainer = document.getElementById('invoiceLineItems');
+            const subtotal = invoiceData.total;
+            const tax = subtotal * 0.1;
+            const totalDue = subtotal + tax + upsellAmount;
+
+            let html = `
+                <div class="invoice-item">
+                    <span class="invoice-item-name">Automotive Repair Services</span>
+                    <span class="invoice-item-price">$65.00</span>
+                </div>
+                <div class="invoice-item">
+                    <span class="invoice-item-name">Parts & Materials</span>
+                    <span class="invoice-item-price">$35.00</span>
+                </div>
+            `;
+
+            if (selectedServices.length > 0) {
+                html += `<div style="border-top: 1px solid #e5e7eb; margin-top: 8px; padding-top: 8px; margin-bottom: 8px;">
+                    <div style="font-size: 12px; font-weight: 600; color: #374151; margin-bottom: 8px;">Additional BNPL Services:</div>`;
+                selectedServices.forEach(service => {
+                    html += `
+                    <div class="invoice-item" style="padding: 4px 0;">
+                        <span class="invoice-item-name" style="font-size: 12px;">• ${service.name}</span>
+                        <span class="invoice-item-price" style="font-size: 12px;">$${service.price.toFixed(2)}</span>
+                    </div>`;
+                });
+                html += `</div>`;
+            }
+
+            html += `
+                <div class="invoice-item total">
+                    <span>Subtotal</span>
+                    <span>$${subtotal.toFixed(2)}</span>
+                </div>
+                <div class="invoice-item">
+                    <span class="invoice-item-name">Tax (10%)</span>
+                    <span class="invoice-item-price">$${tax.toFixed(2)}</span>
+                </div>
+            `;
+
+            if (selectedServices.length > 0) {
+                html += `
+                <div class="invoice-item">
+                    <span class="invoice-item-name">BNPL Services</span>
+                    <span class="invoice-item-price">$${upsellAmount.toFixed(2)}</span>
+                </div>`;
+            }
+
+            html += `
+                <div class="invoice-item total" style="border-top: 2px solid #e5e7eb; padding-top: 8px; margin-top: 8px;">
+                    <span>Total Due</span>
+                    <span>$${totalDue.toFixed(2)}</span>
+                </div>
+            `;
+
+            lineItemsContainer.innerHTML = html;
         }
 
         function showInvoiceModal() {
+            populateInvoiceModal();
             document.getElementById('invoiceModal').classList.add('show');
         }
 
@@ -1809,9 +1970,14 @@
         }
 
         window.onclick = function(event) {
-            const modal = document.getElementById('invoiceModal');
-            if (event.target == modal) {
-                modal.classList.remove('show');
+            const invoiceModal = document.getElementById('invoiceModal');
+            const voidConfirmModal = document.getElementById('voidConfirmModal');
+            
+            if (event.target == invoiceModal) {
+                invoiceModal.classList.remove('show');
+            }
+            if (event.target == voidConfirmModal) {
+                voidConfirmModal.classList.remove('show');
             }
         }
     </script>
