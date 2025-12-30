@@ -984,6 +984,80 @@
         </div>
     </div>
 
+    <div id="overageConfirmModal" class="modal">
+        <div class="modal-content" style="max-width: 450px;">
+            <div class="modal-header">
+                <h2>Pre-Approved Limit Exceeded</h2>
+                <button class="modal-close" onclick="closeOverageConfirmModal()">&times;</button>
+            </div>
+
+            <div style="margin-bottom: 24px;">
+                <div style="background: #fef9e7; border: 1px solid #eab308; border-radius: 8px; padding: 16px; margin-bottom: 16px;">
+                    <div style="color: #713f12; font-weight: 600; margin-bottom: 8px;">⚠️ Pre-Approved Limit Maxed Out</div>
+                    <p style="margin: 0; color: #713f12; font-size: 13px;">Adding <span id="overageServiceName"></span> ($<span id="overageServicePrice">0.00</span>) will exceed the customer's pre-approved amount of <strong>$3,600.00</strong>.</p>
+                </div>
+
+                <div style="background: #f9fafb; border-radius: 8px; padding: 12px; margin-bottom: 16px;">
+                    <div style="font-size: 12px; color: #6b7280; margin-bottom: 8px;">Here's how it will work:</div>
+                    <div style="font-size: 13px; color: #374151; line-height: 1.8;">
+                        <div>✓ BNPL will cover: <strong>$3,600.00</strong></div>
+                        <div>• Customer financed via DigniFi</div>
+                        <div style="margin-top: 8px; padding-top: 8px; border-top: 1px solid #e5e7eb;">💳 Customer pays remaining balance with:</div>
+                        <div style="margin-top: 4px; color: #6b7280; font-size: 12px;">Another payment method (card, cash, check)</div>
+                        <div id="overageAmount" style="margin-top: 8px; font-weight: 600; color: #ef4444;">Remaining: $0.00</div>
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                    <button class="btn btn-secondary" onclick="closeOverageConfirmModal()">Cancel</button>
+                    <button class="btn btn-primary" onclick="confirmAddService()">Yes, Add Service</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="secondaryPaymentModal" class="modal">
+        <div class="modal-content" style="max-width: 500px;">
+            <div class="modal-header">
+                <h2>Complete Payment</h2>
+                <button class="modal-close" onclick="closeSecondaryPaymentModal()" style="display: none;">&times;</button>
+            </div>
+
+            <div style="margin-bottom: 24px;">
+                <div style="background: #f0fdf4; border: 2px solid #22c55e; border-radius: 8px; padding: 16px; margin-bottom: 16px;">
+                    <div style="color: #15803d; font-size: 12px; margin-bottom: 4px;">✓ BNPL Payment Applied</div>
+                    <div style="color: #15803d; font-size: 18px; font-weight: 700;">$3,600.00</div>
+                </div>
+
+                <div style="background: #fef9e7; border: 2px solid #eab308; border-radius: 8px; padding: 16px; margin-bottom: 16px;">
+                    <div style="color: #713f12; font-size: 12px; margin-bottom: 4px;">💳 Remaining Balance Due</div>
+                    <div style="color: #713f12; font-size: 18px; font-weight: 700;">$<span id="secondaryOverageAmount">0.00</span></div>
+                </div>
+
+                <p style="font-size: 13px; color: #6b7280; margin-bottom: 16px;">Select a payment method to cover the remaining balance:</p>
+
+                <div style="display: grid; gap: 12px;">
+                    <button class="payment-method-btn" style="text-align: left; padding: 16px;" onclick="selectSecondaryPayment('card')">
+                        <div style="font-weight: 600; font-size: 14px; margin-bottom: 4px;">💳 Credit/Debit Card</div>
+                        <div style="font-size: 12px; color: #6b7280;">Visa, Mastercard, Amex</div>
+                    </button>
+                    <button class="payment-method-btn" style="text-align: left; padding: 16px;" onclick="selectSecondaryPayment('cash')">
+                        <div style="font-weight: 600; font-size: 14px; margin-bottom: 4px;">💵 Cash</div>
+                        <div style="font-size: 12px; color: #6b7280;">Pay at location</div>
+                    </button>
+                    <button class="payment-method-btn" style="text-align: left; padding: 16px;" onclick="selectSecondaryPayment('check')">
+                        <div style="font-weight: 600; font-size: 14px; margin-bottom: 4px;">📋 Check</div>
+                        <div style="font-size: 12px; color: #6b7280;">Pay by check</div>
+                    </button>
+                    <button class="payment-method-btn" style="text-align: left; padding: 16px;" onclick="selectSecondaryPayment('bank')">
+                        <div style="font-weight: 600; font-size: 14px; margin-bottom: 4px;">🏦 Bank Transfer</div>
+                        <div style="font-size: 12px; color: #6b7280;">Direct bank transfer</div>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
         const invoiceData = {
             total: 110.00
@@ -1069,7 +1143,9 @@
             { name: 'Coolant Flush & Refill', price: 175, id: 'btn-coolant' },
             { name: 'Brake Pad Replacement (Front)', price: 420, id: 'btn-brake-pads' },
             { name: 'Engine Diagnostics', price: 280, id: 'btn-engine' },
-            { name: 'Paint Protection', price: 350, id: 'btn-paint' }
+            { name: 'Paint Protection', price: 350, id: 'btn-paint' },
+            { name: 'Engine Overhaul', price: 1200, id: 'btn-engine-overhaul' },
+            { name: 'Transmission Rebuild', price: 950, id: 'btn-transmission-rebuild' }
         ];
 
         function getPrequalification() {
@@ -1141,6 +1217,9 @@
             const combinedSubtotal = baseSubtotal + upsellAmount; // Base + BNPL services
             const tax = combinedSubtotal * 0.1; // 10% of combined
             const finalTotal = combinedSubtotal + tax;
+            
+            // Cap at pre-approved if overage exists
+            const cappedLoanAmount = Math.min(finalTotal, approvedAmount);
 
             // Update invoice summary section (left side)
             const subtotalEl = document.getElementById('invoiceSubtotal');
@@ -1162,22 +1241,77 @@
             const totalPaidEl = document.getElementById('totalPaidAmount');
             
             if (amountToPayEl) {
-                amountToPayEl.textContent = `$${finalTotal.toFixed(2)}`;
+                // If transaction complete with overage, show remaining balance
+                if (transactionComplete && loanOverage > 0) {
+                    amountToPayEl.textContent = `$${loanOverage.toFixed(2)}`;
+                } else if (transactionComplete) {
+                    // No overage, everything paid via BNPL
+                    amountToPayEl.textContent = `$0.00`;
+                } else {
+                    // Transaction not complete, show full amount
+                    amountToPayEl.textContent = `$${finalTotal.toFixed(2)}`;
+                }
             }
             
-            if (totalPaidEl && transactionComplete) {
-                totalPaidEl.textContent = `$${finalTotal.toFixed(2)}`;
+            if (totalPaidEl) {
+                if (transactionComplete) {
+                    // Show what was paid via BNPL (capped at approved amount)
+                    totalPaidEl.textContent = `$${cappedLoanAmount.toFixed(2)}`;
+                } else {
+                    totalPaidEl.textContent = `$0.00`;
+                }
             }
         }
 
+        // Pending service to be added after overage confirmation
+        let pendingService = null;
+
         function addService(serviceName, servicePrice) {
             // Check if service is already added to prevent duplicates
-            if (!selectedServices.find(s => s.name === serviceName)) {
-                selectedServices.push({ name: serviceName, price: servicePrice });
-                upsellAmount += servicePrice;
+            if (selectedServices.find(s => s.name === serviceName)) {
+                return;
+            }
+
+            // Calculate what the final amount would be with this service
+            const baseSubtotal = invoiceData.total / 1.1;
+            const newCombinedSubtotal = baseSubtotal + upsellAmount + servicePrice;
+            const newFinalAmount = newCombinedSubtotal * 1.1;
+
+            // Check if adding this service would exceed pre-approved amount
+            if (newFinalAmount > approvedAmount) {
+                // Show overage confirmation modal
+                const overage = newFinalAmount - approvedAmount;
+                document.getElementById('overageServiceName').textContent = serviceName;
+                document.getElementById('overageServicePrice').textContent = servicePrice.toFixed(2);
+                document.getElementById('overageAmount').textContent = `Remaining: $${overage.toFixed(2)}`;
+                
+                // Store pending service info
+                pendingService = { name: serviceName, price: servicePrice };
+                
+                document.getElementById('overageConfirmModal').classList.add('show');
+                return;
+            }
+
+            // Service doesn't exceed limit, add it normally
+            selectedServices.push({ name: serviceName, price: servicePrice });
+            upsellAmount += servicePrice;
+            updateInvoiceDisplay();
+            renderDignifiFlow();
+        }
+
+        function confirmAddService() {
+            if (pendingService) {
+                selectedServices.push({ name: pendingService.name, price: pendingService.price });
+                upsellAmount += pendingService.price;
+                pendingService = null;
+                closeOverageConfirmModal();
                 updateInvoiceDisplay();
                 renderDignifiFlow();
             }
+        }
+
+        function closeOverageConfirmModal() {
+            document.getElementById('overageConfirmModal').classList.remove('show');
         }
 
         function sendInviteWithDecline() {
@@ -1223,12 +1357,21 @@
             }, 2000);
         }
 
+        // Track overage for final checkout
+        let loanOverage = 0;
+
         function sendInviteWithFinalAmount() {
             const email = window.customerEmail || '';
             const phone = window.customerPhone || '';
             const baseSubtotal = invoiceData.total / 1.1; // $100 (remove tax)
             const combinedSubtotal = baseSubtotal + upsellAmount; // $100 + services
             const finalAmount = combinedSubtotal * 1.1; // Apply 10% tax to combined
+
+            // Calculate overage (amount over pre-approved limit)
+            loanOverage = finalAmount > approvedAmount ? finalAmount - approvedAmount : 0;
+            
+            // Cap the loan amount at pre-approved limit
+            const loanAmount = Math.min(finalAmount, approvedAmount);
 
             // Hide the service selection area
             document.getElementById('dignifi-flow').style.display = 'block';
@@ -1247,7 +1390,9 @@
                 addWebhook('checkout.initiated', {
                     checkout_id: `checkout_${Date.now()}`,
                     transaction_amount: finalAmount,
+                    loan_amount: loanAmount,
                     approved_amount: approvedAmount,
+                    overage_amount: loanOverage,
                     services: selectedServices,
                     merchant_id: 'merchant_cdkglobal_demo',
                     customer_contact: email ? `email (${email})` : `phone (${phone})`,
@@ -1582,30 +1727,48 @@
                 const baseSubtotal = invoiceData.total / 1.1; // $100 (remove tax)
                 const combinedSubtotal = baseSubtotal + upsellAmount; // $100 + services
                 const finalAmount = combinedSubtotal * 1.1; // Apply 10% tax to combined
+                const cappedLoanAmount = Math.min(finalAmount, approvedAmount);
+                const overage = finalAmount - cappedLoanAmount;
+                
                 html = `
                     <div class="approval-card">
                         <div class="approval-header">
                             <div class="approval-header-icon">✓</div>
                             <div class="approval-header-text">
                                 <h3>Checkout Complete - Loan Funded!</h3>
-                                <p>Customer signed and approved for the exact amount</p>
+                                <p>${overage > 0 ? 'Customer signed for BNPL financing with secondary payment' : 'Customer signed and approved for the full amount'}</p>
                             </div>
                         </div>
 
                         <div class="funds-balance">
                             <div class="funds-row">
-                                <span class="funds-label">Total Approved Amount</span>
-                                <span class="funds-amount">$${approvedAmount.toFixed(2)}</span>
-                            </div>
-                            <div class="funds-row">
-                                <span class="funds-label">Customer Signed For</span>
+                                <span class="funds-label">Total Request</span>
                                 <span class="funds-amount">$${finalAmount.toFixed(2)}</span>
                             </div>
+                            <div class="funds-row">
+                                <span class="funds-label">BNPL Approved & Signed</span>
+                                <span class="funds-amount">$${cappedLoanAmount.toFixed(2)}</span>
+                            </div>
                             <div class="funds-row" style="background-color: rgba(34, 197, 94, 0.1); margin: 8px -16px -16px -16px; padding: 8px 16px 16px 16px; border-radius: 0 0 8px 8px;">
-                                <span class="funds-label" style="color: #15803d; font-weight: 600;">Remaining Approved Balance</span>
-                                <span class="funds-amount" style="color: #15803d; font-size: 18px;">$${(approvedAmount - finalAmount).toFixed(2)}</span>
+                                <span class="funds-label" style="color: #15803d; font-weight: 600;">BNPL Loan Amount</span>
+                                <span class="funds-amount" style="color: #15803d; font-size: 18px;">$${cappedLoanAmount.toFixed(2)}</span>
                             </div>
                         </div>
+
+                        ${overage > 0 ? `
+                        <div style="background: #fef9e7; border: 2px solid #eab308; border-radius: 8px; padding: 12px; margin-bottom: 16px;">
+                            <div style="font-size: 12px; font-weight: 600; color: #713f12; margin-bottom: 8px;">💳 Additional Payment Required</div>
+                            <div style="font-size: 13px; color: #713f12; margin-bottom: 8px;">
+                                The customer's selected services exceeded the pre-approved limit. The remaining balance must be collected via another payment method:
+                            </div>
+                            <div style="background: white; border-radius: 6px; padding: 12px; margin-top: 8px;">
+                                <div style="display: flex; justify-content: space-between; font-weight: 600; color: #ef4444; font-size: 16px;">
+                                    <span>Amount Due:</span>
+                                    <span>$${overage.toFixed(2)}</span>
+                                </div>
+                            </div>
+                        </div>
+                        ` : ''}
 
                         ${selectedServices.length > 0 ? `
                         <div style="background: #f9fafb; border-radius: 8px; padding: 12px; margin-bottom: 16px; border: 1px solid #e5e7eb;">
@@ -1618,12 +1781,12 @@
 
                         <div class="loan-details">
                             <div class="loan-detail">
-                                <span>Loan Amount</span>
-                                <span>$${finalAmount.toFixed(2)}</span>
+                                <span>BNPL Loan Amount</span>
+                                <span>$${cappedLoanAmount.toFixed(2)}</span>
                             </div>
                             <div class="loan-detail text">
                                 <span>Monthly Payment (24mo)</span>
-                                <span>$${(finalAmount / 24).toFixed(2)}</span>
+                                <span>$${(cappedLoanAmount / 24).toFixed(2)}</span>
                             </div>
                             <div class="loan-detail text">
                                 <span>Loan ID</span>
@@ -1645,7 +1808,7 @@
                         </div>
 
                         <div style="background: #fef9e7; border: 1px solid #eab308; border-radius: 8px; padding: 12px; margin-top: 16px; font-size: 12px; color: #713f12;">
-                            <strong>✓ Workflow Complete:</strong> Services added → Final amount locked → Customer signed for exact amount → Loan funded.
+                            <strong>✓ Workflow Complete:</strong> ${overage > 0 ? 'Services added → Final amount locked → BNPL capped at $3,600 → Secondary payment collected → Loan funded.' : 'Services added → Final amount locked → Customer signed for exact amount → Loan funded.'}
                         </div>
                     </div>
                 `;
@@ -1653,30 +1816,48 @@
                 const baseSubtotal = invoiceData.total / 1.1; // $100 (remove tax)
                 const combinedSubtotal = baseSubtotal + upsellAmount; // $100 + services
                 const finalAmount = combinedSubtotal * 1.1; // Apply 10% tax to combined
+                const cappedLoanAmount = Math.min(finalAmount, approvedAmount);
+                const overage = finalAmount - cappedLoanAmount;
+                
                 html = `
                     <div class="approval-card">
                         <div class="approval-header">
                             <div class="approval-header-icon">✓</div>
                             <div class="approval-header-text">
                                 <h3>Checkout Complete - Loan Funded!</h3>
-                                <p>Customer signed and approved for the exact amount</p>
+                                <p>${overage > 0 ? 'Customer signed for BNPL financing with secondary payment' : 'Customer signed and approved for the full amount'}</p>
                             </div>
                         </div>
 
                         <div class="funds-balance">
                             <div class="funds-row">
-                                <span class="funds-label">Total Approved Amount</span>
-                                <span class="funds-amount">$${approvedAmount.toFixed(2)}</span>
-                            </div>
-                            <div class="funds-row">
-                                <span class="funds-label">Customer Signed For</span>
+                                <span class="funds-label">Total Request</span>
                                 <span class="funds-amount">$${finalAmount.toFixed(2)}</span>
                             </div>
+                            <div class="funds-row">
+                                <span class="funds-label">BNPL Approved & Signed</span>
+                                <span class="funds-amount">$${cappedLoanAmount.toFixed(2)}</span>
+                            </div>
                             <div class="funds-row" style="background-color: rgba(34, 197, 94, 0.1); margin: 8px -16px -16px -16px; padding: 8px 16px 16px 16px; border-radius: 0 0 8px 8px;">
-                                <span class="funds-label" style="color: #15803d; font-weight: 600;">Remaining Approved Balance</span>
-                                <span class="funds-amount" style="color: #15803d; font-size: 18px;">$${(approvedAmount - finalAmount).toFixed(2)}</span>
+                                <span class="funds-label" style="color: #15803d; font-weight: 600;">BNPL Loan Amount</span>
+                                <span class="funds-amount" style="color: #15803d; font-size: 18px;">$${cappedLoanAmount.toFixed(2)}</span>
                             </div>
                         </div>
+
+                        ${overage > 0 ? `
+                        <div style="background: #fef9e7; border: 2px solid #eab308; border-radius: 8px; padding: 12px; margin-bottom: 16px;">
+                            <div style="font-size: 12px; font-weight: 600; color: #713f12; margin-bottom: 8px;">💳 Additional Payment Collected</div>
+                            <div style="font-size: 13px; color: #713f12; margin-bottom: 8px;">
+                                Customer's selected services exceeded the BNPL limit. Remaining balance collected via secondary payment:
+                            </div>
+                            <div style="background: white; border-radius: 6px; padding: 12px; margin-top: 8px;">
+                                <div style="display: flex; justify-content: space-between; font-weight: 600; color: #15803d; font-size: 14px;">
+                                    <span>Secondary Payment:</span>
+                                    <span>$${overage.toFixed(2)}</span>
+                                </div>
+                            </div>
+                        </div>
+                        ` : ''}
 
                         ${selectedServices.length > 0 ? `
                         <div style="background: #f9fafb; border-radius: 8px; padding: 12px; margin-bottom: 16px; border: 1px solid #e5e7eb;">
@@ -1689,12 +1870,12 @@
 
                         <div class="loan-details">
                             <div class="loan-detail">
-                                <span>Loan Amount</span>
-                                <span>$${finalAmount.toFixed(2)}</span>
+                                <span>BNPL Loan Amount</span>
+                                <span>$${cappedLoanAmount.toFixed(2)}</span>
                             </div>
                             <div class="loan-detail text">
                                 <span>Monthly Payment (24mo)</span>
-                                <span>$${(finalAmount / 24).toFixed(2)}</span>
+                                <span>$${(cappedLoanAmount / 24).toFixed(2)}</span>
                             </div>
                             <div class="loan-detail text">
                                 <span>Loan ID</span>
@@ -1716,7 +1897,7 @@
                         </div>
 
                         <div style="background: #fef9e7; border: 1px solid #eab308; border-radius: 8px; padding: 12px; margin-top: 16px; font-size: 12px; color: #713f12;">
-                            <strong>✓ Workflow Complete:</strong> Services added → Final amount locked → Customer signed for exact amount → Loan funded.
+                            <strong>✓ Workflow Complete:</strong> ${overage > 0 ? 'Services added → Final amount locked → BNPL capped at $3,600 → Secondary payment collected → Loan funded.' : 'Services added → Final amount locked → Customer signed for exact amount → Loan funded.'}
                         </div>
                     </div>
                 `;
@@ -1845,25 +2026,68 @@
             const baseSubtotal = invoiceData.total / 1.1;
             const combinedSubtotal = baseSubtotal + upsellAmount;
             const totalAmount = combinedSubtotal * 1.1;
+            
+            // Cap loan at pre-approved amount
+            const cappedLoanAmount = Math.min(totalAmount, approvedAmount);
+            const overageAmount = totalAmount - cappedLoanAmount;
+            
             addWebhook('checkout.payment_applied', {
                 transaction_id: '#510665_TOY-I_2022-05-13',
-                loan_amount: totalAmount,
+                loan_amount: cappedLoanAmount,
+                total_transaction_amount: totalAmount,
+                overage_amount: overageAmount,
                 services: selectedServices,
                 timestamp: new Date().toISOString(),
                 status: 'success'
             });
 
             transactionComplete = true;
+            loanOverage = overageAmount;
             updateInvoiceDisplay();
             renderDignifiFlow();
             
             // Show payment success modal
-            document.getElementById('successLoanAmount').textContent = totalAmount.toFixed(2);
+            document.getElementById('successLoanAmount').textContent = cappedLoanAmount.toFixed(2);
             document.getElementById('paymentSuccessModal').classList.add('show');
         }
 
         function closePaymentSuccessModal() {
             document.getElementById('paymentSuccessModal').classList.remove('show');
+            
+            // If there's an overage, show secondary payment modal
+            if (loanOverage > 0) {
+                document.getElementById('secondaryOverageAmount').textContent = loanOverage.toFixed(2);
+                document.getElementById('secondaryPaymentModal').classList.add('show');
+            }
+        }
+
+        function closeSecondaryPaymentModal() {
+            document.getElementById('secondaryPaymentModal').classList.remove('show');
+        }
+
+        function selectSecondaryPayment(method) {
+            const baseSubtotal = invoiceData.total / 1.1;
+            const combinedSubtotal = baseSubtotal + upsellAmount;
+            const totalAmount = combinedSubtotal * 1.1;
+            
+            const methodNames = {
+                card: 'Credit/Debit Card',
+                cash: 'Cash',
+                check: 'Check',
+                bank: 'Bank Transfer'
+            };
+            
+            addWebhook('secondary_payment_initiated', {
+                transaction_id: '#510665_TOY-I_2022-05-13',
+                payment_method: method,
+                amount: loanOverage,
+                primary_bnpl_amount: approvedAmount,
+                total_transaction_amount: totalAmount,
+                timestamp: new Date().toISOString()
+            });
+            
+            alert(`Secondary payment of $${loanOverage.toFixed(2)} via ${methodNames[method]} has been initiated. Transaction complete!`);
+            closeSecondaryPaymentModal();
         }
 
         function voidTransaction() {
@@ -2047,6 +2271,7 @@
             const invoiceModal = document.getElementById('invoiceModal');
             const voidConfirmModal = document.getElementById('voidConfirmModal');
             const paymentSuccessModal = document.getElementById('paymentSuccessModal');
+            const overageConfirmModal = document.getElementById('overageConfirmModal');
             
             if (event.target == invoiceModal) {
                 invoiceModal.classList.remove('show');
@@ -2056,6 +2281,9 @@
             }
             if (event.target == paymentSuccessModal) {
                 paymentSuccessModal.classList.remove('show');
+            }
+            if (event.target == overageConfirmModal) {
+                overageConfirmModal.classList.remove('show');
             }
         }
     </script>
