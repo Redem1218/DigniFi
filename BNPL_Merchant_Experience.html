@@ -1386,23 +1386,21 @@
                 html = `
                     <div style="background: #fef2f2; border: 1px solid #ef4444; border-radius: 8px; padding: 16px; margin-bottom: 16px;">
                         <h3 style="color: #991b1b; margin-top: 0;">✗ Prequalification Not Available</h3>
-                        <p style="color: #7f1d1d; margin: 8px 0 0 0; font-size: 13px;">Customer does not currently qualify for financing.</p>
+                        <p style="color: #7f1d1d; margin: 8px 0 0 0; font-size: 13px;">Customer has been declined for DigniFi BNPL financing.</p>
                     </div>
 
-                    <p style="font-size: 13px; color: #6b7280; margin-bottom: 16px;">When a customer is declined, they receive an adverse action notice explaining the reason.</p>
+                    <p style="font-size: 13px; color: #6b7280; margin-bottom: 16px;">The customer received an adverse action notice explaining the reason for the decline. They can try a different payment method.</p>
 
                     <div class="flow-status error" style="margin-bottom: 16px;">
-                        <p style="margin: 0; font-weight: 600;">Adverse Action Notice</p>
+                        <p style="margin: 0; font-weight: 600;">Adverse Action Notice Sent</p>
                         <p style="margin: 8px 0 0 0; font-size: 12px;">The applicant was not approved for the requested financing due to credit decision criteria. The applicant has the right to request a detailed explanation of the adverse action within 60 days by contacting DigniFi at support@dignifi.com or 1-855-DIGNIFI.</p>
                     </div>
 
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
-                        <button class="btn btn-secondary" onclick="resetFlow()">Start Over</button>
-                        <button class="btn btn-primary" onclick="sendInviteWithDecline()">
-                            📧 Send Decline Notice
-                        </button>
-                    </div>
+                    <button class="btn btn-primary" onclick="resetFlow()" style="width: 100%;">
+                        ← Return to Payment Method Selection
+                    </button>
                 `;
+
             } else if (dignifiFlow === 'add_services') {
                 html = `
                     <div style="background: #f0fdf4; border: 1px solid #22c55e; border-radius: 8px; padding: 16px; margin-bottom: 16px;">
@@ -1903,9 +1901,11 @@
 
         function populateInvoiceModal() {
             const lineItemsContainer = document.getElementById('invoiceLineItems');
-            const subtotal = invoiceData.total;
-            const tax = subtotal * 0.1;
-            const totalDue = subtotal + tax + upsellAmount;
+            // invoiceData.total is $110 (which includes 10% tax), so back out the tax to get base
+            const baseSubtotal = invoiceData.total / 1.1; // $100
+            const combinedSubtotal = baseSubtotal + upsellAmount; // Add BNPL services to base
+            const tax = combinedSubtotal * 0.1; // Calculate tax on combined subtotal
+            const totalDue = combinedSubtotal + tax;
 
             let html = `
                 <div class="invoice-item">
@@ -1934,21 +1934,13 @@
             html += `
                 <div class="invoice-item total">
                     <span>Subtotal</span>
-                    <span>$${subtotal.toFixed(2)}</span>
+                    <span>$${combinedSubtotal.toFixed(2)}</span>
                 </div>
                 <div class="invoice-item">
                     <span class="invoice-item-name">Tax (10%)</span>
                     <span class="invoice-item-price">$${tax.toFixed(2)}</span>
                 </div>
             `;
-
-            if (selectedServices.length > 0) {
-                html += `
-                <div class="invoice-item">
-                    <span class="invoice-item-name">BNPL Services</span>
-                    <span class="invoice-item-price">$${upsellAmount.toFixed(2)}</span>
-                </div>`;
-            }
 
             html += `
                 <div class="invoice-item total" style="border-top: 2px solid #e5e7eb; padding-top: 8px; margin-top: 8px;">
