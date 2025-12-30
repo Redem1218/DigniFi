@@ -1058,6 +1058,46 @@
         </div>
     </div>
 
+    <div id="secondaryPaymentCollectionModal" class="modal">
+        <div class="modal-content" style="max-width: 450px;">
+            <div class="modal-header">
+                <h2>Record Secondary Payment</h2>
+                <button class="modal-close" onclick="closeSecondaryPaymentCollectionModal()" style="display: none;">&times;</button>
+            </div>
+
+            <div style="margin-bottom: 24px;">
+                <div style="background: #f0fdf4; border: 2px solid #22c55e; border-radius: 8px; padding: 16px; margin-bottom: 16px;">
+                    <div style="color: #15803d; font-size: 12px; margin-bottom: 4px;">✓ BNPL Payment Applied</div>
+                    <div style="color: #15803d; font-size: 18px; font-weight: 700;">$3,600.00</div>
+                </div>
+
+                <p style="font-size: 13px; color: #6b7280; margin-bottom: 16px;">Enter the amount collected from the customer via the selected payment method:</p>
+
+                <div style="background: #fef9e7; border: 2px solid #eab308; border-radius: 8px; padding: 16px; margin-bottom: 16px;">
+                    <label style="display: block; font-size: 12px; color: #713f12; font-weight: 600; margin-bottom: 8px;">
+                        Amount Collected (Expected: $<span id="expectedOverageAmount">0.00</span>)
+                    </label>
+                    <div style="display: flex; gap: 8px;">
+                        <div style="flex: 1; position: relative;">
+                            <span style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); font-size: 16px; font-weight: 600; color: #713f12;">$</span>
+                            <input type="number" id="secondaryPaymentAmount" placeholder="0.00" class="form-input" style="padding-left: 32px; font-size: 16px;" step="0.01" min="0" max="9999">
+                        </div>
+                    </div>
+                    <div id="amountValidation" style="font-size: 11px; color: #713f12; margin-top: 8px; display: none;"></div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                    <button class="btn btn-secondary" onclick="closeSecondaryPaymentCollectionModal()" style="display: none;">
+                        Cancel
+                    </button>
+                    <button class="btn btn-primary" onclick="completeSecondaryPayment()" style="grid-column: 1 / -1;">
+                        ✓ Complete Transaction
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
         const invoiceData = {
             total: 110.00
@@ -2065,11 +2105,45 @@
             document.getElementById('secondaryPaymentModal').classList.remove('show');
         }
 
+        let selectedSecondaryPaymentMethod = null;
+
         function selectSecondaryPayment(method) {
             const baseSubtotal = invoiceData.total / 1.1;
             const combinedSubtotal = baseSubtotal + upsellAmount;
             const totalAmount = combinedSubtotal * 1.1;
             
+            selectedSecondaryPaymentMethod = method;
+            
+            // Show the payment collection modal
+            document.getElementById('expectedOverageAmount').textContent = loanOverage.toFixed(2);
+            document.getElementById('secondaryPaymentAmount').value = '';
+            document.getElementById('amountValidation').style.display = 'none';
+            document.getElementById('secondaryPaymentCollectionModal').classList.add('show');
+            closeSecondaryPaymentModal();
+        }
+
+        function closeSecondaryPaymentCollectionModal() {
+            document.getElementById('secondaryPaymentCollectionModal').classList.remove('show');
+        }
+
+        function completeSecondaryPayment() {
+            const enteredAmount = parseFloat(document.getElementById('secondaryPaymentAmount').value) || 0;
+            const validationEl = document.getElementById('amountValidation');
+            
+            // Validate amount
+            if (enteredAmount === 0) {
+                validationEl.textContent = '⚠️ Please enter an amount';
+                validationEl.style.display = 'block';
+                return;
+            }
+            
+            if (enteredAmount !== loanOverage) {
+                validationEl.textContent = `⚠️ Amount must equal $${loanOverage.toFixed(2)}`;
+                validationEl.style.display = 'block';
+                return;
+            }
+            
+            // Amount is valid, record the secondary payment
             const methodNames = {
                 card: 'Credit/Debit Card',
                 cash: 'Cash',
@@ -2077,17 +2151,58 @@
                 bank: 'Bank Transfer'
             };
             
-            addWebhook('secondary_payment_initiated', {
+            addWebhook('secondary_payment_collected', {
                 transaction_id: '#510665_TOY-I_2022-05-13',
-                payment_method: method,
-                amount: loanOverage,
+                payment_method: selectedSecondaryPaymentMethod,
+                amount_collected: enteredAmount,
                 primary_bnpl_amount: approvedAmount,
-                total_transaction_amount: totalAmount,
-                timestamp: new Date().toISOString()
+                total_transaction_amount: approvedAmount + enteredAmount,
+                timestamp: new Date().toISOString(),
+                status: 'completed'
             });
             
-            alert(`Secondary payment of $${loanOverage.toFixed(2)} via ${methodNames[method]} has been initiated. Transaction complete!`);
-            closeSecondaryPaymentModal();
+            closeSecondaryPaymentCollectionModal();
+            showTransactionComplete(enteredAmount);
+        }
+
+        function showTransactionComplete(secondaryAmount) {
+            // Hide all flow sections
+            document.getElementById('dignifi-flow').style.display = 'none';
+            document.getElementById('journey-tracker').style.display = 'none';
+            document.getElementById('webhook-section').style.display = 'block';
+
+            // Show completion message as a special state
+            const completionHtml = `
+                <div style="background: #f0fdf4; border: 3px solid #22c55e; border-radius: 12px; padding: 32px; text-align: center; max-width: 500px; margin: 40px auto;">
+                    <div style="font-size: 64px; margin-bottom: 20px;">✓</div>
+                    <h2 style="color: #15803d; margin: 0 0 12px 0; font-size: 28px;">Transaction Complete!</h2>
+                    
+                    <div style="background: white; border-radius: 8px; padding: 20px; margin: 24px 0; text-align: left;">
+                        <div style="font-size: 12px; color: #6b7280; margin-bottom: 12px; font-weight: 600;">PAYMENT SUMMARY</div>
+                        <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #e5e7eb;">
+                            <span style="color: #374151;">BNPL Financing</span>
+                            <span style="font-weight: 600;">$3,600.00</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #e5e7eb;">
+                            <span style="color: #374151;">Secondary Payment</span>
+                            <span style="font-weight: 600;">$${secondaryAmount.toFixed(2)}</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; padding: 12px 0; background: #f9fafb; margin: 12px -20px -20px -20px; padding: 12px 20px; border-radius: 0 0 8px 8px;">
+                            <span style="color: #111827; font-weight: 700;">Total Collected</span>
+                            <span style="color: #15803d; font-weight: 700; font-size: 16px;">$${(3600 + secondaryAmount).toFixed(2)}</span>
+                        </div>
+                    </div>
+
+                    <p style="color: #6b7280; margin: 20px 0;">All services have been financed and transaction has been recorded in the system.</p>
+
+                    <button class="btn btn-primary" onclick="reset()" style="width: 100%; padding: 12px; font-size: 16px;">
+                        🔄 Start New Simulation
+                    </button>
+                </div>
+            `;
+
+            document.getElementById('dignifi-flow').innerHTML = completionHtml;
+            document.getElementById('dignifi-flow').style.display = 'block';
         }
 
         function voidTransaction() {
@@ -2165,6 +2280,9 @@
             transactionComplete = false;
             selectedServices = [];
             simulateDecline = false;
+            loanOverage = 0;
+            selectedSecondaryPaymentMethod = null;
+            pendingService = null;
 
             // Reset journey steps to original labels and icons
             journeySteps[0].label = 'Invite Sent';
@@ -2193,13 +2311,23 @@
                 declineCheckbox.checked = false;
             }
 
+            // Close any open modals
+            document.getElementById('secondaryPaymentModal').classList.remove('show');
+            document.getElementById('secondaryPaymentCollectionModal').classList.remove('show');
+            document.getElementById('paymentSuccessModal').classList.remove('show');
+            document.getElementById('voidConfirmModal').classList.remove('show');
+            document.getElementById('invoiceModal').classList.remove('show');
+            document.getElementById('overageConfirmModal').classList.remove('show');
+
             // Hide all flow sections
             document.getElementById('dignifi-flow').style.display = 'none';
             document.getElementById('journey-tracker').style.display = 'none';
             document.getElementById('webhook-section').style.display = 'none';
-            document.getElementById('customer-form-container').style.display = 'none';
             document.getElementById('other-payment-msg').style.display = 'none';
             document.getElementById('webhook-log').innerHTML = '';
+            
+            // Show customer form container again
+            document.getElementById('customer-form-container').style.display = 'block';
 
             // Reset invoice display
             updateInvoiceDisplay();
@@ -2287,5 +2415,16 @@
             }
         }
     </script>
+
+    <footer style="background: #f3f4f6; border-top: 1px solid #d1d5db; padding: 20px; margin-top: 40px; text-align: center;">
+        <div style="max-width: 1200px; margin: 0 auto;">
+            <p style="font-size: 11px; color: #6b7280; margin: 0; line-height: 1.6;">
+                <strong style="color: #374151;">© DigniFi, Inc.</strong> | This demo application is the property of DigniFi, Inc. and is provided for demonstration purposes only. 
+                The functionality, features, and behavior shown in this demo are not guaranteed and may not reflect actual product performance, capabilities, or future updates. 
+                This demo is intended for evaluation and educational purposes only and should not be relied upon as a representation of final product functionality. 
+                DigniFi makes no warranties, express or implied, regarding this demonstration software. Use of this demo is at your own risk.
+            </p>
+        </div>
+    </footer>
 </body>
 </html>
