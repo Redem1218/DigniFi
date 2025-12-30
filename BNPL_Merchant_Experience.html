@@ -87,10 +87,12 @@
             text-decoration: none;
             margin-left: 8px;
             font-size: 12px;
+            cursor: pointer;
         }
 
         .invoice-number a:hover {
             color: #1d4ed8;
+            text-decoration: underline;
         }
 
         .invoice-detail {
@@ -310,6 +312,58 @@
             font-weight: 600;
         }
 
+        .funds-balance {
+            background: linear-gradient(135deg, #f0fdf4 0%, #eff6ff 100%);
+            padding: 16px;
+            border-radius: 8px;
+            border: 1px solid #22c55e;
+            margin-bottom: 16px;
+        }
+
+        .funds-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 14px;
+            margin-bottom: 8px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid rgba(34, 197, 94, 0.2);
+        }
+
+        .funds-row:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .funds-label {
+            color: #6b7280;
+        }
+
+        .funds-amount {
+            font-weight: 600;
+        }
+
+        .upsell-prompt {
+            background: #fef3c7;
+            border-left: 4px solid #f59e0b;
+            padding: 16px;
+            border-radius: 8px;
+            margin-bottom: 16px;
+            margin-top: 16px;
+        }
+
+        .upsell-prompt h4 {
+            color: #92400e;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .upsell-prompt p {
+            color: #92400e;
+            font-size: 13px;
+            margin-bottom: 12px;
+        }
+
         .btn {
             width: 100%;
             padding: 12px 16px;
@@ -346,6 +400,36 @@
 
         .btn-gray:hover {
             background-color: #6b7280;
+        }
+
+        .btn-danger {
+            background-color: #ef4444;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background-color: #dc2626;
+        }
+
+        .btn-warning {
+            background-color: #f59e0b;
+            color: white;
+        }
+
+        .btn-warning:hover {
+            background-color: #d97706;
+        }
+
+        .btn-small {
+            padding: 8px 12px;
+            font-size: 13px;
+            width: auto;
+        }
+
+        .btn-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
         }
 
         .customer-form {
@@ -533,22 +617,85 @@
             50% { opacity: 0.7; }
         }
 
-        .divider {
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .modal.show {
             display: flex;
             align-items: center;
-            gap: 12px;
-            margin: 16px 0;
+            justify-content: center;
         }
 
-        .divider-line {
-            flex: 1;
-            height: 1px;
-            background-color: #e5e7eb;
+        .modal-content {
+            background-color: white;
+            padding: 32px;
+            border-radius: 12px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 25px rgba(0, 0, 0, 0.15);
         }
 
-        .divider-text {
-            font-size: 12px;
-            color: #9ca3af;
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            border-bottom: 1px solid #e5e7eb;
+            padding-bottom: 16px;
+        }
+
+        .modal-header h2 {
+            font-size: 24px;
+            font-weight: 700;
+            color: #111827;
+            margin: 0;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #6b7280;
+        }
+
+        .modal-close:hover {
+            color: #111827;
+        }
+
+        .invoice-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .invoice-item.total {
+            font-weight: 700;
+            font-size: 16px;
+            padding-top: 16px;
+            border-bottom: 2px solid #111827;
+            margin-top: 8px;
+        }
+
+        .invoice-item-name {
+            color: #111827;
+        }
+
+        .invoice-item-price {
+            color: #6b7280;
+            font-weight: 600;
         }
 
         @media (max-width: 1024px) {
@@ -577,6 +724,10 @@
             .customer-form {
                 grid-template-columns: 1fr;
             }
+
+            .btn-group {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
@@ -599,7 +750,7 @@
                     <div class="invoice-section">
                         <div class="invoice-number">
                             Invoice <span class="code">#510665_TOY-I_2022-05-13</span>
-                            <a href="#">View Details</a>
+                            <a onclick="showInvoiceModal()">View Details</a>
                         </div>
 
                         <div class="invoice-detail">
@@ -716,6 +867,64 @@
         </div>
     </div>
 
+    <!-- Invoice Detail Modal -->
+    <div id="invoiceModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Invoice #510665_TOY-I_2022-05-13</h2>
+                <button class="modal-close" onclick="closeInvoiceModal()">&times;</button>
+            </div>
+
+            <div style="margin-bottom: 24px;">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 24px;">
+                    <div>
+                        <div style="font-size: 12px; color: #6b7280; margin-bottom: 4px;">Invoice Date</div>
+                        <div style="font-weight: 600;">May 13, 2022</div>
+                    </div>
+                    <div>
+                        <div style="font-size: 12px; color: #6b7280; margin-bottom: 4px;">Due Date</div>
+                        <div style="font-weight: 600;">May 20, 2022</div>
+                    </div>
+                    <div>
+                        <div style="font-size: 12px; color: #6b7280; margin-bottom: 4px;">Status</div>
+                        <div style="font-weight: 600; color: #ef4444;">Pending</div>
+                    </div>
+                    <div>
+                        <div style="font-size: 12px; color: #6b7280; margin-bottom: 4px;">Terms</div>
+                        <div style="font-weight: 600;">Net 7</div>
+                    </div>
+                </div>
+
+                <div style="border-top: 2px solid #e5e7eb; padding-top: 16px;">
+                    <h3 style="font-size: 14px; font-weight: 700; margin-bottom: 12px;">Line Items</h3>
+                    
+                    <div class="invoice-item">
+                        <span class="invoice-item-name">Automotive Repair Services</span>
+                        <span class="invoice-item-price">$65.00</span>
+                    </div>
+                    <div class="invoice-item">
+                        <span class="invoice-item-name">Parts & Materials</span>
+                        <span class="invoice-item-price">$35.00</span>
+                    </div>
+                    <div class="invoice-item total">
+                        <span>Subtotal</span>
+                        <span>$100.00</span>
+                    </div>
+                    <div class="invoice-item">
+                        <span class="invoice-item-name">Tax (10%)</span>
+                        <span class="invoice-item-price">$10.00</span>
+                    </div>
+                    <div class="invoice-item total">
+                        <span>Total Due</span>
+                        <span>$110.00</span>
+                    </div>
+                </div>
+            </div>
+
+            <button class="btn btn-secondary" onclick="closeInvoiceModal()" style="width: 100%;">Close</button>
+        </div>
+    </div>
+
     <script>
         const invoiceData = {
             total: 110.00
@@ -725,28 +934,9 @@
         let dignifiFlow = 'idle';
         let webhooks = [];
         let decisionData = null;
-
-        function selectPaymentMethod(method) {
-            selectedPaymentMethod = method;
-            
-            // Update button states
-            document.querySelectorAll('.payment-method-btn').forEach(btn => {
-                btn.classList.remove('active');
-            });
-            event.target.classList.add('active');
-
-            if (method === 'dignifi') {
-                handleDignifiFlow();
-            } else {
-                document.getElementById('dignifi-flow').style.display = 'none';
-                document.getElementById('webhook-section').style.display = 'none';
-                document.getElementById('customer-form-container').style.display = 'block';
-                document.getElementById('other-payment-msg').style.display = 'none';
-                
-                const msg = document.getElementById('other-payment-msg');
-                msg.textContent = `Selected: ${method === 'card' ? 'Enter Card' : method === 'terminal' ? 'Use Terminal' : method === 'bank' ? 'Bank Account' : method === 'cash' ? 'Cash' : 'Invite to Pay'}`;
-            }
-        }
+        let approvedAmount = 2100.00;
+        let upsellAmount = 0;
+        let transactionComplete = false;
 
         const journeySteps = [
             { id: 'invite_sent', label: 'Invite Sent', icon: '📧', completed: false },
@@ -759,6 +949,25 @@
             { id: 'funded', label: 'Loan Funded', icon: '💰', completed: false }
         ];
 
+        function selectPaymentMethod(method) {
+            selectedPaymentMethod = method;
+            
+            document.querySelectorAll('.payment-method-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+
+            if (method === 'dignifi') {
+                handleDignifiFlow();
+            } else {
+                document.getElementById('dignifi-flow').style.display = 'none';
+                document.getElementById('webhook-section').style.display = 'none';
+                document.getElementById('journey-tracker').style.display = 'none';
+                document.getElementById('customer-form-container').style.display = 'block';
+                document.getElementById('other-payment-msg').style.display = 'none';
+            }
+        }
+
         function handleDignifiFlow() {
             document.getElementById('customer-form-container').style.display = 'none';
             document.getElementById('dignifi-flow').style.display = 'block';
@@ -768,6 +977,7 @@
             webhooks = [];
             dignifiFlow = 'invite_form';
             decisionData = null;
+            transactionComplete = false;
 
             renderDignifiFlow();
         }
@@ -787,16 +997,13 @@
 
             const contactMethod = email ? `email (${email})` : `phone (${phone})`;
             
-            document.getElementById('customer-form-container').style.display = 'none';
             document.getElementById('journey-tracker').style.display = 'block';
             
             webhooks = [];
             dignifiFlow = 'invite_sent';
 
-            // Reset journey steps
             journeySteps.forEach(step => step.completed = false);
 
-            // Trigger merchant.activated webhook
             setTimeout(() => {
                 addWebhook('merchant.activated', {
                     merchant_id: 'merchant_cdkglobal_demo',
@@ -805,11 +1012,11 @@
                 });
             }, 300);
 
-            // Trigger checkout.initiated webhook
             setTimeout(() => {
                 addWebhook('checkout.initiated', {
                     checkout_id: `checkout_${Date.now()}`,
                     transaction_amount: invoiceData.total,
+                    approved_amount: approvedAmount,
                     merchant_id: 'merchant_cdkglobal_demo',
                     customer_contact: contactMethod,
                     invite_type: email ? 'email' : 'sms',
@@ -820,25 +1027,24 @@
                 renderJourneyTracker();
             }, 600);
 
-            // Simulate customer opening link after 3-5 seconds
             setTimeout(() => {
                 journeySteps[1].completed = true;
                 renderJourneyTracker();
             }, 4000);
 
-            // Simulate customer viewing offer after 5-7 seconds
             setTimeout(() => {
                 journeySteps[2].completed = true;
                 renderJourneyTracker();
             }, 6000);
 
-            // Trigger decision API - prequalification
             setTimeout(() => {
                 const isApproved = Math.random() > 0.15;
                 
                 decisionData = {
                     approved: isApproved,
-                    approval_amount: invoiceData.total,
+                    approval_amount: approvedAmount,
+                    transaction_amount: invoiceData.total,
+                    available_balance: approvedAmount - invoiceData.total,
                     apr: '8.99%',
                     term_months: 24,
                     monthly_payment: (invoiceData.total / 24).toFixed(2),
@@ -852,21 +1058,19 @@
                     decision_id: `dec_${Date.now()}`,
                     approved: isApproved,
                     approval_amount: decisionData.approval_amount,
+                    available_balance: decisionData.available_balance,
                     response_time_ms: 247
                 });
 
                 if (isApproved) {
-                    // Simulate customer seeing approved decision
                     setTimeout(() => {
                         journeySteps[4].completed = true;
                         renderJourneyTracker();
 
-                        // Simulate customer reviewing agreement
                         setTimeout(() => {
                             journeySteps[5].completed = true;
                             renderJourneyTracker();
 
-                            // Simulate customer signing
                             setTimeout(() => {
                                 addWebhook('merchant.signed', {
                                     checkout_id: `checkout_${Date.now()}`,
@@ -878,18 +1082,18 @@
                                 journeySteps[6].completed = true;
                                 renderJourneyTracker();
 
-                                // Trigger checkout.approved
                                 setTimeout(() => {
                                     addWebhook('checkout.approved', {
                                         checkout_id: `checkout_${Date.now()}`,
                                         decision_id: `dec_${Date.now()}`,
-                                        approval_amount: invoiceData.total,
+                                        approval_amount: approvedAmount,
+                                        transaction_amount: invoiceData.total,
+                                        available_balance: decisionData.available_balance,
                                         monthly_payment: decisionData.monthly_payment,
                                         term_months: 24,
                                         interest_rate: '8.99%'
                                     });
 
-                                    // Trigger checkout.completed
                                     setTimeout(() => {
                                         addWebhook('checkout.completed', {
                                             checkout_id: `checkout_${Date.now()}`,
@@ -902,6 +1106,7 @@
                                         journeySteps[7].completed = true;
                                         renderJourneyTracker();
                                         dignifiFlow = 'approved';
+                                        transactionComplete = false;
                                         renderDignifiFlow();
                                     }, 1000);
                                 }, 500);
@@ -968,51 +1173,49 @@
                     </div>
                 `;
             } else if (dignifiFlow === 'approved') {
-                html = `
-                    <div style="margin-bottom: 16px;">
-                        <div class="flow-status success">
-                            <div style="display: flex; align-items: center; margin-bottom: 16px;">
-                                <span style="font-size: 24px; margin-right: 8px;">✓</span>
-                                <h3 style="margin: 0; color: #166534;">Approved!</h3>
-                            </div>
-                            <div class="approval-grid">
-                                <div class="approval-item">
-                                    <div class="approval-label">Approval Amount</div>
-                                    <div class="approval-value">$${decisionData.approval_amount.toFixed(2)}</div>
-                                </div>
-                                <div class="approval-item">
-                                    <div class="approval-label">Monthly Payment</div>
-                                    <div class="approval-value">$${decisionData.monthly_payment}</div>
-                                </div>
-                                <div class="approval-item">
-                                    <div class="approval-label">Term</div>
-                                    <div class="approval-value">${decisionData.term_months} mo</div>
-                                </div>
-                                <div class="approval-item">
-                                    <div class="approval-label">APR</div>
-                                    <div class="approval-value">${decisionData.apr}</div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="flow-status warning">
-                            <p style="margin: 0; font-size: 14px;">⏳ Simulating customer completing checkout...</p>
-                            <div class="progress-bar">
-                                <div class="progress-fill"></div>
-                            </div>
-                        </div>
-                    </div>
-                `;
-            } else if (dignifiFlow === 'approved') {
+                const availableForUpsell = (decisionData.available_balance - upsellAmount).toFixed(2);
                 html = `
                     <div class="approval-card">
                         <div class="approval-header">
                             <div class="approval-header-icon">✓</div>
                             <div class="approval-header-text">
-                                <h3>Checkout Complete</h3>
-                                <p>Loan is funded and ready</p>
+                                <h3>Checkout Complete - Loan Funded!</h3>
+                                <p>Customer approved and transaction is ready</p>
                             </div>
                         </div>
+
+                        <div class="funds-balance">
+                            <div class="funds-row">
+                                <span class="funds-label">Total Approved Amount</span>
+                                <span class="funds-amount">$${approvedAmount.toFixed(2)}</span>
+                            </div>
+                            <div class="funds-row">
+                                <span class="funds-label">This Transaction</span>
+                                <span class="funds-amount">$${invoiceData.total.toFixed(2)}</span>
+                            </div>
+                            <div class="funds-row" style="background-color: rgba(34, 197, 94, 0.1); margin: 8px -16px -16px -16px; padding: 8px 16px 16px 16px; border-radius: 0 0 8px 8px;">
+                                <span class="funds-label" style="color: #15803d; font-weight: 600;">Available for Upsell</span>
+                                <span class="funds-amount" style="color: #15803d; font-size: 18px;">$${availableForUpsell}</span>
+                            </div>
+                        </div>
+
+                        ${availableForUpsell > 50 ? `
+                        <div class="upsell-prompt">
+                            <h4>💡 Upsell Opportunity!</h4>
+                            <p>Customer has $${availableForUpsell} available in approved funds. Offer additional services:</p>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                                <button class="btn btn-warning btn-small" onclick="addUpsell(300)">Add $300 Service</button>
+                                <button class="btn btn-warning btn-small" onclick="addUpsell(500)">Add $500 Service</button>
+                            </div>
+                        </div>
+                        ` : ''}
+
+                        ${upsellAmount > 0 ? `
+                        <div class="flow-status success" style="margin-bottom: 16px;">
+                            <p style="margin: 0;">✓ Upsell added: $${upsellAmount.toFixed(2)}</p>
+                            <p style="margin: 8px 0 0 0; font-size: 12px;">New total transaction: $${(invoiceData.total + upsellAmount).toFixed(2)}</p>
+                        </div>
+                        ` : ''}
 
                         <div class="loan-details">
                             <div class="loan-detail">
@@ -1023,11 +1226,20 @@
                                 <span>First Payment Due</span>
                                 <span>Feb 15, 2025</span>
                             </div>
+                            <div class="loan-detail text">
+                                <span>APR</span>
+                                <span>8.99%</span>
+                            </div>
                         </div>
 
-                        <button class="btn btn-primary" onclick="completePayment()">
-                            Complete Payment
-                        </button>
+                        <div class="btn-group">
+                            <button class="btn btn-primary" onclick="applyPayment()" ${transactionComplete ? 'disabled style="opacity: 0.6; cursor: not-allowed;"' : ''}>
+                                ${transactionComplete ? '✓ Payment Applied' : '💳 Apply Payment'}
+                            </button>
+                            <button class="btn btn-danger" onclick="voidTransaction()">
+                                ✗ Void Transaction
+                            </button>
+                        </div>
                     </div>
                 `;
             } else if (dignifiFlow === 'declined') {
@@ -1046,6 +1258,41 @@
             }
 
             container.innerHTML = html;
+        }
+
+        function addUpsell(amount) {
+            upsellAmount += amount;
+            renderDignifiFlow();
+        }
+
+        function applyPayment() {
+            if (transactionComplete) return;
+
+            const totalAmount = invoiceData.total + upsellAmount;
+            addWebhook('checkout.payment_applied', {
+                transaction_id: '#510665_TOY-I_2022-05-13',
+                amount: totalAmount,
+                timestamp: new Date().toISOString(),
+                status: 'success'
+            });
+
+            transactionComplete = true;
+            renderDignifiFlow();
+            alert(`Payment of $${totalAmount.toFixed(2)} has been successfully applied!`);
+        }
+
+        function voidTransaction() {
+            if (confirm('Are you sure you want to void this transaction? This cannot be undone.')) {
+                addWebhook('checkout.voided', {
+                    transaction_id: '#510665_TOY-I_2022-05-13',
+                    void_reason: 'merchant_request',
+                    timestamp: new Date().toISOString(),
+                    status: 'success'
+                });
+
+                alert('Transaction voided successfully.');
+                reset();
+            }
         }
 
         function addWebhook(event, data) {
@@ -1081,13 +1328,7 @@
                 </div>
             `).join('');
 
-            // Auto-scroll to bottom
             log.scrollTop = log.scrollHeight;
-        }
-
-        function completePayment() {
-            alert(`Payment of $${invoiceData.total.toFixed(2)} processed via DigniFi BNPL!\n\nLoan Details:\n- Monthly Payment: $${(invoiceData.total / 24).toFixed(2)}\n- Term: 24 months\n- APR: 8.99%`);
-            reset();
         }
 
         function reset() {
@@ -1095,6 +1336,8 @@
             dignifiFlow = 'idle';
             webhooks = [];
             decisionData = null;
+            upsellAmount = 0;
+            transactionComplete = false;
 
             document.querySelectorAll('.payment-method-btn').forEach(btn => {
                 btn.classList.remove('active');
@@ -1106,6 +1349,21 @@
             document.getElementById('customer-form-container').style.display = 'none';
             document.getElementById('other-payment-msg').style.display = 'none';
             document.getElementById('webhook-log').innerHTML = '';
+        }
+
+        function showInvoiceModal() {
+            document.getElementById('invoiceModal').classList.add('show');
+        }
+
+        function closeInvoiceModal() {
+            document.getElementById('invoiceModal').classList.remove('show');
+        }
+
+        window.onclick = function(event) {
+            const modal = document.getElementById('invoiceModal');
+            if (event.target == modal) {
+                modal.classList.remove('show');
+            }
         }
     </script>
 </body>
