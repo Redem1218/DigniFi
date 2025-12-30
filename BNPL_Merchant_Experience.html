@@ -2137,8 +2137,12 @@
                 return;
             }
             
-            if (enteredAmount !== loanOverage) {
-                validationEl.textContent = `⚠️ Amount must equal $${loanOverage.toFixed(2)}`;
+            // Round both to 2 decimal places for comparison to avoid floating point issues
+            const roundedEntered = Math.round(enteredAmount * 100) / 100;
+            const roundedOverage = Math.round(loanOverage * 100) / 100;
+            
+            if (roundedEntered !== roundedOverage) {
+                validationEl.textContent = `⚠️ Amount must equal $${roundedOverage.toFixed(2)}`;
                 validationEl.style.display = 'block';
                 return;
             }
