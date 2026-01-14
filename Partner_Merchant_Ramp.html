@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Partner Merchant Forecast</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .slide-container {
+            width: 100%;
+            max-width: 1920px;
+            aspect-ratio: 16 / 9;
+            background: white;
+            display: flex;
+            flex-direction: column;
+            padding: 48px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .slide-header {
+            margin-bottom: 24px;
+        }
+        .slide-title {
+            font-size: 36px;
+            font-weight: 700;
+            color: #0a0a0a;
+            margin: 0 0 8px 0;
+            letter-spacing: -0.5px;
+        }
+        .slide-subtitle {
+            font-size: 16px;
+            color: #606060;
+            margin: 0;
+            font-weight: 400;
+        }
+        .chart-wrapper {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            margin-bottom: 24px;
+            position: relative;
+            min-height: 320px;
+        }
+        canvas {
+            max-height: 100%;
+        }
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+        }
+        .metric-card {
+            padding: 20px;
+            background: #f9fafb;
+            border-radius: 8px;
+            border: 1px solid #e5e5e5;
+        }
+        .metric-label {
+            font-size: 11px;
+            color: #606060;
+            font-weight: 600;
+            margin: 0 0 8px 0;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .metric-value {
+            font-size: 28px;
+            font-weight: 700;
+            margin: 0;
+        }
+        .metric-subtext {
+            font-size: 12px;
+            color: #999999;
+            margin: 4px 0 0 0;
+        }
+        .value-green {
+            color: #10b981;
+        }
+        .value-blue {
+            color: #2563eb;
+        }
+        .value-orange {
+            color: #f59e0b;
+        }
+    </style>
+</head>
+<body>
+    <div class="slide-container">
+        <div class="slide-header">
+            <h1 class="slide-title">Partner Merchant Forecast 2026</h1>
+            <p class="slide-subtitle">Monthly new merchant additions and cumulative growth trajectory</p>
+        </div>
+
+        <div class="chart-wrapper">
+            <canvas id="merchantChart"></canvas>
+        </div>
+
+        <div class="metrics-grid">
+            <div class="metric-card">
+                <p class="metric-label">Total by Year End</p>
+                <p class="metric-value value-green">1,818</p>
+            </div>
+            <div class="metric-card">
+                <p class="metric-label">Peak Monthly Addition</p>
+                <p class="metric-value value-blue">189</p>
+                <p class="metric-subtext">June</p>
+            </div>
+            <div class="metric-card">
+                <p class="metric-label">Stabilized Run Rate</p>
+                <p class="metric-value value-orange">174</p>
+                <p class="metric-subtext">Aug - Dec</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const ctx = document.getElementById('merchantChart').getContext('2d');
+
+        const data = {
+            labels: ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JULY', 'AUG', 'SEPT', 'OCT', 'NOV', 'DEC'],
+            datasets: [
+                {
+                    label: 'Monthly Additions',
+                    data: [74, 79, 89, 119, 169, 189, 174, 174, 174, 174, 174, 174],
+                    backgroundColor: '#2563eb',
+                    borderColor: '#1e40af',
+                    borderWidth: 0,
+                    borderRadius: 6,
+                    yAxisID: 'y',
+                    order: 2,
+                    barPercentage: 0.7,
+                },
+                {
+                    label: 'Cumulative Total',
+                    data: [129, 208, 297, 416, 585, 774, 948, 1122, 1296, 1470, 1644, 1818],
+                    borderColor: '#10b981',
+                    backgroundColor: 'transparent',
+                    borderWidth: 3,
+                    fill: false,
+                    tension: 0.4,
+                    yAxisID: 'y1',
+                    pointRadius: 5,
+                    pointBackgroundColor: '#10b981',
+                    pointBorderColor: '#ffffff',
+                    pointBorderWidth: 2,
+                    pointHoverRadius: 7,
+                    order: 1,
+                    type: 'line'
+                }
+            ]
+        };
+
+        const config = {
+            type: 'bar',
+            data: data,
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                interaction: {
+                    mode: 'index',
+                    intersect: false,
+                },
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'bottom',
+                        labels: {
+                            font: {
+                                size: 13,
+                                weight: '500'
+                            },
+                            padding: 20,
+                            color: '#333333',
+                            usePointStyle: true,
+                        }
+                    },
+                    tooltip: {
+                        backgroundColor: '#1a1a1a',
+                        padding: 12,
+                        titleFont: {
+                            size: 14,
+                            weight: '500'
+                        },
+                        bodyFont: {
+                            size: 13
+                        },
+                        borderColor: '#404040',
+                        borderWidth: 1,
+                        displayColors: true,
+                        callbacks: {
+                            label: function(context) {
+                                return context.dataset.label + ': ' + context.parsed.y.toLocaleString();
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        type: 'linear',
+                        display: true,
+                        position: 'left',
+                        title: {
+                            display: true,
+                            text: 'Monthly Additions',
+                            font: {
+                                size: 12,
+                                weight: '500'
+                            },
+                            color: '#666666'
+                        },
+                        grid: {
+                            color: '#e5e5e5',
+                            drawBorder: false
+                        },
+                        ticks: {
+                            color: '#666666',
+                            font: {
+                                size: 11
+                            }
+                        }
+                    },
+                    y1: {
+                        type: 'linear',
+                        display: true,
+                        position: 'right',
+                        title: {
+                            display: true,
+                            text: 'Cumulative Total',
+                            font: {
+                                size: 12,
+                                weight: '500'
+                            },
+                            color: '#666666'
+                        },
+                        grid: {
+                            drawOnChartArea: false,
+                        },
+                        ticks: {
+                            color: '#666666',
+                            font: {
+                                size: 11
+                            }
+                        }
+                    },
+                    x: {
+                        grid: {
+                            color: '#e5e5e5',
+                            drawBorder: false
+                        },
+                        ticks: {
+                            color: '#666666',
+                            font: {
+                                size: 12,
+                                weight: '500'
+                            }
+                        }
+                    }
+                }
+            }
+        };
+
+        new Chart(ctx, config);
+    </script>
+</body>
+</html>
