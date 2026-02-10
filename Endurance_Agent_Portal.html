@@ -1,0 +1,1567 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Endurance Agent Portal — Denied Warranty PreQual</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,500;0,9..40,700;1,9..40,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --dignifi-navy: #0B2535;
+      --dignifi-teal: #1A6B7A;
+      --dignifi-red: #E8503A;
+      --dignifi-red-hover: #D4432F;
+      --surface: #F7F9FB;
+      --surface-raised: #FFFFFF;
+      --border: #E2E8F0;
+      --border-focus: #1A6B7A;
+      --text-primary: #0B2535;
+      --text-secondary: #5A6B7B;
+      --text-muted: #8E9BAA;
+      --agent-blue: #2B7DE9;
+      --agent-blue-bg: #EBF3FD;
+      --system-purple: #7C5CFC;
+      --system-purple-bg: #F0ECFE;
+      --customer-green: #16A34A;
+      --customer-green-bg: #ECFDF5;
+      --advisor-amber: #D97706;
+      --advisor-amber-bg: #FFFBEB;
+      --success: #16A34A;
+      --warning: #D97706;
+      --radius-sm: 6px;
+      --radius-md: 10px;
+      --radius-lg: 16px;
+      --shadow-sm: 0 1px 3px rgba(11,37,53,0.06);
+      --shadow-md: 0 4px 16px rgba(11,37,53,0.08);
+      --shadow-lg: 0 12px 40px rgba(11,37,53,0.12);
+      --shadow-xl: 0 20px 60px rgba(11,37,53,0.16);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--surface);
+      color: var(--text-primary);
+      min-height: 100vh;
+    }
+
+    /* ── Top Navigation Bar ── */
+    .topbar {
+      background: var(--dignifi-navy);
+      padding: 0 32px;
+      height: 56px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+
+    .topbar-brand {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .topbar-logo {
+      font-size: 20px;
+      font-weight: 700;
+      color: #FFF;
+      letter-spacing: -0.3px;
+    }
+
+
+    .topbar-divider {
+      width: 1px;
+      height: 24px;
+      background: rgba(255,255,255,0.15);
+    }
+
+    .topbar-partner {
+      font-size: 13px;
+      color: rgba(255,255,255,0.6);
+      font-weight: 500;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+
+    .topbar-right {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .topbar-status {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      color: rgba(255,255,255,0.7);
+    }
+
+    .status-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #22C55E;
+      box-shadow: 0 0 6px rgba(34,197,94,0.5);
+    }
+
+    .topbar-agent {
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: var(--radius-sm);
+      padding: 6px 14px;
+      font-size: 13px;
+      color: rgba(255,255,255,0.85);
+      font-weight: 500;
+    }
+
+    /* ── Page Title Bar ── */
+    .page-header {
+      background: var(--surface-raised);
+      border-bottom: 1px solid var(--border);
+      padding: 20px 32px;
+    }
+
+    .page-header-inner {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .page-title {
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--text-primary);
+      letter-spacing: -0.3px;
+    }
+
+    .page-subtitle {
+      font-size: 13px;
+      color: var(--text-secondary);
+      margin-top: 2px;
+    }
+
+    .page-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--dignifi-red);
+      color: #FFF;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      padding: 5px 12px;
+      border-radius: 20px;
+    }
+
+    /* ── Main Layout ── */
+    .main-container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 24px 32px;
+      display: grid;
+      grid-template-columns: 380px 1fr;
+      gap: 24px;
+      min-height: calc(100vh - 140px);
+    }
+
+    /* ── Left Panel (Form) ── */
+    .form-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .card {
+      background: var(--surface-raised);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-sm);
+      overflow: hidden;
+    }
+
+    .card-header {
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .card-header-icon {
+      width: 28px;
+      height: 28px;
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      flex-shrink: 0;
+    }
+
+    .card-header-icon.blue { background: var(--agent-blue-bg); color: var(--agent-blue); }
+    .card-header-icon.teal { background: #E6F4F6; color: var(--dignifi-teal); }
+    .card-header-icon.red { background: #FEF2F0; color: var(--dignifi-red); }
+
+    .card-header-text h3 {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .card-header-text p {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: 1px;
+    }
+
+    .card-body { padding: 20px; }
+
+    /* ── Form Elements ── */
+    .form-group { margin-bottom: 14px; }
+    .form-group:last-child { margin-bottom: 0; }
+
+    .form-label {
+      display: block;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      margin-bottom: 6px;
+    }
+
+    .form-input {
+      width: 100%;
+      padding: 10px 14px;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-sm);
+      font-family: inherit;
+      font-size: 14px;
+      color: var(--text-primary);
+      background: var(--surface);
+      transition: all 0.2s;
+    }
+
+    .form-input:focus {
+      outline: none;
+      border-color: var(--border-focus);
+      background: #FFF;
+      box-shadow: 0 0 0 3px rgba(26,107,122,0.08);
+    }
+
+    .form-input::placeholder { color: var(--text-muted); }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .input-with-btn {
+      display: flex;
+      gap: 8px;
+    }
+
+    .input-with-btn .form-input { flex: 1; }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 10px 18px;
+      border: none;
+      border-radius: var(--radius-sm);
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+
+    .btn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    .btn-primary {
+      background: var(--dignifi-teal);
+      color: #FFF;
+    }
+
+    .btn-primary:hover:not(:disabled) {
+      background: #15576A;
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-md);
+    }
+
+    .btn-action {
+      background: var(--dignifi-red);
+      color: #FFF;
+      width: 100%;
+      padding: 14px;
+      font-size: 14px;
+      border-radius: var(--radius-md);
+    }
+
+    .btn-action:hover:not(:disabled) {
+      background: var(--dignifi-red-hover);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 16px rgba(232,80,58,0.3);
+    }
+
+    /* ── Right Panel (Map + Results) ── */
+    .map-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .map-wrapper {
+      margin-bottom: 20px;
+    }
+
+    .map-svg-container {
+      width: 100%;
+      height: 420px;
+      background: #EDF2F7;
+      border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+      position: relative;
+    }
+
+    .map-svg-container svg {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    .map-empty-msg {
+      width: 100%;
+      height: 420px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-muted);
+      font-size: 13px;
+      gap: 8px;
+      background: #EDF2F7;
+      border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+    }
+
+    .map-empty-msg svg { opacity: 0.25; }
+
+    /* ── Results List ── */
+    .results-card { max-height: 320px; display: flex; flex-direction: column; }
+    .results-card .card-body { overflow-y: auto; padding: 8px; }
+
+    .results-empty {
+      text-align: center;
+      padding: 40px 20px;
+      color: var(--text-muted);
+      font-size: 13px;
+    }
+
+    .results-empty svg {
+      display: block;
+      margin: 0 auto 12px;
+      opacity: 0.3;
+    }
+
+    .location-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 12px 14px;
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      transition: all 0.15s;
+      border: 1.5px solid transparent;
+    }
+
+    .location-item:hover {
+      background: var(--surface);
+      border-color: var(--border);
+    }
+
+    .location-item.selected {
+      background: #E6F4F6;
+      border-color: var(--dignifi-teal);
+    }
+
+    .location-marker {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--dignifi-teal);
+      color: #FFF;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      font-weight: 700;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    .location-item.selected .location-marker { background: var(--dignifi-red); }
+
+    .location-details { flex: 1; min-width: 0; }
+
+    .location-name {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 2px;
+    }
+
+    .location-address {
+      font-size: 12px;
+      color: var(--text-secondary);
+      margin-bottom: 4px;
+    }
+
+    .location-meta {
+      display: flex;
+      gap: 12px;
+      font-size: 11px;
+    }
+
+    .location-meta span {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      color: var(--text-muted);
+    }
+
+    .location-meta .distance { color: var(--dignifi-teal); font-weight: 600; }
+
+    /* ── Status Messages ── */
+    .status-bar {
+      padding: 12px 20px;
+      font-size: 13px;
+      font-weight: 600;
+      border-radius: var(--radius-md);
+      display: none;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .status-bar.success {
+      display: flex;
+      background: var(--customer-green-bg);
+      color: var(--customer-green);
+      border: 1px solid rgba(22,163,74,0.2);
+    }
+
+    .status-bar.info {
+      display: flex;
+      background: var(--agent-blue-bg);
+      color: var(--agent-blue);
+      border: 1px solid rgba(43,125,233,0.2);
+    }
+
+    .status-bar.error {
+      display: flex;
+      background: #FEF2F2;
+      color: #DC2626;
+      border: 1px solid rgba(220,38,38,0.2);
+    }
+
+    /* ── Enrollment Full Page ── */
+    .enrollment-page {
+      position: fixed;
+      inset: 0;
+      z-index: 2000;
+      background: var(--surface);
+      display: none;
+      flex-direction: column;
+      overflow-y: auto;
+      animation: pageSlideIn 0.35s ease;
+    }
+
+    .enrollment-page.active { display: flex; }
+
+    @keyframes pageSlideIn {
+      from { opacity: 0; transform: translateX(30px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+
+    .enrollment-topbar {
+      background: #162B3D;
+      padding: 0 32px;
+      height: 56px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-shrink: 0;
+    }
+
+    .enrollment-topbar-brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .enrollment-topbar-logo {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 20px;
+      font-weight: 700;
+      color: #FFF;
+    }
+
+    .enrollment-topbar-divider {
+      width: 1px;
+      height: 24px;
+      background: rgba(255,255,255,0.15);
+    }
+
+    .enrollment-topbar-label {
+      font-size: 13px;
+      color: rgba(255,255,255,0.6);
+      font-weight: 500;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+
+    .enrollment-back-btn {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: var(--radius-sm);
+      padding: 7px 16px;
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 600;
+      color: rgba(255,255,255,0.85);
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .enrollment-back-btn:hover {
+      background: rgba(255,255,255,0.14);
+      color: #FFF;
+    }
+
+    .enrollment-page-body {
+      flex: 1;
+      max-width: 680px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 40px 32px 60px;
+    }
+
+    .enrollment-page-header {
+      margin-bottom: 32px;
+    }
+
+    .enrollment-page-header h1 {
+      font-size: 26px;
+      font-weight: 700;
+      color: var(--text-primary);
+      letter-spacing: -0.4px;
+      margin-bottom: 8px;
+    }
+
+    .enrollment-page-header p {
+      font-size: 15px;
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+
+    /* ── Enrollment CTA ── */
+    .enrollment-cta {
+      text-align: center;
+      padding: 16px 20px;
+      background: var(--surface-raised);
+      border: 1.5px dashed var(--border);
+      border-radius: var(--radius-md);
+      font-size: 13px;
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+
+    .enrollment-cta a {
+      color: var(--dignifi-teal);
+      font-weight: 700;
+      text-decoration: none;
+      transition: color 0.15s;
+    }
+
+    .enrollment-cta a:hover {
+      color: var(--dignifi-red);
+      text-decoration: underline;
+    }
+
+    /* ── Enrollment Modal Extras ── */
+    .form-select {
+      width: 100%;
+      padding: 0;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-sm);
+      font-family: inherit;
+      font-size: 13px;
+      color: var(--text-primary);
+      background: var(--surface);
+      transition: all 0.2s;
+      overflow-y: auto;
+    }
+
+    .form-select:focus {
+      outline: none;
+      border-color: var(--border-focus);
+      box-shadow: 0 0 0 3px rgba(26,107,122,0.08);
+    }
+
+    .form-select option {
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--border);
+      cursor: pointer;
+    }
+
+    .form-select option:checked {
+      background: #E6F4F6;
+      color: var(--dignifi-teal);
+      font-weight: 600;
+    }
+
+    .enrollment-selected-info {
+      background: #E6F4F6;
+      border: 1px solid rgba(26,107,122,0.2);
+      border-radius: var(--radius-sm);
+      padding: 14px 16px;
+      margin-bottom: 20px;
+    }
+
+    .enrollment-selected-info .name {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 2px;
+    }
+
+    .enrollment-selected-info .addr {
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+
+    .enrollment-selected-info .contact {
+      font-size: 12px;
+      color: var(--dignifi-teal);
+      font-weight: 600;
+      margin-top: 6px;
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 1024px) {
+      .main-container {
+        grid-template-columns: 1fr;
+        padding: 16px;
+      }
+      .map-wrapper { min-height: 350px; }
+    }
+
+    @media (max-width: 600px) {
+      .topbar { padding: 0 16px; }
+      .topbar-partner, .topbar-status { display: none; }
+      .form-row { grid-template-columns: 1fr; }
+      .page-header { padding: 16px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Navigation -->
+  <nav class="topbar">
+    <div class="topbar-brand">
+      <div class="topbar-logo">DigniFi</div>
+      <div class="topbar-divider"></div>
+      <div class="topbar-partner">Endurance Partner Portal</div>
+    </div>
+    <div class="topbar-right">
+      <div class="topbar-status">
+        <div class="status-dot"></div>
+        2,000+ Active Service Centers
+      </div>
+      <div class="topbar-agent">Agent: Sarah M.</div>
+    </div>
+  </nav>
+
+  <!-- Page Header -->
+  <div class="page-header">
+    <div class="page-header-inner">
+      <div>
+        <div class="page-title">Denied Warranty — PreQualification Invite</div>
+        <div class="page-subtitle">Route denied warranty customers to BNPL financing at an active DigniFi service center</div>
+      </div>
+      <div class="page-badge">⚡ Phase 1 MVP</div>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="main-container">
+
+    <!-- ═══ LEFT: Form Panel ═══ -->
+    <div class="form-panel">
+
+      <!-- Customer Information -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-header-icon blue">👤</div>
+          <div class="card-header-text">
+            <h3>Customer Information</h3>
+            <p>Denied warranty customer details</p>
+          </div>
+        </div>
+        <div class="card-body">
+          <form id="prequal-form" autocomplete="off">
+            <div class="form-group">
+              <label class="form-label">Customer Name</label>
+              <input type="text" class="form-input" id="customerName" placeholder="First and last name" required>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Email Address</label>
+                <input type="email" class="form-input" id="customerEmail" placeholder="customer@email.com" required>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Phone (SMS)</label>
+                <input type="tel" class="form-input" id="customerPhone" placeholder="(615) 555-1234" required>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Repair Amount (Optional)</label>
+              <input type="text" class="form-input" id="repairAmount" placeholder="$0.00">
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Service Center Search -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-header-icon teal">📍</div>
+          <div class="card-header-text">
+            <h3>Find Active Service Center</h3>
+            <p>Search by customer zip code</p>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="input-with-btn">
+            <input type="text" class="form-input" id="zipSearch" placeholder="Enter zip code" maxlength="5">
+            <button class="btn btn-primary" id="searchBtn" onclick="searchServiceCenters()">Search</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Selected Center + Submit -->
+      <div id="selectedCenterCard" class="card" style="display:none;">
+        <div class="card-header">
+          <div class="card-header-icon teal">✓</div>
+          <div class="card-header-text">
+            <h3>Selected Service Center</h3>
+          </div>
+        </div>
+        <div class="card-body">
+          <div id="selectedInfo" style="margin-bottom:16px;"></div>
+          <button class="btn btn-action" id="sendBtn" onclick="sendPreQual()">
+            ⚡ Send PreQualification Invite
+          </button>
+        </div>
+      </div>
+
+      <!-- Status -->
+      <div class="status-bar" id="statusBar"></div>
+
+      <!-- Enrollment CTA -->
+      <div class="enrollment-cta">
+        <span>Don't see your service center?</span>
+        <a href="#" onclick="openEnrollmentPage(); return false;">Click here to find your service center and send an enrollment email.</a>
+      </div>
+
+    </div>
+
+    <!-- ═══ RIGHT: Map + Results ═══ -->
+    <div class="map-panel">
+
+      <!-- Map -->
+      <div class="map-wrapper">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-header-icon teal">🗺️</div>
+            <div class="card-header-text">
+              <h3>Service Center Map</h3>
+              <p id="mapSubtitle">Search a zip code to see nearby active DigniFi locations</p>
+            </div>
+          </div>
+          <div id="mapArea">
+            <div class="map-empty-msg" id="mapEmpty">
+              <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+              Search a zip code to see locations
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Results List -->
+      <div class="card results-card">
+        <div class="card-header">
+          <div class="card-header-icon teal">📋</div>
+          <div class="card-header-text">
+            <h3 id="resultsTitle">Search Results</h3>
+            <p id="resultsSubtitle">Active DigniFi service centers near customer</p>
+          </div>
+        </div>
+        <div class="card-body" id="resultsList">
+          <div class="results-empty">
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+            Enter a zip code to find nearby service centers
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ═══ Enrollment Page (Separate Endurance Webpage) ═══ -->
+  <div class="enrollment-page" id="enrollmentPage">
+
+    <!-- Separate Nav Bar -->
+    <nav class="enrollment-topbar">
+      <div class="enrollment-topbar-brand">
+        <div class="enrollment-topbar-logo">DigniFi</div>
+        <div class="enrollment-topbar-divider"></div>
+        <div class="enrollment-topbar-label">Service Center Enrollment</div>
+      </div>
+      <button class="enrollment-back-btn" onclick="closeEnrollmentPage()">← Back to Agent Portal</button>
+    </nav>
+
+    <!-- Page Content -->
+    <div class="enrollment-page-body">
+
+      <div class="enrollment-page-header">
+        <h1>Endurance Service Center Enrollment</h1>
+        <p>Find a non-enrolled Endurance service center and send a DigniFi enrollment email. Once submitted, our CRM handles the outreach and onboarding process automatically.</p>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-header-icon teal">🏪</div>
+          <div class="card-header-text">
+            <h3>Select Service Center</h3>
+            <p>Search from Endurance's non-enrolled service center network</p>
+          </div>
+        </div>
+        <div class="card-body">
+
+          <div class="form-group">
+            <label class="form-label">Search by Name, City, or Zip</label>
+            <input type="text" class="form-input" id="enrollmentSearch" placeholder="Start typing to filter..." oninput="filterEnrollmentCenters()">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Non-Enrolled Endurance Service Centers</label>
+            <select class="form-select" id="enrollmentDropdown" size="8">
+              <option value="" disabled selected>— Select a service center —</option>
+            </select>
+          </div>
+
+          <div id="enrollmentSelected" class="enrollment-selected-info" style="display:none;"></div>
+
+          <button class="btn btn-action" id="enrollBtn" onclick="sendEnrollmentEmail()" disabled>
+            ✉️ Send Enrollment Email
+          </button>
+
+          <div class="status-bar" id="enrollmentStatus" style="margin-top:16px;"></div>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    // ═══════════════════════════════════════════
+    // SERVICE CENTER DATABASE (Mock Data)
+    // ═══════════════════════════════════════════
+    const serviceCenters = {
+      '37174': [
+        { id: 1, name: 'Spring Hill Auto Care', address: '101 Main St, Spring Hill, TN 37174', distance: '0.3 mi', lat: 35.7512, lng: -86.9300, rating: 4.8 },
+        { id: 2, name: 'Saturn Parkway Service Center', address: '2220 Saturn Pkwy, Spring Hill, TN 37174', distance: '1.1 mi', lat: 35.7450, lng: -86.9180, rating: 4.6 },
+        { id: 3, name: 'Thompson Station Repair', address: '4415 Thompson Station Rd, Spring Hill, TN 37174', distance: '2.4 mi', lat: 35.7680, lng: -86.9050, rating: 4.5 },
+        { id: 4, name: 'Maury County Auto Works', address: '789 Columbia Ave, Spring Hill, TN 37174', distance: '3.0 mi', lat: 35.7380, lng: -86.9400, rating: 4.3 }
+      ],
+      '37027': [
+        { id: 50, name: 'Brentwood Auto Service', address: '330 Franklin Rd, Brentwood, TN 37027', distance: '0.3 mi', lat: 36.0292, lng: -86.7828, rating: 4.9 },
+        { id: 51, name: 'Maryland Farms Auto Care', address: '5115 Maryland Way, Brentwood, TN 37027', distance: '0.8 mi', lat: 36.0370, lng: -86.7750, rating: 4.7 },
+        { id: 52, name: 'Concord Road Repair Center', address: '1200 Concord Rd, Brentwood, TN 37027', distance: '1.4 mi', lat: 36.0180, lng: -86.7680, rating: 4.6 },
+        { id: 53, name: 'Moores Lane Tire & Brake', address: '710 Moores Ln, Brentwood, TN 37027', distance: '1.9 mi', lat: 36.0100, lng: -86.7900, rating: 4.5 },
+        { id: 54, name: 'Old Hickory Boulevard Motors', address: '8020 Old Hickory Blvd, Brentwood, TN 37027', distance: '2.6 mi', lat: 36.0450, lng: -86.8050, rating: 4.4 }
+      ],
+      '37067': [
+        { id: 5, name: 'Cool Springs Collision', address: '500 Mallory Lane, Franklin, TN 37067', distance: '0.4 mi', lat: 35.9345, lng: -86.8200, rating: 4.9 },
+        { id: 6, name: 'Franklin European Auto', address: '118 Seaboard Ln, Franklin, TN 37067', distance: '0.9 mi', lat: 35.9280, lng: -86.8350, rating: 4.7 },
+        { id: 7, name: 'Williamson County Tire & Auto', address: '3050 Columbia Ave, Franklin, TN 37067', distance: '1.8 mi', lat: 35.9150, lng: -86.8480, rating: 4.5 },
+        { id: 8, name: 'McEwen Drive Service', address: '4000 McEwen Dr, Franklin, TN 37067', distance: '2.2 mi', lat: 35.9400, lng: -86.8100, rating: 4.4 }
+      ],
+      '37205': [
+        { id: 9, name: 'Belle Meade Auto Service', address: '110 Belle Meade Blvd, Nashville, TN 37205', distance: '0.5 mi', lat: 36.1035, lng: -86.8620, rating: 4.8 },
+        { id: 10, name: 'West End Motors', address: '4520 Harding Pike, Nashville, TN 37205', distance: '1.3 mi', lat: 36.1100, lng: -86.8500, rating: 4.6 },
+        { id: 11, name: 'Hillsboro Village Garage', address: '1702 21st Ave S, Nashville, TN 37205', distance: '2.1 mi', lat: 36.1320, lng: -86.7990, rating: 4.4 }
+      ],
+      '37201': [
+        { id: 12, name: 'Broadway Auto Center', address: '525 Broadway, Nashville, TN 37201', distance: '0.2 mi', lat: 36.1580, lng: -86.7760, rating: 4.7 },
+        { id: 13, name: 'SoBro Service & Repair', address: '400 4th Ave S, Nashville, TN 37201', distance: '0.6 mi', lat: 36.1550, lng: -86.7810, rating: 4.5 },
+        { id: 14, name: 'Riverfront Auto Works', address: '100 1st Ave N, Nashville, TN 37201', distance: '1.0 mi', lat: 36.1630, lng: -86.7720, rating: 4.3 }
+      ],
+      '37214': [
+        { id: 15, name: 'Donelson Pike Auto', address: '2818 Donelson Pike, Nashville, TN 37214', distance: '0.4 mi', lat: 36.1400, lng: -86.6690, rating: 4.6 },
+        { id: 16, name: 'Airport Service Center', address: '401 Donelson Pike, Nashville, TN 37214', distance: '1.2 mi', lat: 36.1280, lng: -86.6780, rating: 4.4 },
+        { id: 17, name: 'Hermitage Highway Motors', address: '5400 Old Hickory Blvd, Nashville, TN 37214', distance: '2.5 mi', lat: 36.1500, lng: -86.6500, rating: 4.2 }
+      ],
+      '60601': [
+        { id: 101, name: 'Loop Auto Service', address: '200 S Michigan Ave, Chicago, IL 60601', distance: '0.3 mi', lat: 41.8781, lng: -87.6245, rating: 4.7 },
+        { id: 102, name: 'DigniFi Chicago Loop', address: '311 S Wacker Dr, Chicago, IL 60601', distance: '1.1 mi', lat: 41.8765, lng: -87.6375, rating: 4.8 },
+        { id: 103, name: 'Grant Park Motors', address: '550 S Columbus Dr, Chicago, IL 60601', distance: '1.5 mi', lat: 41.8720, lng: -87.6170, rating: 4.5 }
+      ],
+      '60173': [
+        { id: 104, name: 'Schaumburg Auto Experts', address: '1250 E Higgins Rd, Schaumburg, IL 60173', distance: '0.5 mi', lat: 42.0350, lng: -88.0834, rating: 4.9 },
+        { id: 105, name: 'Woodfield Service Center', address: '300 Woodfield Rd, Schaumburg, IL 60173', distance: '0.8 mi', lat: 42.0420, lng: -88.0900, rating: 4.6 },
+        { id: 106, name: 'Golf Road Auto Care', address: '800 E Golf Rd, Schaumburg, IL 60173', distance: '1.4 mi', lat: 42.0520, lng: -88.0750, rating: 4.5 },
+        { id: 107, name: 'Meacham Road Repair', address: '1550 N Meacham Rd, Schaumburg, IL 60173', distance: '2.0 mi', lat: 42.0600, lng: -88.0650, rating: 4.3 }
+      ],
+      '60540': [
+        { id: 108, name: 'Naperville Complete Auto', address: '120 W Jefferson Ave, Naperville, IL 60540', distance: '0.2 mi', lat: 41.7728, lng: -88.1485, rating: 4.8 },
+        { id: 109, name: 'Ogden Avenue Service', address: '1640 W Ogden Ave, Naperville, IL 60540', distance: '1.0 mi', lat: 41.7680, lng: -88.1700, rating: 4.6 },
+        { id: 110, name: 'Route 59 Auto Center', address: '2750 Rt 59, Naperville, IL 60540', distance: '2.3 mi', lat: 41.7550, lng: -88.2000, rating: 4.4 },
+        { id: 111, name: 'Fox Valley Tire & Brake', address: '400 S Route 59, Naperville, IL 60540', distance: '1.5 mi', lat: 41.7600, lng: -88.1900, rating: 4.7 }
+      ],
+      '60614': [
+        { id: 112, name: 'Lincoln Park Service Center', address: '2340 N Clark St, Chicago, IL 60614', distance: '0.3 mi', lat: 41.9260, lng: -87.6420, rating: 4.6 },
+        { id: 113, name: 'DePaul Auto Works', address: '1000 W Fullerton Ave, Chicago, IL 60614', distance: '0.9 mi', lat: 41.9250, lng: -87.6550, rating: 4.5 },
+        { id: 114, name: 'Clybourn Corridor Repair', address: '1550 N Clybourn Ave, Chicago, IL 60614', distance: '1.4 mi', lat: 41.9120, lng: -87.6600, rating: 4.4 }
+      ],
+      '60504': [
+        { id: 115, name: 'Aurora Premier Auto', address: '3200 Fox Valley Center Dr, Aurora, IL 60504', distance: '0.4 mi', lat: 41.7460, lng: -88.2840, rating: 4.7 },
+        { id: 116, name: 'Eola Road Service', address: '2650 W Eola Rd, Aurora, IL 60504', distance: '1.2 mi', lat: 41.7380, lng: -88.2700, rating: 4.5 },
+        { id: 117, name: 'Fox River Auto Center', address: '720 N Lake St, Aurora, IL 60504', distance: '2.0 mi', lat: 41.7600, lng: -88.3100, rating: 4.3 },
+        { id: 118, name: 'DuPage County Tire & Auto', address: '1800 Ogden Ave, Aurora, IL 60504', distance: '1.8 mi', lat: 41.7500, lng: -88.2950, rating: 4.6 }
+      ]
+    };
+
+    // ═══════════════════════════════════════════
+    // SVG MAP (fully self-contained, no dependencies)
+    // ═══════════════════════════════════════════
+    let selectedId = null;
+    let mapCenters = [];
+    let mapBounds = null;
+    const MAP_W = 800;
+    const MAP_H = 420;
+    const PAD = 60;
+
+    // ═══════════════════════════════════════════
+    // ROAD / GEOGRAPHY DATA PER ZIP CODE
+    // ═══════════════════════════════════════════
+    // Each entry: roads (lat/lng polylines), labels, parks, water
+    const geoData = {
+      '37027': {
+        roads: [
+          // I-65 (highway)
+          { pts: [[36.065,-86.795],[36.045,-86.793],[36.025,-86.790],[36.005,-86.788],[35.990,-86.787]], weight: 5, color: '#B8860B', label: 'I-65', labelPos: 0 },
+          // Franklin Road
+          { pts: [[36.055,-86.783],[36.040,-86.783],[36.030,-86.783],[36.020,-86.782],[36.010,-86.782],[36.000,-86.781]], weight: 3, color: '#888', label: 'Franklin Rd', labelPos: 2 },
+          // Old Hickory Blvd
+          { pts: [[36.046,-86.820],[36.045,-86.810],[36.044,-86.800],[36.043,-86.790],[36.044,-86.780],[36.045,-86.770],[36.046,-86.760]], weight: 3, color: '#888', label: 'Old Hickory Blvd', labelPos: 3 },
+          // Concord Road
+          { pts: [[36.022,-86.785],[36.020,-86.775],[36.018,-86.768],[36.017,-86.758]], weight: 2.5, color: '#999', label: 'Concord Rd', labelPos: 1 },
+          // Moores Lane
+          { pts: [[36.010,-86.805],[36.010,-86.795],[36.010,-86.785],[36.011,-86.775],[36.012,-86.765]], weight: 2.5, color: '#999', label: 'Moores Ln', labelPos: 2 },
+          // Maryland Way
+          { pts: [[36.040,-86.783],[36.038,-86.776],[36.037,-86.770]], weight: 2, color: '#aaa', label: 'Maryland Way', labelPos: 1 },
+          // Wilson Pike
+          { pts: [[36.050,-86.760],[36.040,-86.762],[36.030,-86.764],[36.020,-86.766],[36.010,-86.768]], weight: 2.5, color: '#999', label: 'Wilson Pike', labelPos: 2 },
+          // Church St E
+          { pts: [[36.032,-86.800],[36.032,-86.790],[36.032,-86.783],[36.032,-86.775]], weight: 2, color: '#aaa' },
+          // Granny White Pike
+          { pts: [[36.055,-86.798],[36.045,-86.796],[36.035,-86.794],[36.025,-86.793]], weight: 2, color: '#999', label: 'Granny White Pk', labelPos: 1 },
+        ],
+        labels: [
+          { text: 'BRENTWOOD', lat: 36.035, lng: -86.785, size: 15, color: 'rgba(11,37,53,0.12)', weight: 800 },
+          { text: 'Maryland Farms', lat: 36.038, lng: -86.774, size: 9, color: '#7A8A9A' },
+          { text: 'Sullivan Farms', lat: 36.015, lng: -86.795, size: 9, color: '#7A8A9A' },
+          { text: 'Governors Club', lat: 36.020, lng: -86.760, size: 9, color: '#7A8A9A' },
+        ],
+        parks: [
+          { lat: 36.028, lng: -86.798, r: 12, label: 'Crockett Park' },
+          { lat: 36.042, lng: -86.810, r: 8, label: 'Owl Creek' },
+          { lat: 36.015, lng: -86.770, r: 10, label: 'Marcella Vivrette Smith Park' },
+        ]
+      },
+      '37174': {
+        roads: [
+          { pts: [[35.770,-86.945],[35.755,-86.935],[35.745,-86.930],[35.735,-86.928],[35.725,-86.930]], weight: 5, color: '#B8860B', label: 'Saturn Pkwy', labelPos: 1 },
+          { pts: [[35.770,-86.930],[35.755,-86.930],[35.745,-86.930],[35.735,-86.930],[35.725,-86.930]], weight: 3, color: '#888', label: 'Main St', labelPos: 2 },
+          { pts: [[35.755,-86.950],[35.752,-86.935],[35.750,-86.920],[35.748,-86.905]], weight: 3, color: '#888', label: 'Thompson Station Rd', labelPos: 1 },
+          { pts: [[35.768,-86.940],[35.760,-86.942],[35.750,-86.943],[35.740,-86.942]], weight: 2.5, color: '#999', label: 'Columbia Ave', labelPos: 1 },
+          { pts: [[35.745,-86.950],[35.745,-86.935],[35.745,-86.920],[35.745,-86.905]], weight: 2, color: '#aaa', label: 'Duplex Rd', labelPos: 2 },
+        ],
+        labels: [
+          { text: 'SPRING HILL', lat: 36.750, lng: -86.930, size: 15, color: 'rgba(11,37,53,0.12)', weight: 800 },
+        ],
+        parks: [
+          { lat: 35.748, lng: -86.935, r: 10, label: 'Harvey Park' },
+        ]
+      },
+      '37067': {
+        roads: [
+          { pts: [[35.945,-86.855],[35.935,-86.850],[35.925,-86.845],[35.915,-86.842],[35.905,-86.842]], weight: 5, color: '#B8860B', label: 'I-65', labelPos: 1 },
+          { pts: [[35.940,-86.830],[35.935,-86.828],[35.928,-86.825],[35.920,-86.830],[35.915,-86.835],[35.910,-86.840]], weight: 3, color: '#888', label: 'Mallory Ln', labelPos: 1 },
+          { pts: [[35.945,-86.820],[35.935,-86.820],[35.925,-86.822],[35.915,-86.825],[35.905,-86.828]], weight: 3, color: '#888', label: 'Columbia Ave', labelPos: 2 },
+          { pts: [[35.942,-86.850],[35.940,-86.840],[35.938,-86.830],[35.937,-86.820],[35.938,-86.810]], weight: 3, color: '#888', label: 'McEwen Dr', labelPos: 2 },
+          { pts: [[35.930,-86.845],[35.930,-86.835],[35.930,-86.825],[35.930,-86.815]], weight: 2, color: '#aaa', label: 'Seaboard Ln', labelPos: 1 },
+        ],
+        labels: [
+          { text: 'COOL SPRINGS', lat: 35.930, lng: -86.830, size: 14, color: 'rgba(11,37,53,0.12)', weight: 800 },
+          { text: 'FRANKLIN', lat: 35.918, lng: -86.842, size: 10, color: '#7A8A9A' },
+        ],
+        parks: []
+      },
+      '37205': {
+        roads: [
+          { pts: [[36.115,-86.870],[36.110,-86.865],[36.105,-86.860],[36.100,-86.855],[36.095,-86.855]], weight: 5, color: '#B8860B', label: 'I-440', labelPos: 1 },
+          { pts: [[36.115,-86.865],[36.110,-86.860],[36.105,-86.855],[36.100,-86.850],[36.095,-86.845]], weight: 3, color: '#888', label: 'Harding Pike', labelPos: 2 },
+          { pts: [[36.105,-86.870],[36.105,-86.860],[36.105,-86.850],[36.105,-86.840]], weight: 3, color: '#888', label: 'Belle Meade Blvd', labelPos: 1 },
+          { pts: [[36.115,-86.850],[36.110,-86.845],[36.110,-86.840],[36.115,-86.830],[36.120,-86.825],[36.128,-86.810],[36.132,-86.800]], weight: 2.5, color: '#999', label: '21st Ave S', labelPos: 3 },
+        ],
+        labels: [
+          { text: 'BELLE MEADE', lat: 36.106, lng: -86.858, size: 14, color: 'rgba(11,37,53,0.12)', weight: 800 },
+          { text: 'West End', lat: 36.112, lng: -86.840, size: 9, color: '#7A8A9A' },
+        ],
+        parks: [
+          { lat: 36.102, lng: -86.862, r: 14, label: 'Percy Warner Park' },
+        ]
+      },
+      '37201': {
+        roads: [
+          { pts: [[36.168,-86.785],[36.163,-86.782],[36.158,-86.778],[36.155,-86.776],[36.150,-86.775]], weight: 4, color: '#B8860B', label: 'I-24', labelPos: 1 },
+          { pts: [[36.165,-86.778],[36.162,-86.778],[36.158,-86.776],[36.155,-86.776],[36.150,-86.778]], weight: 3, color: '#888', label: 'Broadway', labelPos: 2 },
+          { pts: [[36.165,-86.785],[36.162,-86.783],[36.158,-86.781],[36.155,-86.781],[36.150,-86.782]], weight: 2.5, color: '#999', label: '4th Ave S', labelPos: 1 },
+          { pts: [[36.167,-86.775],[36.163,-86.774],[36.160,-86.773],[36.157,-86.773],[36.153,-86.774]], weight: 2.5, color: '#999', label: '1st Ave N', labelPos: 2 },
+        ],
+        labels: [
+          { text: 'DOWNTOWN', lat: 36.160, lng: -86.778, size: 14, color: 'rgba(11,37,53,0.12)', weight: 800 },
+          { text: 'SoBro', lat: 36.154, lng: -86.777, size: 9, color: '#7A8A9A' },
+          { text: 'The Gulch', lat: 36.153, lng: -86.786, size: 9, color: '#7A8A9A' },
+        ],
+        parks: [],
+        water: [
+          { pts: [[36.168,-86.770],[36.164,-86.770],[36.161,-86.772],[36.158,-86.774],[36.155,-86.774],[36.150,-86.773]], label: 'Cumberland River' }
+        ]
+      },
+      '37214': {
+        roads: [
+          { pts: [[36.155,-86.680],[36.148,-86.678],[36.142,-86.675],[36.135,-86.672],[36.128,-86.670]], weight: 5, color: '#B8860B', label: 'I-40', labelPos: 1 },
+          { pts: [[36.150,-86.690],[36.145,-86.685],[36.140,-86.678],[36.135,-86.670],[36.130,-86.665]], weight: 3, color: '#888', label: 'Donelson Pike', labelPos: 1 },
+          { pts: [[36.155,-86.665],[36.150,-86.660],[36.145,-86.655],[36.140,-86.650]], weight: 2.5, color: '#999', label: 'Old Hickory Blvd', labelPos: 1 },
+        ],
+        labels: [
+          { text: 'DONELSON', lat: 36.142, lng: -86.675, size: 14, color: 'rgba(11,37,53,0.12)', weight: 800 },
+          { text: '✈ BNA Airport', lat: 36.130, lng: -86.678, size: 9, color: '#7A8A9A' },
+        ],
+        parks: []
+      },
+      '60601': {
+        roads: [
+          { pts: [[41.884,-87.630],[41.880,-87.630],[41.876,-87.630],[41.872,-87.630],[41.868,-87.630]], weight: 4, color: '#B8860B', label: 'Michigan Ave', labelPos: 1 },
+          { pts: [[41.882,-87.640],[41.880,-87.637],[41.878,-87.633],[41.876,-87.630],[41.874,-87.627]], weight: 3, color: '#888', label: 'Wacker Dr', labelPos: 1 },
+          { pts: [[41.882,-87.625],[41.878,-87.625],[41.874,-87.625],[41.870,-87.625]], weight: 2.5, color: '#999', label: 'Columbus Dr', labelPos: 1 },
+          { pts: [[41.880,-87.645],[41.880,-87.640],[41.880,-87.635],[41.880,-87.628],[41.880,-87.620]], weight: 3, color: '#888', label: 'Congress Pkwy', labelPos: 2 },
+        ],
+        labels: [
+          { text: 'THE LOOP', lat: 36.878, lng: -87.632, size: 14, color: 'rgba(11,37,53,0.12)', weight: 800 },
+        ],
+        parks: [
+          { lat: 41.876, lng: -87.620, r: 14, label: 'Grant Park' },
+        ],
+        water: [
+          { pts: [[41.885,-87.615],[41.880,-87.614],[41.875,-87.613],[41.870,-87.613],[41.865,-87.614]], label: 'Lake Michigan' }
+        ]
+      },
+      '60173': {
+        roads: [
+          { pts: [[42.060,-86.095],[42.050,-86.090],[42.040,-86.085],[42.030,-86.080]], weight: 5, color: '#B8860B', label: 'I-90', labelPos: 1 },
+          { pts: [[42.058,-86.085],[42.050,-86.084],[42.042,-86.083],[42.035,-86.083]], weight: 3, color: '#888', label: 'Higgins Rd', labelPos: 1 },
+          { pts: [[42.055,-86.095],[42.048,-86.092],[42.042,-86.090],[42.035,-86.088]], weight: 2.5, color: '#999', label: 'Meacham Rd', labelPos: 1 },
+          { pts: [[42.055,-86.080],[42.050,-86.080],[42.045,-86.080],[42.040,-86.080]], weight: 2.5, color: '#999', label: 'Golf Rd', labelPos: 1 },
+        ],
+        labels: [
+          { text: 'SCHAUMBURG', lat: 42.045, lng: -86.085, size: 14, color: 'rgba(11,37,53,0.12)', weight: 800 },
+          { text: 'Woodfield', lat: 42.048, lng: -86.092, size: 9, color: '#7A8A9A' },
+        ],
+        parks: []
+      },
+      '60540': {
+        roads: [
+          { pts: [[41.782,-88.170],[41.775,-88.165],[41.770,-88.158],[41.765,-88.150],[41.758,-88.145]], weight: 5, color: '#B8860B', label: 'I-88', labelPos: 1 },
+          { pts: [[41.778,-88.175],[41.772,-88.170],[41.768,-88.165],[41.763,-88.155],[41.758,-88.148]], weight: 3, color: '#888', label: 'Ogden Ave', labelPos: 1 },
+          { pts: [[41.775,-88.200],[41.768,-88.198],[41.762,-88.195],[41.755,-88.192]], weight: 3, color: '#888', label: 'Route 59', labelPos: 1 },
+          { pts: [[41.775,-88.155],[41.773,-88.150],[41.772,-88.148]], weight: 2.5, color: '#999', label: 'Jefferson Ave', labelPos: 0 },
+        ],
+        labels: [
+          { text: 'NAPERVILLE', lat: 41.770, lng: -88.165, size: 14, color: 'rgba(11,37,53,0.12)', weight: 800 },
+        ],
+        parks: [
+          { lat: 41.772, lng: -88.152, r: 8, label: 'Riverwalk' },
+        ]
+      },
+      '60614': {
+        roads: [
+          { pts: [[41.932,-87.660],[41.928,-87.655],[41.925,-87.650],[41.920,-87.648],[41.915,-87.650]], weight: 4, color: '#B8860B', label: 'Clybourn Ave', labelPos: 2 },
+          { pts: [[41.932,-87.645],[41.928,-87.644],[41.925,-87.643],[41.920,-87.642]], weight: 3, color: '#888', label: 'Clark St', labelPos: 1 },
+          { pts: [[41.928,-87.660],[41.926,-87.655],[41.925,-87.650],[41.925,-87.645],[41.925,-87.640]], weight: 3, color: '#888', label: 'Fullerton Ave', labelPos: 2 },
+        ],
+        labels: [
+          { text: 'LINCOLN PARK', lat: 41.925, lng: -87.648, size: 14, color: 'rgba(11,37,53,0.12)', weight: 800 },
+        ],
+        parks: [
+          { lat: 41.928, lng: -87.638, r: 14, label: 'Lincoln Park' },
+        ]
+      },
+      '60504': {
+        roads: [
+          { pts: [[41.762,-88.310],[41.755,-88.300],[41.748,-88.290],[41.740,-88.285]], weight: 5, color: '#B8860B', label: 'I-88', labelPos: 1 },
+          { pts: [[41.758,-88.300],[41.752,-88.295],[41.748,-88.290],[41.742,-88.285]], weight: 3, color: '#888', label: 'Ogden Ave', labelPos: 1 },
+          { pts: [[41.762,-88.285],[41.758,-88.284],[41.752,-88.282],[41.748,-88.280]], weight: 2.5, color: '#999', label: 'Eola Rd', labelPos: 1 },
+          { pts: [[41.760,-88.315],[41.758,-88.310],[41.755,-88.305],[41.752,-88.300]], weight: 2.5, color: '#999', label: 'Lake St', labelPos: 1 },
+        ],
+        labels: [
+          { text: 'AURORA', lat: 41.752, lng: -88.295, size: 14, color: 'rgba(11,37,53,0.12)', weight: 800 },
+        ],
+        parks: [
+          { lat: 41.760, lng: -88.308, r: 10, label: 'Fox River' },
+        ]
+      }
+    };
+
+    function calcBounds(centers, zip) {
+      let minLat = Infinity, maxLat = -Infinity, minLng = Infinity, maxLng = -Infinity;
+      // Include service center points
+      centers.forEach(c => {
+        if (c.lat < minLat) minLat = c.lat;
+        if (c.lat > maxLat) maxLat = c.lat;
+        if (c.lng < minLng) minLng = c.lng;
+        if (c.lng > maxLng) maxLng = c.lng;
+      });
+      // Include road points for geographic coverage
+      const geo = geoData[zip];
+      if (geo) {
+        geo.roads.forEach(r => {
+          r.pts.forEach(([lat, lng]) => {
+            if (lat < minLat) minLat = lat;
+            if (lat > maxLat) maxLat = lat;
+            if (lng < minLng) minLng = lng;
+            if (lng > maxLng) maxLng = lng;
+          });
+        });
+      }
+      const latSpan = Math.max(maxLat - minLat, 0.008);
+      const lngSpan = Math.max(maxLng - minLng, 0.012);
+      return {
+        minLat: minLat - latSpan * 0.15,
+        maxLat: maxLat + latSpan * 0.15,
+        minLng: minLng - lngSpan * 0.15,
+        maxLng: maxLng + lngSpan * 0.15
+      };
+    }
+
+    function toXY(lat, lng) {
+      const x = PAD + ((lng - mapBounds.minLng) / (mapBounds.maxLng - mapBounds.minLng)) * (MAP_W - PAD * 2);
+      const y = PAD + ((mapBounds.maxLat - lat) / (mapBounds.maxLat - mapBounds.minLat)) * (MAP_H - PAD * 2);
+      return { x, y };
+    }
+
+    function buildMapSVG(centers, zip) {
+      let svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${MAP_W} ${MAP_H}" style="width:100%;height:420px;display:block;border-radius:0 0 16px 16px;">`;
+
+      // Background
+      svg += `<rect width="${MAP_W}" height="${MAP_H}" fill="#F0F4F0"/>`;
+
+      // Subtle land blocks
+      svg += `<rect x="0" y="0" width="${MAP_W}" height="${MAP_H}" fill="url(#landPattern)" opacity="0.4"/>`;
+      svg += `<defs><pattern id="landPattern" width="60" height="60" patternUnits="userSpaceOnUse">`;
+      svg += `<rect width="60" height="60" fill="#EAF0E8"/>`;
+      svg += `<rect x="2" y="2" width="56" height="56" rx="2" fill="#EEF3EC" opacity="0.5"/>`;
+      svg += `</pattern></defs>`;
+
+      const geo = geoData[zip];
+      if (geo) {
+        // Parks
+        if (geo.parks) {
+          geo.parks.forEach(p => {
+            const { x, y } = toXY(p.lat, p.lng);
+            svg += `<circle cx="${x}" cy="${y}" r="${p.r * 3}" fill="#D4EDDA" opacity="0.6"/>`;
+            svg += `<circle cx="${x}" cy="${y}" r="${p.r * 2}" fill="#C3E6CB" opacity="0.5"/>`;
+            if (p.label) {
+              svg += `<text x="${x}" y="${y + p.r * 3 + 12}" text-anchor="middle" fill="#5A8F6A" font-family="DM Sans,sans-serif" font-size="8" font-style="italic">${p.label}</text>`;
+            }
+          });
+        }
+
+        // Water
+        if (geo.water) {
+          geo.water.forEach(w => {
+            let pathD = '';
+            w.pts.forEach(([lat, lng], i) => {
+              const { x, y } = toXY(lat, lng);
+              pathD += (i === 0 ? 'M' : 'L') + `${x},${y} `;
+            });
+            svg += `<path d="${pathD}" fill="none" stroke="#A8D5E2" stroke-width="8" stroke-linecap="round" opacity="0.5"/>`;
+            svg += `<path d="${pathD}" fill="none" stroke="#7EC8E3" stroke-width="4" stroke-linecap="round" opacity="0.6"/>`;
+            if (w.label) {
+              const mid = w.pts[Math.floor(w.pts.length / 2)];
+              const { x, y } = toXY(mid[0], mid[1]);
+              svg += `<text x="${x}" y="${y - 10}" text-anchor="middle" fill="#5B9DB5" font-family="DM Sans,sans-serif" font-size="9" font-style="italic">${w.label}</text>`;
+            }
+          });
+        }
+
+        // Area labels (behind roads)
+        if (geo.labels) {
+          geo.labels.forEach(l => {
+            const { x, y } = toXY(l.lat, l.lng);
+            svg += `<text x="${x}" y="${y}" text-anchor="middle" fill="${l.color}" font-family="DM Sans,sans-serif" font-size="${l.size}" font-weight="${l.weight || 600}" letter-spacing="${l.size > 12 ? 4 : 1}">${l.text}</text>`;
+          });
+        }
+
+        // Roads
+        geo.roads.forEach(road => {
+          let pathD = '';
+          road.pts.forEach(([lat, lng], i) => {
+            const { x, y } = toXY(lat, lng);
+            pathD += (i === 0 ? 'M' : 'L') + `${x},${y} `;
+          });
+          // Road casing (darker outline)
+          svg += `<path d="${pathD}" fill="none" stroke="#CCC" stroke-width="${road.weight + 2}" stroke-linecap="round" stroke-linejoin="round"/>`;
+          // Road fill
+          const fillColor = road.color === '#B8860B' ? '#F5E6C8' : '#FFFFFF';
+          svg += `<path d="${pathD}" fill="none" stroke="${fillColor}" stroke-width="${road.weight}" stroke-linecap="round" stroke-linejoin="round"/>`;
+          // Highway center line
+          if (road.color === '#B8860B') {
+            svg += `<path d="${pathD}" fill="none" stroke="#D4A84B" stroke-width="1" stroke-dasharray="8,6" stroke-linecap="round"/>`;
+          }
+          // Road label
+          if (road.label) {
+            const li = road.labelPos || 0;
+            const lpt = road.pts[Math.min(li, road.pts.length - 1)];
+            const { x, y } = toXY(lpt[0], lpt[1]);
+            const bgW = road.label.length * 6 + 10;
+            svg += `<rect x="${x - bgW/2}" y="${y - 18}" width="${bgW}" height="14" rx="3" fill="rgba(255,255,255,0.85)"/>`;
+            svg += `<text x="${x}" y="${y - 9}" text-anchor="middle" fill="#555" font-family="DM Sans,sans-serif" font-size="9" font-weight="500">${road.label}</text>`;
+          }
+        });
+      }
+
+      // Markers (on top of everything)
+      centers.forEach((c, i) => {
+        const { x, y } = toXY(c.lat, c.lng);
+        const isSel = c.id === selectedId;
+        const color = isSel ? '#E8503A' : '#1A6B7A';
+        const r = isSel ? 16 : 13;
+        const glowColor = isSel ? 'rgba(232,80,58,0.18)' : 'rgba(26,107,122,0.15)';
+        const name = c.name.length > 22 ? c.name.slice(0, 20) + '…' : c.name;
+
+        svg += `<circle cx="${x}" cy="${y}" r="30" fill="transparent" style="cursor:pointer" onclick="selectCenter(${c.id})"/>`;
+        svg += `<circle cx="${x}" cy="${y}" r="${r + 6}" fill="${glowColor}"/>`;
+        svg += `<circle cx="${x}" cy="${y}" r="${r + 2.5}" fill="white"/>`;
+        svg += `<circle cx="${x}" cy="${y}" r="${r}" fill="${color}"/>`;
+        svg += `<text x="${x}" y="${y}" text-anchor="middle" dominant-baseline="central" fill="white" font-family="DM Sans,sans-serif" font-weight="700" font-size="11">${i + 1}</text>`;
+        svg += `<rect x="${x - 72}" y="${y + r + 5}" width="144" height="28" rx="4" fill="rgba(255,255,255,0.92)"/>`;
+        svg += `<text x="${x}" y="${y + r + 17}" text-anchor="middle" fill="#0B2535" font-family="DM Sans,sans-serif" font-weight="600" font-size="11">${name}</text>`;
+        svg += `<text x="${x}" y="${y + r + 29}" text-anchor="middle" fill="#8E9BAA" font-family="DM Sans,sans-serif" font-size="10">${c.distance}</text>`;
+      });
+
+      // Legend
+      svg += `<rect x="${MAP_W - 265}" y="${MAP_H - 38}" width="252" height="28" rx="8" fill="rgba(255,255,255,0.92)" stroke="#E2E8F0" stroke-width="0.5"/>`;
+      svg += `<circle cx="${MAP_W - 247}" cy="${MAP_H - 24}" r="5" fill="#1A6B7A" stroke="white" stroke-width="2"/>`;
+      svg += `<text x="${MAP_W - 236}" y="${MAP_H - 20}" fill="#5A6B7B" font-family="DM Sans,sans-serif" font-size="10" font-weight="500">Active DigniFi Center</text>`;
+      svg += `<circle cx="${MAP_W - 135}" cy="${MAP_H - 24}" r="5" fill="#E8503A" stroke="white" stroke-width="2"/>`;
+      svg += `<text x="${MAP_W - 124}" y="${MAP_H - 20}" fill="#5A6B7B" font-family="DM Sans,sans-serif" font-size="10" font-weight="500">Selected Center</text>`;
+
+      svg += `</svg>`;
+      return svg;
+    }
+
+    function plotCenters(centers, zip) {
+      mapCenters = centers;
+      currentZip = zip;
+      mapBounds = calcBounds(centers, zip);
+      document.getElementById('mapArea').innerHTML = buildMapSVG(centers, zip);
+    }
+
+    function refreshMarkers(centers) {
+      mapCenters = centers;
+      document.getElementById('mapArea').innerHTML = buildMapSVG(centers, currentZip);
+    }
+
+    // ═══════════════════════════════════════════
+    // SEARCH & SELECT LOGIC
+    // ═══════════════════════════════════════════
+    let currentResults = [];
+    let currentZip = '';
+
+    function searchServiceCenters() {
+      const zip = document.getElementById('zipSearch').value.trim();
+      if (zip.length !== 5) {
+        showStatus('Please enter a valid 5-digit zip code', 'error');
+        return;
+      }
+      const centers = serviceCenters[zip];
+      if (!centers) {
+        showStatus(`No active DigniFi service centers found for ${zip}. Use the enrollment link below to find and enroll a service center.`, 'info');
+        document.getElementById('resultsList').innerHTML = `
+          <div class="results-empty">
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+            No active centers found for ${zip}.<br>Try 37027, 37174, 37067, 37205, 60601, 60173, or 60540.
+          </div>`;
+        mapCenters = [];
+        document.getElementById('mapArea').innerHTML = `
+          <div class="map-empty-msg">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            No active centers found for this zip code
+          </div>`;
+        return;
+      }
+
+      currentResults = centers;
+      currentZip = zip;
+      selectedId = null;
+      document.getElementById('selectedCenterCard').style.display = 'none';
+      hideStatus();
+
+      document.getElementById('mapSubtitle').textContent = `${centers.length} active centers near ${zip}`;
+      document.getElementById('resultsTitle').textContent = `${centers.length} Centers Found`;
+      document.getElementById('resultsSubtitle').textContent = `Active DigniFi locations near ${zip}`;
+
+      renderResults(centers);
+      plotCenters(centers, zip);
+    }
+
+    function renderResults(centers) {
+      const list = document.getElementById('resultsList');
+      list.innerHTML = centers.map((c, i) => `
+        <div class="location-item ${c.id === selectedId ? 'selected' : ''}" onclick="selectCenter(${c.id})">
+          <div class="location-marker">${i + 1}</div>
+          <div class="location-details">
+            <div class="location-name">${c.name}</div>
+            <div class="location-address">${c.address}</div>
+            <div class="location-meta">
+              <span class="distance">📍 ${c.distance}</span>
+              <span>⭐ ${c.rating}</span>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function selectCenter(id) {
+      selectedId = id;
+      const center = currentResults.find(c => c.id === id);
+      if (!center) return;
+
+      renderResults(currentResults);
+      refreshMarkers(currentResults);
+
+      const card = document.getElementById('selectedCenterCard');
+      card.style.display = 'block';
+      document.getElementById('selectedInfo').innerHTML = `
+        <div style="font-size:15px;font-weight:700;color:var(--text-primary);margin-bottom:4px;">${center.name}</div>
+        <div style="font-size:13px;color:var(--text-secondary);">${center.address}</div>
+        <div style="font-size:12px;color:var(--dignifi-teal);font-weight:600;margin-top:4px;">📍 ${center.distance} · ⭐ ${center.rating}</div>
+      `;
+      hideStatus();
+    }
+
+    // ═══════════════════════════════════════════
+    // SEND PREQUAL INVITE
+    // ═══════════════════════════════════════════
+    function sendPreQual() {
+      const name = document.getElementById('customerName').value.trim();
+      const email = document.getElementById('customerEmail').value.trim();
+      const phone = document.getElementById('customerPhone').value.trim();
+
+      if (!name || !email || !phone) {
+        showStatus('Please complete all required customer fields.', 'error');
+        return;
+      }
+      if (!selectedId) {
+        showStatus('Please select a service center first.', 'error');
+        return;
+      }
+
+      const btn = document.getElementById('sendBtn');
+      btn.disabled = true;
+      btn.textContent = 'Sending...';
+
+      setTimeout(() => {
+        const center = currentResults.find(c => c.id === selectedId);
+        showStatus(`✅ PreQual invite sent to ${email} — routed to ${center.name}`, 'success');
+        btn.disabled = false;
+        btn.innerHTML = '⚡ Send PreQualification Invite';
+      }, 1200);
+    }
+
+    // ═══════════════════════════════════════════
+    // ENROLLMENT PAGE (Hidden Endurance Webpage)
+    // ═══════════════════════════════════════════
+    const nonEnrolledCenters = [
+      { id: 'ne-001', name: 'Precision Auto & Tire', address: '1420 Columbia Ave, Franklin, TN 37064', contact: 'Mike Reynolds', email: 'mike@precisionauto.com' },
+      { id: 'ne-002', name: 'Heritage Motors Service', address: '890 Murfreesboro Rd, Franklin, TN 37067', contact: 'Linda Torres', email: 'linda@heritagemotors.com' },
+      { id: 'ne-003', name: 'Nolensville Road Garage', address: '3300 Nolensville Pike, Nashville, TN 37211', contact: 'James Carter', email: 'james@nolensvillegarage.com' },
+      { id: 'ne-004', name: 'Thompson Lane Auto Repair', address: '410 Thompson Ln, Nashville, TN 37211', contact: 'Denise Williams', email: 'denise@thompsonlaneauto.com' },
+      { id: 'ne-005', name: 'Gallatin Pike Service Center', address: '2680 Gallatin Pike, Nashville, TN 37216', contact: 'Robert Kim', email: 'robert@gallatinservice.com' },
+      { id: 'ne-006', name: 'Lebanon Road Auto Works', address: '5500 Lebanon Pike, Hermitage, TN 37076', contact: 'Steve Patel', email: 'steve@lebanonroadauto.com' },
+      { id: 'ne-007', name: 'Clarksville Highway Motors', address: '3100 Clarksville Pike, Nashville, TN 37218', contact: 'Angela Brooks', email: 'angela@clarksvillehwy.com' },
+      { id: 'ne-008', name: 'Dickerson Pike Repair', address: '1750 Dickerson Pike, Nashville, TN 37207', contact: 'Carlos Mendez', email: 'carlos@dickersonrepair.com' },
+      { id: 'ne-009', name: 'Harding Place Service', address: '720 Harding Place, Nashville, TN 37211', contact: 'Sarah Mitchell', email: 'sarah@hardingplaceservice.com' },
+      { id: 'ne-010', name: 'Murfreesboro Auto Center', address: '1200 NW Broad St, Murfreesboro, TN 37129', contact: 'Tom Jackson', email: 'tom@mboroautocenter.com' },
+      { id: 'ne-011', name: 'Smyrna Quick Lube & Repair', address: '450 S Lowry St, Smyrna, TN 37167', contact: 'David Liu', email: 'david@smyrnaquicklube.com' },
+      { id: 'ne-012', name: 'LaVergne Auto Service', address: '5210 Murfreesboro Rd, La Vergne, TN 37086', contact: 'Karen Foster', email: 'karen@lavergneastuo.com' },
+      { id: 'ne-013', name: 'Cicero Auto & Transmission', address: '5900 W Cermak Rd, Cicero, IL 60804', contact: 'Victor Romero', email: 'victor@ciceroauto.com' },
+      { id: 'ne-014', name: 'Berwyn Complete Auto Care', address: '6540 W Ogden Ave, Berwyn, IL 60402', contact: 'Paul Nowak', email: 'paul@berwyncomplete.com' },
+      { id: 'ne-015', name: 'Joliet Highway Service', address: '1200 W Jefferson St, Joliet, IL 60435', contact: 'Maria Santos', email: 'maria@joliethwyservice.com' },
+      { id: 'ne-016', name: 'Elgin Boulevard Auto', address: '825 N McLean Blvd, Elgin, IL 60123', contact: 'Brian Cho', email: 'brian@elginblvdauto.com' },
+      { id: 'ne-017', name: 'Waukegan Auto Experts', address: '2400 Grand Ave, Waukegan, IL 60085', contact: 'Patricia Hall', email: 'patricia@waukeganexperts.com' },
+      { id: 'ne-018', name: 'Plainfield Road Repair', address: '13850 S Route 59, Plainfield, IL 60544', contact: 'Ryan Douglas', email: 'ryan@plainfieldrepair.com' },
+      { id: 'ne-019', name: 'Bolingbrook Auto Center', address: '340 N Bolingbrook Dr, Bolingbrook, IL 60440', contact: 'Tina Nguyen', email: 'tina@bolingbrookauto.com' },
+      { id: 'ne-020', name: 'Oak Park Motor Works', address: '1025 South Blvd, Oak Park, IL 60302', contact: 'Dan Murphy', email: 'dan@oakparkmotors.com' }
+    ];
+
+    let selectedEnrollmentId = null;
+
+    function openEnrollmentPage() {
+      populateEnrollmentDropdown(nonEnrolledCenters);
+      selectedEnrollmentId = null;
+      document.getElementById('enrollmentSearch').value = '';
+      document.getElementById('enrollmentSelected').style.display = 'none';
+      document.getElementById('enrollBtn').disabled = true;
+      const statusEl = document.getElementById('enrollmentStatus');
+      statusEl.className = 'status-bar';
+      statusEl.style.display = 'none';
+      document.getElementById('enrollmentPage').classList.add('active');
+      window.scrollTo(0, 0);
+    }
+
+    function closeEnrollmentPage() {
+      document.getElementById('enrollmentPage').classList.remove('active');
+    }
+
+    function populateEnrollmentDropdown(centers) {
+      const dropdown = document.getElementById('enrollmentDropdown');
+      dropdown.innerHTML = '<option value="" disabled selected>— Select a service center —</option>';
+      centers.forEach(c => {
+        const opt = document.createElement('option');
+        opt.value = c.id;
+        opt.textContent = `${c.name} — ${c.address}`;
+        dropdown.appendChild(opt);
+      });
+    }
+
+    function filterEnrollmentCenters() {
+      const query = document.getElementById('enrollmentSearch').value.toLowerCase().trim();
+      const filtered = nonEnrolledCenters.filter(c =>
+        c.name.toLowerCase().includes(query) ||
+        c.address.toLowerCase().includes(query)
+      );
+      populateEnrollmentDropdown(filtered);
+      selectedEnrollmentId = null;
+      document.getElementById('enrollmentSelected').style.display = 'none';
+      document.getElementById('enrollBtn').disabled = true;
+    }
+
+    document.addEventListener('change', function(e) {
+      if (e.target.id === 'enrollmentDropdown') {
+        const id = e.target.value;
+        const center = nonEnrolledCenters.find(c => c.id === id);
+        if (center) {
+          selectedEnrollmentId = id;
+          const info = document.getElementById('enrollmentSelected');
+          info.style.display = 'block';
+          info.innerHTML = `
+            <div class="name">${center.name}</div>
+            <div class="addr">${center.address}</div>
+            <div class="contact">Contact: ${center.contact} · ${center.email}</div>
+          `;
+          document.getElementById('enrollBtn').disabled = false;
+        }
+      }
+    });
+
+    function sendEnrollmentEmail() {
+      if (!selectedEnrollmentId) return;
+      const center = nonEnrolledCenters.find(c => c.id === selectedEnrollmentId);
+      const btn = document.getElementById('enrollBtn');
+      btn.disabled = true;
+      btn.textContent = 'Sending...';
+
+      setTimeout(() => {
+        const statusEl = document.getElementById('enrollmentStatus');
+        statusEl.className = 'status-bar success';
+        statusEl.style.display = 'flex';
+        statusEl.textContent = `✅ Enrollment email sent to ${center.name} (${center.email}). CRM will handle the rest.`;
+        btn.disabled = false;
+        btn.innerHTML = '✉️ Send Enrollment Email';
+      }, 1000);
+    }
+
+    // ═══════════════════════════════════════════
+    // STATUS BAR
+    // ═══════════════════════════════════════════
+    function showStatus(msg, type) {
+      const bar = document.getElementById('statusBar');
+      bar.className = `status-bar ${type}`;
+      bar.textContent = msg;
+    }
+
+    function hideStatus() {
+      const bar = document.getElementById('statusBar');
+      bar.className = 'status-bar';
+      bar.style.display = 'none';
+    }
+
+    // ═══════════════════════════════════════════
+    // PHONE FORMATTING
+    // ═══════════════════════════════════════════
+    document.getElementById('customerPhone').addEventListener('input', function(e) {
+      let val = e.target.value.replace(/\D/g, '');
+      if (val.length > 10) val = val.slice(0, 10);
+      if (val.length >= 7) {
+        e.target.value = `(${val.slice(0,3)}) ${val.slice(3,6)}-${val.slice(6)}`;
+      } else if (val.length >= 4) {
+        e.target.value = `(${val.slice(0,3)}) ${val.slice(3)}`;
+      } else if (val.length > 0) {
+        e.target.value = `(${val}`;
+      }
+    });
+
+    // Enter key on zip search
+    document.getElementById('zipSearch').addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') { e.preventDefault(); searchServiceCenters(); }
+    });
+
+    // ═══════════════════════════════════════════
+    // INIT
+    // ═══════════════════════════════════════════
+  </script>
+</body>
+</html>
