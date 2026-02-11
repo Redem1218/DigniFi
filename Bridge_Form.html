@@ -1,511 +1,822 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>DigniFi — Service Center Enrollment</title>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,700;1,9..40,400&display=swap" rel="stylesheet">
-  <style>
-    :root {
-      --navy: #0B2535;
-      --teal: #1A6B7A;
-      --teal-light: #E6F4F6;
-      --red: #E8503A;
-      --surface: #F5F7FA;
-      --white: #FFFFFF;
-      --border: #DDE3EA;
-      --border-focus: #1A6B7A;
-      --text: #0B2535;
-      --text-secondary: #5A6B7B;
-      --text-muted: #8E9BAA;
-      --success: #16A34A;
-      --success-bg: #ECFDF5;
-      --error: #DC2626;
-      --radius: 10px;
-      --radius-sm: 6px;
-    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DigniFi – Service Center Enrollment</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --dignifi-teal: #00A99D;
+    --dignifi-teal-dark: #008F85;
+    --dignifi-teal-light: #E6F8F7;
+    --dignifi-teal-mid: #B3EBE7;
+    --dignifi-navy: #1A2D3D;
+    --dignifi-dark: #0F1F2E;
+    --dignifi-charcoal: #2A3F52;
+    --surface: #F5FAFA;
+    --border: #C8DDD9;
+    --text-primary: #1A2D3D;
+    --text-secondary: #4E6A7A;
+    --text-muted: #8AA0AD;
+    --white: #FFFFFF;
+    --error: #E5384F;
+    --warn-bg: #FFF8F0;
+    --warn-text: #8B5E2B;
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 16px;
+    --shadow-lg: 0 12px 40px rgba(15,31,46,0.1), 0 4px 12px rgba(15,31,46,0.05);
+  }
 
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
 
-    body {
-      font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
-      background: var(--surface);
-      color: var(--text);
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-    }
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--surface);
+    color: var(--text-primary);
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+  }
 
-    /* ── Header ── */
-    .header {
-      background: var(--navy);
-      padding: 20px 32px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
+  .top-bar {
+    background: var(--dignifi-dark);
+    padding: 16px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
 
-    .header-inner {
-      max-width: 680px;
-      width: 100%;
-      display: flex;
-      align-items: center;
-      gap: 16px;
-    }
+  .top-bar .brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
 
-    .logo {
-      font-size: 22px;
-      font-weight: 700;
-      color: #FFF;
-      letter-spacing: -0.3px;
-    }
+  .top-bar .logo-mark {
+    width: 36px;
+    height: 36px;
+    background: var(--dignifi-teal);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 800;
+    font-size: 16px;
+    color: white;
+    letter-spacing: -0.5px;
+  }
 
-    .header-divider {
-      width: 1px;
-      height: 24px;
-      background: rgba(255,255,255,0.15);
-    }
+  .top-bar .logo-text {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 700;
+    font-size: 20px;
+    color: white;
+    letter-spacing: -0.3px;
+  }
 
-    .header-label {
-      font-size: 13px;
-      color: rgba(255,255,255,0.6);
-      font-weight: 500;
-      letter-spacing: 0.5px;
-      text-transform: uppercase;
-    }
+  .top-bar .partner-badge {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--dignifi-teal);
+    background: rgba(0,169,157,0.1);
+    padding: 4px 12px;
+    border-radius: 20px;
+    border: 1px solid rgba(0,169,157,0.25);
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+  }
 
-    /* ── Main Content ── */
-    .main {
-      flex: 1;
-      display: flex;
-      justify-content: center;
-      padding: 40px 24px 60px;
-    }
+  .hero {
+    background: linear-gradient(135deg, var(--dignifi-dark) 0%, var(--dignifi-charcoal) 50%, #1B3A3E 100%);
+    padding: 48px 32px 56px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
 
-    .form-container {
-      max-width: 680px;
-      width: 100%;
-    }
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -60%;
+    right: -20%;
+    width: 500px;
+    height: 500px;
+    background: radial-gradient(circle, rgba(0,169,157,0.18) 0%, transparent 70%);
+    border-radius: 50%;
+  }
 
-    /* ── Intro Section ── */
-    .intro {
-      margin-bottom: 32px;
-    }
+  .hero::after {
+    content: '';
+    position: absolute;
+    bottom: -40%;
+    left: -10%;
+    width: 400px;
+    height: 400px;
+    background: radial-gradient(circle, rgba(0,169,157,0.1) 0%, transparent 70%);
+    border-radius: 50%;
+  }
 
-    .intro h1 {
-      font-size: 28px;
-      font-weight: 700;
-      color: var(--text);
-      letter-spacing: -0.5px;
-      margin-bottom: 12px;
-      line-height: 1.2;
-    }
+  .hero h1 {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 800;
+    font-size: 28px;
+    color: white;
+    margin-bottom: 12px;
+    position: relative;
+    z-index: 1;
+    letter-spacing: -0.5px;
+  }
 
-    .intro p {
-      font-size: 15px;
-      color: var(--text-secondary);
-      line-height: 1.65;
-    }
+  .hero p {
+    font-size: 15px;
+    color: rgba(255,255,255,0.65);
+    max-width: 520px;
+    margin: 0 auto;
+    line-height: 1.6;
+    position: relative;
+    z-index: 1;
+  }
 
-    .intro-highlight {
-      display: flex;
-      align-items: flex-start;
-      gap: 14px;
-      background: var(--teal-light);
-      border: 1px solid rgba(26,107,122,0.15);
-      border-radius: var(--radius);
-      padding: 16px 20px;
-      margin-top: 20px;
-    }
+  .form-container {
+    max-width: 640px;
+    margin: -28px auto 48px;
+    padding: 0 20px;
+    position: relative;
+    z-index: 2;
+  }
 
-    .intro-highlight-icon {
-      width: 36px;
-      height: 36px;
-      border-radius: 50%;
-      background: var(--teal);
-      color: #FFF;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 16px;
-      flex-shrink: 0;
-      margin-top: 2px;
-    }
+  .form-card {
+    background: var(--white);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-lg);
+    overflow: hidden;
+    animation: slideUp 0.5s ease-out;
+  }
 
-    .intro-highlight-text {
-      font-size: 13px;
-      color: var(--teal);
-      line-height: 1.55;
-      font-weight: 500;
-    }
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
 
-    .intro-highlight-text strong {
-      display: block;
-      font-size: 14px;
-      font-weight: 700;
-      margin-bottom: 2px;
-    }
+  .section {
+    padding: 32px 36px 28px;
+  }
 
-    /* ── Form Card ── */
-    .form-card {
-      background: var(--white);
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      box-shadow: 0 2px 12px rgba(11,37,53,0.05);
-      overflow: hidden;
-    }
+  .section + .section {
+    border-top: 1px solid var(--border);
+  }
 
-    .form-section {
-      padding: 28px 32px;
-      border-bottom: 1px solid var(--border);
-    }
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 24px;
+  }
 
-    .form-section:last-child {
-      border-bottom: none;
-    }
+  .section-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
 
-    .section-header {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 22px;
-    }
+  .section-icon.eligibility { background: var(--warn-bg); color: var(--warn-text); }
+  .section-icon.signer { background: var(--dignifi-teal-light); color: var(--dignifi-teal); }
+  .section-icon.business { background: rgba(26,45,61,0.06); color: var(--dignifi-navy); }
+  .section-icon svg { width: 20px; height: 20px; }
 
-    .section-icon {
-      width: 32px;
-      height: 32px;
-      border-radius: var(--radius-sm);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 15px;
-      flex-shrink: 0;
-    }
+  .section-title {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 700;
+    font-size: 17px;
+    color: var(--text-primary);
+    letter-spacing: -0.2px;
+  }
 
-    .section-icon.signer { background: #FEF2F0; color: var(--red); }
-    .section-icon.business { background: var(--teal-light); color: var(--teal); }
+  .section-subtitle {
+    font-size: 13px;
+    color: var(--text-secondary);
+    margin-top: 2px;
+  }
 
-    .section-title {
-      font-size: 16px;
-      font-weight: 700;
-      color: var(--text);
-    }
+  /* === ELIGIBILITY === */
+  .eligibility-box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 20px 24px;
+    margin-bottom: 20px;
+  }
 
-    .section-subtitle {
-      font-size: 12px;
-      color: var(--text-muted);
-      margin-top: 1px;
-    }
+  .eligibility-box .elig-intro {
+    font-size: 14px;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    margin-bottom: 16px;
+  }
 
-    /* ── Form Fields ── */
-    .field-row {
-      display: grid;
-      gap: 16px;
-      margin-bottom: 16px;
-    }
+  .elig-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
 
-    .field-row.cols-2 { grid-template-columns: 1fr 1fr; }
-    .field-row.cols-3 { grid-template-columns: 2fr 1fr 1fr; }
+  .elig-list li {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    font-size: 13.5px;
+    color: var(--text-primary);
+    line-height: 1.5;
+  }
 
-    .field-row:last-child { margin-bottom: 0; }
+  .elig-check {
+    width: 20px;
+    height: 20px;
+    min-width: 20px;
+    border-radius: 50%;
+    background: var(--dignifi-teal-light);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 1px;
+  }
 
-    .field {
-      display: flex;
-      flex-direction: column;
-    }
+  .elig-check svg {
+    width: 12px;
+    height: 12px;
+    color: var(--dignifi-teal);
+  }
 
-    .field-label {
-      font-size: 11px;
-      font-weight: 700;
-      color: var(--text-secondary);
-      text-transform: uppercase;
-      letter-spacing: 0.6px;
-      margin-bottom: 6px;
-      display: flex;
-      align-items: center;
-      gap: 4px;
-    }
+  .elig-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 24px;
+  }
 
-    .field-label .req {
-      color: var(--red);
-      font-size: 13px;
-      line-height: 1;
-    }
+  .elig-confirm-btn {
+    width: 100%;
+    height: 46px;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    color: white;
+    background: var(--dignifi-teal);
+    border: none;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
 
-    .field-input {
-      width: 100%;
-      padding: 11px 14px;
-      border: 1.5px solid var(--border);
-      border-radius: var(--radius-sm);
-      font-family: inherit;
-      font-size: 14px;
-      color: var(--text);
-      background: var(--surface);
-      transition: all 0.2s;
-    }
+  .elig-confirm-btn:hover {
+    background: var(--dignifi-teal-dark);
+    box-shadow: 0 4px 16px rgba(0,169,157,0.3);
+    transform: translateY(-1px);
+  }
 
-    .field-input:focus {
-      outline: none;
-      border-color: var(--border-focus);
-      background: var(--white);
-      box-shadow: 0 0 0 3px rgba(26,107,122,0.08);
-    }
+  .elig-confirm-btn:active { transform: translateY(0); box-shadow: none; }
 
-    .field-input::placeholder { color: var(--text-muted); }
+  .elig-optout-btn {
+    width: 100%;
+    height: 42px;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 600;
+    font-size: 13.5px;
+    color: var(--text-secondary);
+    background: transparent;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
 
-    .field-input.error {
-      border-color: var(--error);
-      box-shadow: 0 0 0 3px rgba(220,38,38,0.08);
-    }
+  .elig-optout-btn:hover {
+    border-color: var(--error);
+    color: var(--error);
+    background: rgba(229,56,79,0.03);
+  }
 
-    .field-error {
-      font-size: 11px;
-      color: var(--error);
-      margin-top: 4px;
-      display: none;
-    }
+  /* === NOTICE === */
+  .notice {
+    background: var(--dignifi-teal-light);
+    border: 1px solid var(--dignifi-teal-mid);
+    border-radius: var(--radius-sm);
+    padding: 12px 16px;
+    margin-bottom: 24px;
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+  }
 
-    .field-error.visible { display: block; }
+  .notice-icon { color: var(--dignifi-teal); flex-shrink: 0; margin-top: 1px; }
+  .notice-icon svg { width: 16px; height: 16px; }
+  .notice p { font-size: 13px; color: var(--dignifi-navy); line-height: 1.5; }
 
-    .field-hint {
-      font-size: 11px;
-      color: var(--text-muted);
-      margin-top: 4px;
-      line-height: 1.4;
-    }
+  /* === FORM FIELDS === */
+  .field-row { display: grid; gap: 16px; margin-bottom: 18px; }
+  .field-row.two-col { grid-template-columns: 1fr 1fr; }
+  .field-row.three-col { grid-template-columns: 2fr 1fr 1fr; }
+  .field-row.single { grid-template-columns: 1fr; }
 
-    select.field-input {
-      appearance: none;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%238E9BAA' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
-      background-repeat: no-repeat;
-      background-position: right 14px center;
-      padding-right: 36px;
-      cursor: pointer;
-    }
+  .field { display: flex; flex-direction: column; }
 
-    /* ── Submit Area ── */
-    .submit-section {
-      padding: 28px 32px;
-      background: #FAFBFC;
-      border-top: 1px solid var(--border);
-    }
+  .field label {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 6px;
+    letter-spacing: 0.01em;
+  }
 
-    .submit-btn {
-      width: 100%;
-      padding: 16px;
-      background: var(--red);
-      color: #FFF;
-      border: none;
-      border-radius: var(--radius);
-      font-family: inherit;
-      font-size: 15px;
-      font-weight: 700;
-      cursor: pointer;
-      transition: all 0.2s;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-    }
+  .field label .required { color: var(--error); margin-left: 2px; }
+  .field label .optional { color: var(--text-muted); font-weight: 400; font-size: 12px; margin-left: 4px; }
 
-    .submit-btn:hover:not(:disabled) {
-      background: #D4432F;
-      transform: translateY(-1px);
-      box-shadow: 0 6px 20px rgba(232,80,58,0.3);
-    }
+  .field input,
+  .field select {
+    height: 44px;
+    padding: 0 14px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    color: var(--text-primary);
+    background: var(--white);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    transition: all 0.2s ease;
+    outline: none;
+    width: 100%;
+  }
 
-    .submit-btn:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-    }
+  .field input::placeholder { color: var(--text-muted); }
+  .field input:hover, .field select:hover { border-color: #9DC5BF; }
+  .field input:focus, .field select:focus { border-color: var(--dignifi-teal); box-shadow: 0 0 0 3px rgba(0,169,157,0.12); }
+  .field input.error { border-color: var(--error); box-shadow: 0 0 0 3px rgba(229,56,79,0.08); }
+  .field .error-msg { font-size: 12px; color: var(--error); margin-top: 4px; display: none; }
+  .field .error-msg.visible { display: block; }
 
-    .submit-note {
-      font-size: 12px;
-      color: var(--text-muted);
-      text-align: center;
-      margin-top: 14px;
-      line-height: 1.5;
-    }
+  .field select {
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1.5L6 6.5L11 1.5' stroke='%234E6A7A' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 14px center;
+    padding-right: 36px;
+  }
 
-    .submit-note a {
-      color: var(--teal);
-      text-decoration: none;
-      font-weight: 600;
-    }
+  /* === SUBMIT === */
+  .form-footer {
+    padding: 24px 36px 32px;
+    border-top: 1px solid var(--border);
+    background: var(--surface);
+  }
 
-    /* ── Success State ── */
-    .success-state {
-      display: none;
-      text-align: center;
-      padding: 60px 40px;
-    }
+  .submit-btn {
+    width: 100%;
+    height: 50px;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 700;
+    font-size: 15px;
+    color: white;
+    background: var(--dignifi-teal);
+    border: none;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
 
-    .success-state.visible { display: block; }
+  .submit-btn:hover { background: var(--dignifi-teal-dark); box-shadow: 0 4px 16px rgba(0,169,157,0.35); transform: translateY(-1px); }
+  .submit-btn:active { transform: translateY(0); box-shadow: none; }
+  .submit-btn:disabled { background: var(--border); cursor: not-allowed; transform: none; box-shadow: none; }
 
-    .success-icon {
-      width: 72px;
-      height: 72px;
-      border-radius: 50%;
-      background: var(--success-bg);
-      color: var(--success);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 32px;
-      margin: 0 auto 24px;
-      border: 2px solid rgba(22,163,74,0.15);
-    }
+  .submit-btn .spinner {
+    display: none;
+    width: 20px;
+    height: 20px;
+    border: 2.5px solid rgba(255,255,255,0.3);
+    border-top-color: white;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+  }
 
-    .success-state h2 {
-      font-size: 24px;
-      font-weight: 700;
-      color: var(--text);
-      margin-bottom: 12px;
-    }
+  .submit-btn.loading .btn-text { display: none; }
+  .submit-btn.loading .spinner { display: inline-block; }
 
-    .success-state p {
-      font-size: 15px;
-      color: var(--text-secondary);
-      line-height: 1.6;
-      max-width: 440px;
-      margin: 0 auto;
-    }
+  @keyframes spin { to { transform: rotate(360deg); } }
 
-    .success-details {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 20px 24px;
-      margin: 28px auto 0;
-      max-width: 400px;
-      text-align: left;
-    }
+  .legal-text {
+    font-size: 12px;
+    color: var(--text-muted);
+    text-align: center;
+    margin-top: 14px;
+    line-height: 1.5;
+  }
 
-    .success-details-title {
-      font-size: 11px;
-      font-weight: 700;
-      color: var(--text-muted);
-      text-transform: uppercase;
-      letter-spacing: 0.6px;
-      margin-bottom: 12px;
-    }
+  /* === END STATES === */
+  .end-state {
+    display: none;
+    text-align: center;
+    padding: 56px 36px;
+  }
 
-    .success-detail-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 6px 0;
-      font-size: 13px;
-      border-bottom: 1px solid var(--border);
-    }
+  .end-state.visible { display: block; }
 
-    .success-detail-row:last-child { border-bottom: none; }
+  .end-state-icon {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 20px;
+  }
 
-    .success-detail-row .label { color: var(--text-muted); }
-    .success-detail-row .value { color: var(--text); font-weight: 600; }
+  .end-state-icon.success { background: rgba(0,169,157,0.1); color: var(--dignifi-teal); }
+  .end-state-icon.removed { background: rgba(78,106,122,0.08); color: var(--text-secondary); }
+  .end-state-icon svg { width: 28px; height: 28px; }
 
-    /* ── Footer ── */
-    .footer {
-      padding: 20px 32px;
-      text-align: center;
-      font-size: 12px;
-      color: var(--text-muted);
-      border-top: 1px solid var(--border);
-      background: var(--white);
-    }
+  .end-state h2 {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 700;
+    font-size: 22px;
+    color: var(--text-primary);
+    margin-bottom: 8px;
+  }
 
-    .footer a { color: var(--teal); text-decoration: none; font-weight: 600; }
+  .end-state p {
+    font-size: 14px;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    max-width: 420px;
+    margin: 0 auto;
+  }
 
-    /* ── Responsive ── */
-    @media (max-width: 600px) {
-      .main { padding: 24px 16px 40px; }
-      .form-section { padding: 22px 20px; }
-      .submit-section { padding: 22px 20px; }
-      .field-row.cols-2,
-      .field-row.cols-3 { grid-template-columns: 1fr; }
-      .intro h1 { font-size: 24px; }
-      .header { padding: 16px 20px; }
-    }
+  .end-state .ref-tag {
+    margin-top: 20px;
+    background: var(--surface);
+    padding: 12px 20px;
+    border-radius: var(--radius-sm);
+    display: inline-block;
+    font-size: 13px;
+    color: var(--text-secondary);
+  }
 
-    /* ── Animations ── */
-    @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(12px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
+  .end-state .ref-tag strong { color: var(--text-primary); }
 
-    .form-container { animation: fadeUp 0.4s ease; }
-  </style>
+  .form-step.hidden { display: none; }
+
+  @media (max-width: 600px) {
+    .hero { padding: 36px 20px 44px; }
+    .hero h1 { font-size: 24px; }
+    .section { padding: 24px 20px 22px; }
+    .form-footer { padding: 20px; }
+    .field-row.two-col, .field-row.three-col { grid-template-columns: 1fr; }
+    .top-bar { padding: 14px 20px; }
+    .top-bar .partner-badge { display: none; }
+    .eligibility-box { padding: 16px 18px; }
+  }
+</style>
 </head>
 <body>
 
-  <!-- Header -->
-  <header class="header">
-    <div class="header-inner">
-      <div class="logo">DigniFi</div>
-      <div class="header-divider"></div>
-      <div class="header-label">Service Center Enrollment</div>
+<div class="top-bar">
+  <div class="brand">
+    <div class="logo-mark">D</div>
+    <span class="logo-text">DigniFi</span>
+  </div>
+  <span class="partner-badge">Endurance Partner</span>
+</div>
+
+<div class="hero">
+  <h1>Service Center Enrollment</h1>
+  <p>Complete the form below to get set up with DigniFi financing for your service center. An agreement will be sent to your authorized signer for review.</p>
+</div>
+
+<div class="form-container">
+  <div class="form-card">
+
+    <!-- ══════════════════════════════════════ -->
+    <!-- STEP 1 — ELIGIBILITY REQUIREMENTS     -->
+    <!-- ══════════════════════════════════════ -->
+    <div class="form-step" id="stepEligibility">
+      <div class="section">
+        <div class="section-header">
+          <div class="section-icon eligibility">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+          </div>
+          <div>
+            <div class="section-title">Eligibility Requirements</div>
+            <div class="section-subtitle">Please review before continuing</div>
+          </div>
+        </div>
+
+        <div class="eligibility-box">
+          <p class="elig-intro">To enroll as a DigniFi service center, your business must meet <strong>all</strong> of the following qualifications:</p>
+
+          <ul class="elig-list">
+            <li>
+              <span class="elig-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>
+              <span>All business information on file (Tax ID, contact number, etc.)</span>
+            </li>
+            <li>
+              <span class="elig-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>
+              <span>Legal business name and owner's name must be verifiable</span>
+            </li>
+            <li>
+              <span class="elig-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>
+              <span>In good standing with state — in business for a minimum of 12 months</span>
+            </li>
+            <li>
+              <span class="elig-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>
+              <span>No pattern of negative reviews or mentions of fraud</span>
+            </li>
+            <li>
+              <span class="elig-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>
+              <span>Must have an active website</span>
+            </li>
+            <li>
+              <span class="elig-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>
+              <span>Online photos of the business and email address must appear to be a legitimate operation</span>
+            </li>
+            <li>
+              <span class="elig-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>
+              <span>Not associated with any service center previously under investigation or canceled for fraud concerns</span>
+            </li>
+          </ul>
+
+          <div class="elig-actions">
+            <button type="button" class="elig-confirm-btn" id="eligConfirmBtn">I Confirm My Business Meets These Requirements</button>
+            <button type="button" class="elig-optout-btn" id="eligOptOutBtn">Not Eligible? Click Here</button>
+          </div>
+        </div>
+      </div>
     </div>
-  </header>
 
-  <!-- Main -->
-  <main class="main">
-    <div class="form-container">
+    <!-- ══════════════════════════════════════ -->
+    <!-- STEP 2 — ENROLLMENT FORM              -->
+    <!-- ══════════════════════════════════════ -->
+    <form id="bridgeForm" class="form-step hidden" novalidate>
 
-      <!-- Intro -->
-      <div class="intro">
-        <h1>Complete Your DigniFi Enrollment</h1>
-        <p>You've been invited to join DigniFi's Buy Now, Pay Later network through our partnership with Endurance Warranty. Complete the form below to begin accepting BNPL financing for vehicle repairs at your service center.</p>
+      <div class="section">
+        <div class="section-header">
+          <div class="section-icon signer">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          </div>
+          <div>
+            <div class="section-title">Authorized Signer</div>
+            <div class="section-subtitle">The person authorized to sign the merchant agreement</div>
+          </div>
+        </div>
 
-        <div class="intro-highlight">
-          <div class="intro-highlight-icon">🔐</div>
-          <div class="intro-highlight-text">
-            <strong>Authorized Signer Required</strong>
-            Please provide the contact information of the person authorized to sign the DigniFi Merchant Services Agreement. This is typically the business owner or general manager — not a shared or group email.
+        <div class="notice">
+          <div class="notice-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+          </div>
+          <p>Please provide a <strong>personal email address</strong> for the authorized signer — not a shared or group email. The merchant agreement will be sent directly to this address.</p>
+        </div>
+
+        <div class="field-row two-col">
+          <div class="field">
+            <label>First Name <span class="required">*</span></label>
+            <input type="text" id="signerFirst" name="authorizedSignerFirstName" placeholder="e.g. Jane" required>
+            <span class="error-msg" id="err-signerFirst">First name is required</span>
+          </div>
+          <div class="field">
+            <label>Last Name <span class="required">*</span></label>
+            <input type="text" id="signerLast" name="authorizedSignerLastName" placeholder="e.g. Smith" required>
+            <span class="error-msg" id="err-signerLast">Last name is required</span>
+          </div>
+        </div>
+
+        <div class="field-row single">
+          <div class="field">
+            <label>Signer Email <span class="required">*</span></label>
+            <input type="email" id="signerEmail" name="authorizedSignerEmail" placeholder="jane.smith@example.com" required>
+            <span class="error-msg" id="err-signerEmail">Please enter a valid email address</span>
           </div>
         </div>
       </div>
 
-      <!-- Form Card -->
-      <div class="form-card" id="formCard">
-        <form id="bridgeForm" autocomplete="off" novalidate>
-
-          <!-- Section 1: Authorized Signer -->
-          <div class="form-section">
-            <div class="section-header">
-              <div class="section-icon signer">✍️</div>
-              <div>
-                <div class="section-title">Authorized Signer</div>
-                <div class="section-subtitle">The individual authorized to sign the merchant agreement</div>
-              </div>
-            </div>
-
-            <div class="field-row cols-2">
-              <div class="field">
-                <label class="field-label">First Name <span class="req">*</span></label>
-                <input type="text" class="field-input" id="signerFirst" placeholder="First name" required>
-                <div class="field-error" id="signerFirstError">First name is required</div>
-              </div>
-              <div class="field">
-                <label class="field-label">Last Name <span class="req">*</span></label>
-                <input type="text" class="field-input" id="signerLast" placeholder="Last name" required>
-                <div class="field-error" id="signerLastError">Last name is required</div>
-              </div>
-            </div>
-
-            <div class="field-row">
-              <div class="field">
-                <label class="field-label">Email Address <span class="req">*</span></label>
-                <input type="email" class="field-input" id="signerEmail" placeholder="signer@yourbusiness.com" required>
-                <div class="field-error" id="signerEmailError">Please enter a valid email address</div>
-                <div class="field-hint">The merchant services agreement will be sent to this email. Please use a direct email — not a shared or group inbox.</div>
-              </div>
-            </div>
+      <div class="section">
+        <div class="section-header">
+          <div class="section-icon business">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
           </div>
+          <div>
+            <div class="section-title">Service Center Information</div>
+            <div class="section-subtitle">Business details for merchant account setup</div>
+          </div>
+        </div>
 
-          <!-- Section 2: Business Information -->
-          <div class="form-section">
-            <div class="section-header">
-              <div class="section-icon business">🏪</div>
-              <div>
-                <div class="section-title">Business Information</div>
-                <div class="sect
+        <div class="field-row single">
+          <div class="field">
+            <label>Business Name <span class="required">*</span></label>
+            <input type="text" id="bizName" name="name" placeholder="e.g. Main Street Auto Care" required>
+            <span class="error-msg" id="err-bizName">Business name is required</span>
+          </div>
+        </div>
+
+        <div class="field-row single">
+          <div class="field">
+            <label>Street Address <span class="required">*</span></label>
+            <input type="text" id="street" name="street" placeholder="e.g. 123 Main Street" required>
+            <span class="error-msg" id="err-street">Street address is required</span>
+          </div>
+        </div>
+
+        <div class="field-row single">
+          <div class="field">
+            <label>Suite / Unit <span class="optional">(optional)</span></label>
+            <input type="text" id="secondary" name="secondary" placeholder="e.g. Suite 200">
+          </div>
+        </div>
+
+        <div class="field-row three-col">
+          <div class="field">
+            <label>City <span class="required">*</span></label>
+            <input type="text" id="city" name="city" placeholder="e.g. Nashville" required>
+            <span class="error-msg" id="err-city">City is required</span>
+          </div>
+          <div class="field">
+            <label>State <span class="required">*</span></label>
+            <select id="state" name="state" required>
+              <option value="">Select</option>
+              <option value="AL">AL</option><option value="AK">AK</option><option value="AZ">AZ</option>
+              <option value="AR">AR</option><option value="CA">CA</option><option value="CO">CO</option>
+              <option value="CT">CT</option><option value="DE">DE</option><option value="FL">FL</option>
+              <option value="GA">GA</option><option value="HI">HI</option><option value="ID">ID</option>
+              <option value="IL">IL</option><option value="IN">IN</option><option value="IA">IA</option>
+              <option value="KS">KS</option><option value="KY">KY</option><option value="LA">LA</option>
+              <option value="ME">ME</option><option value="MD">MD</option><option value="MA">MA</option>
+              <option value="MI">MI</option><option value="MN">MN</option><option value="MS">MS</option>
+              <option value="MO">MO</option><option value="MT">MT</option><option value="NE">NE</option>
+              <option value="NV">NV</option><option value="NH">NH</option><option value="NJ">NJ</option>
+              <option value="NM">NM</option><option value="NY">NY</option><option value="NC">NC</option>
+              <option value="ND">ND</option><option value="OH">OH</option><option value="OK">OK</option>
+              <option value="OR">OR</option><option value="PA">PA</option><option value="RI">RI</option>
+              <option value="SC">SC</option><option value="SD">SD</option><option value="TN">TN</option>
+              <option value="TX">TX</option><option value="UT">UT</option><option value="VT">VT</option>
+              <option value="VA">VA</option><option value="WA">WA</option><option value="WV">WV</option>
+              <option value="WI">WI</option><option value="WY">WY</option><option value="DC">DC</option>
+            </select>
+            <span class="error-msg" id="err-state">Required</span>
+          </div>
+          <div class="field">
+            <label>Zip Code <span class="required">*</span></label>
+            <input type="text" id="zip" name="zipCode" placeholder="37174" maxlength="10" required>
+            <span class="error-msg" id="err-zip">Required</span>
+          </div>
+        </div>
+
+        <div class="field-row two-col">
+          <div class="field">
+            <label>Phone <span class="required">*</span></label>
+            <input type="tel" id="phone" name="phone" placeholder="(615) 555-1234" required>
+            <span class="error-msg" id="err-phone">Phone number is required</span>
+          </div>
+          <div class="field">
+            <label>Website <span class="optional">(optional)</span></label>
+            <input type="url" id="website" name="website" placeholder="https://www.example.com">
+          </div>
+        </div>
+      </div>
+
+      <div class="form-footer">
+        <button type="submit" class="submit-btn" id="submitBtn">
+          <span class="btn-text">Submit Enrollment</span>
+          <span class="spinner"></span>
+        </button>
+        <p class="legal-text">By submitting, you agree to be contacted by DigniFi regarding merchant enrollment. A service agreement will be sent to the authorized signer's email for review and signature.</p>
+      </div>
+    </form>
+
+    <!-- ══════════════════════════════════════ -->
+    <!-- END STATES                             -->
+    <!-- ══════════════════════════════════════ -->
+
+    <div class="end-state" id="successState">
+      <div class="end-state-icon success">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+      </div>
+      <h2>Enrollment Submitted</h2>
+      <p>Thank you! The DigniFi team will review your information and send the merchant agreement to the authorized signer shortly.</p>
+      <div class="ref-tag" id="successRef"></div>
+    </div>
+
+    <div class="end-state" id="removedState">
+      <div class="end-state-icon removed">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+      </div>
+      <h2>Removed from Outreach</h2>
+      <p>We're sorry — based on the current eligibility requirements, your service center has been removed from the DigniFi enrollment outreach list. If you believe this was made in error or your circumstances change, please contact your Endurance representative for assistance.</p>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  const stepElig  = document.getElementById('stepEligibility');
+  const stepForm  = document.getElementById('bridgeForm');
+  const successEl = document.getElementById('successState');
+  const removedEl = document.getElementById('removedState');
+
+  function showStep(step) {
+    [stepElig, stepForm, successEl, removedEl].forEach(el => {
+      el.classList.add('hidden');
+      el.style.display = 'none';
+    });
+    step.classList.remove('hidden');
+    step.style.display = '';
+    document.querySelector('.form-card').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  document.getElementById('eligConfirmBtn').addEventListener('click', () => showStep(stepForm));
+  document.getElementById('eligOptOutBtn').addEventListener('click', () => showStep(removedEl));
+
+  // Phone formatting
+  document.getElementById('phone').addEventListener('input', function(e) {
+    let v = e.target.value.replace(/\D/g, '');
+    if (v.length > 10) v = v.slice(0, 10);
+    if (v.length >= 7) v = `(${v.slice(0,3)}) ${v.slice(3,6)}-${v.slice(6)}`;
+    else if (v.length >= 4) v = `(${v.slice(0,3)}) ${v.slice(3)}`;
+    else if (v.length >= 1) v = `(${v}`;
+    e.target.value = v;
+  });
+
+  // Zip formatting
+  document.getElementById('zip').addEventListener('input', function(e) {
+    e.target.value = e.target.value.replace(/[^\d-]/g, '');
+  });
+
+  // Validation
+  function validate() {
+    let valid = true;
+    const rules = [
+      { id: 'signerFirst', test: v => v.trim().length > 0 },
+      { id: 'signerLast',  test: v => v.trim().length > 0 },
+      { id: 'signerEmail', test: v => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v) },
+      { id: 'bizName',     test: v => v.trim().length > 0 },
+      { id: 'street',      test: v => v.trim().length > 0 },
+      { id: 'city',        test: v => v.trim().length > 0 },
+      { id: 'state',       test: v => v.trim().length > 0 },
+      { id: 'zip',         test: v => /^\d{5}(-\d{4})?$/.test(v.trim()) },
+      { id: 'phone',       test: v => v.replace(/\D/g, '').length === 10 },
+    ];
+    rules.forEach(({ id, test }) => {
+      const el = document.getElementById(id);
+      const err = document.getElementById(`err-${id}`);
+      if (!test(el.value)) { el.classList.add('error'); if (err) err.classList.add('visible'); valid = false; }
+      else { el.classList.remove('error'); if (err) err.classList.remove('visible'); }
+    });
+    return valid;
+  }
+
+  document.querySelectorAll('input, select').forEach(el => {
+    el.addEventListener('input', () => {
+      el.classList.remove('error');
+      const err = document.getElementById(`err-${el.id}`);
+      if (err) err.classList.remove('visible');
+    });
+  });
+
+  document.getElementById('bridgeForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    if (!validate()) return;
+
+    const btn = document.getElementById('submitBtn');
+    btn.classList.add('loading');
+    btn.disabled = true;
+
+    const payload = {
+      authorizedSignerFirstName:  document.getElementById('signerFirst').value.trim(),
+      authorizedSignerLastName:   document.getElementById('signerLast').value.trim(),
+      authorizedSignerEmail:      document.getElementById('signerEmail').value.trim(),
+      name:                       document.getElementById('bizName').value.trim(),
+      street:                     document.getElementById('street').value.trim(),
+      secondary:                  document.getElementById('secondary').value.trim(),
+      city:                       document.getElementById('city').value.trim(),
+      state:                      document.getElementById('state').value,
+      zipCode:                    document.getElementById('zip').value.trim(),
+      website:                    document.getElementById('website').value.trim(),
+      phone:                      document.getElementById('phone').value.replace(/\D/g, ''),
+    };
+
+    console.log('Bridge Form Payload:', JSON.stringify(payload, null, 2));
+
+    // TODO: Replace with actual endpoint
+    // fetch('https://YOUR_ENDPOINT', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) })
+
+    setTimeout(() => {
+      showStep(successEl);
+      document.getElementById('successRef').innerHTML = `<strong>${payload.name}</strong>`;
+    }, 1500);
+  });
+</script>
+
+</body>
+</html>
