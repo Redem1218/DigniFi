@@ -8,15 +8,15 @@
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
 <style>
   :root {
-    --dignifi-teal: #00A99D;
-    --dignifi-teal-dark: #008F85;
-    --dignifi-teal-light: #E6F8F7;
-    --dignifi-teal-mid: #B3EBE7;
+    --dignifi-teal: #AB2328;
+    --dignifi-teal-dark: #8E1D21;
+    --dignifi-teal-light: #FDF0F0;
+    --dignifi-teal-mid: #E8B3B5;
     --dignifi-navy: #1A2D3D;
     --dignifi-dark: #0F1F2E;
     --dignifi-charcoal: #2A3F52;
-    --surface: #F5FAFA;
-    --border: #C8DDD9;
+    --surface: #FAFAFA;
+    --border: #D9CCCC;
     --text-primary: #1A2D3D;
     --text-secondary: #4E6A7A;
     --text-muted: #8AA0AD;
@@ -81,16 +81,16 @@
     font-size: 12px;
     font-weight: 500;
     color: var(--dignifi-teal);
-    background: rgba(0,169,157,0.1);
+    background: rgba(171,35,40,0.1);
     padding: 4px 12px;
     border-radius: 20px;
-    border: 1px solid rgba(0,169,157,0.25);
+    border: 1px solid rgba(171,35,40,0.25);
     letter-spacing: 0.5px;
     text-transform: uppercase;
   }
 
   .hero {
-    background: linear-gradient(135deg, var(--dignifi-dark) 0%, var(--dignifi-charcoal) 50%, #1B3A3E 100%);
+    background: linear-gradient(135deg, var(--dignifi-dark) 0%, var(--dignifi-charcoal) 50%, #3E1B1C 100%);
     padding: 48px 32px 56px;
     text-align: center;
     position: relative;
@@ -104,7 +104,7 @@
     right: -20%;
     width: 500px;
     height: 500px;
-    background: radial-gradient(circle, rgba(0,169,157,0.18) 0%, transparent 70%);
+    background: radial-gradient(circle, rgba(171,35,40,0.18) 0%, transparent 70%);
     border-radius: 50%;
   }
 
@@ -115,7 +115,7 @@
     left: -10%;
     width: 400px;
     height: 400px;
-    background: radial-gradient(circle, rgba(0,169,157,0.1) 0%, transparent 70%);
+    background: radial-gradient(circle, rgba(171,35,40,0.1) 0%, transparent 70%);
     border-radius: 50%;
   }
 
@@ -278,7 +278,7 @@
 
   .elig-confirm-btn:hover {
     background: var(--dignifi-teal-dark);
-    box-shadow: 0 4px 16px rgba(0,169,157,0.3);
+    box-shadow: 0 4px 16px rgba(171,35,40,0.3);
     transform: translateY(-1px);
   }
 
@@ -355,8 +355,8 @@
   }
 
   .field input::placeholder { color: var(--text-muted); }
-  .field input:hover, .field select:hover { border-color: #9DC5BF; }
-  .field input:focus, .field select:focus { border-color: var(--dignifi-teal); box-shadow: 0 0 0 3px rgba(0,169,157,0.12); }
+  .field input:hover, .field select:hover { border-color: #D4A3A5; }
+  .field input:focus, .field select:focus { border-color: var(--dignifi-teal); box-shadow: 0 0 0 3px rgba(171,35,40,0.12); }
   .field input.error { border-color: var(--error); box-shadow: 0 0 0 3px rgba(229,56,79,0.08); }
   .field .error-msg { font-size: 12px; color: var(--error); margin-top: 4px; display: none; }
   .field .error-msg.visible { display: block; }
@@ -390,7 +390,7 @@
     transition: all 0.2s ease;
   }
 
-  .submit-btn:hover { background: var(--dignifi-teal-dark); box-shadow: 0 4px 16px rgba(0,169,157,0.35); transform: translateY(-1px); }
+  .submit-btn:hover { background: var(--dignifi-teal-dark); box-shadow: 0 4px 16px rgba(171,35,40,0.35); transform: translateY(-1px); }
   .submit-btn:active { transform: translateY(0); box-shadow: none; }
   .submit-btn:disabled { background: var(--border); cursor: not-allowed; transform: none; box-shadow: none; }
 
@@ -433,7 +433,7 @@
     margin: 0 auto 20px;
   }
 
-  .end-state-icon.success { background: rgba(0,169,157,0.1); color: var(--dignifi-teal); }
+  .end-state-icon.success { background: rgba(171,35,40,0.1); color: var(--dignifi-teal); }
   .end-state-icon.removed { background: rgba(78,106,122,0.08); color: var(--text-secondary); }
   .end-state-icon svg { width: 28px; height: 28px; }
 
@@ -494,7 +494,7 @@
     background: var(--dignifi-teal-mid);
     border-color: var(--dignifi-teal);
     transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(0,169,157,0.15);
+    box-shadow: 0 4px 12px rgba(171,35,40,0.15);
   }
 
   .contact-link svg {
@@ -529,7 +529,7 @@
 
 <div class="hero">
   <h1>Service Center Enrollment</h1>
-  <p>Complete the form below to get set up with DigniFi financing for your service center. An agreement will be sent to your authorized signer for review.</p>
+  <p>Complete the form below to get set up to offer your customers access to DigniFi financing. An agreement will be sent to your authorized signer for review.</p>
 </div>
 
 <div class="form-container">
@@ -820,6 +820,24 @@
       el.classList.add('hidden');
     });
     step.classList.remove('hidden');
+    const hero = document.querySelector('.hero');
+    const heroTitle = hero.querySelector('h1');
+    const heroDesc = hero.querySelector('p');
+    const container = document.querySelector('.form-container');
+    if (step === removedEl) {
+      hero.style.display = 'none';
+      container.style.marginTop = '40px';
+    } else if (step === stepOptOut) {
+      hero.style.display = '';
+      container.style.marginTop = '';
+      heroTitle.textContent = 'Service Center Opt Out';
+      heroDesc.textContent = 'Please provide your business details below so we can remove you from future outreach.';
+    } else {
+      hero.style.display = '';
+      container.style.marginTop = '';
+      heroTitle.textContent = 'Service Center Enrollment';
+      heroDesc.textContent = 'Complete the form below to get set up to offer your customers access to DigniFi financing. An agreement will be sent to your authorized signer for review.';
+    }
     document.querySelector('.form-card').scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 
