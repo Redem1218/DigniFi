@@ -419,12 +419,9 @@
 
   /* === END STATES === */
   .end-state {
-    display: none;
     text-align: center;
     padding: 56px 36px;
   }
-
-  .end-state.visible { display: block; }
 
   .end-state-icon {
     width: 64px;
@@ -468,7 +465,45 @@
 
   .end-state .ref-tag strong { color: var(--text-primary); }
 
-  .form-step.hidden { display: none; }
+  .contact-block {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    align-items: center;
+  }
+
+  .contact-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 24px;
+    background: var(--dignifi-teal-light);
+    border: 1px solid var(--dignifi-teal-mid);
+    border-radius: var(--radius-sm);
+    color: var(--dignifi-teal-dark);
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    min-width: 280px;
+    justify-content: center;
+  }
+
+  .contact-link:hover {
+    background: var(--dignifi-teal-mid);
+    border-color: var(--dignifi-teal);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0,169,157,0.15);
+  }
+
+  .contact-link svg {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+  }
+
+  .hidden { display: none !important; }
 
   @media (max-width: 600px) {
     .hero { padding: 36px 20px 44px; }
@@ -687,7 +722,7 @@
       </div>
 
       <div class="form-footer">
-        <button type="submit" class="submit-btn" id="submitBtn">
+        <button type="button" class="submit-btn" id="submitBtn">
           <span class="btn-text">Submit Enrollment</span>
           <span class="spinner"></span>
         </button>
@@ -699,7 +734,7 @@
     <!-- END STATES                             -->
     <!-- ══════════════════════════════════════ -->
 
-    <div class="end-state" id="successState">
+    <div class="end-state hidden" id="successState">
       <div class="end-state-icon success">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
       </div>
@@ -708,12 +743,23 @@
       <div class="ref-tag" id="successRef"></div>
     </div>
 
-    <div class="end-state" id="removedState">
+    <div class="end-state hidden" id="removedState">
       <div class="end-state-icon removed">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
       </div>
-      <h2>Removed from Outreach</h2>
-      <p>We're sorry — based on the current eligibility requirements, your service center has been removed from the DigniFi enrollment outreach list. If you believe this was made in error or your circumstances change, please contact your Endurance representative for assistance.</p>
+      <h2>We're Sorry!</h2>
+      <p>Due to ineligibility, you have been removed from future outreach.</p>
+      <p style="margin-top: 16px;">If you believe you are eligible, please reach out to the DigniFi team at:</p>
+      <div class="contact-block">
+        <a href="mailto:MerchantSupport@DigniFi.com" class="contact-link">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M22 4L12 13 2 4"/></svg>
+          MerchantSupport@DigniFi.com
+        </a>
+        <a href="tel:8558085861" class="contact-link">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+          855-808-5861
+        </a>
+      </div>
     </div>
 
   </div>
@@ -728,10 +774,8 @@
   function showStep(step) {
     [stepElig, stepForm, successEl, removedEl].forEach(el => {
       el.classList.add('hidden');
-      el.style.display = 'none';
     });
     step.classList.remove('hidden');
-    step.style.display = '';
     document.querySelector('.form-card').scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 
@@ -784,8 +828,7 @@
     });
   });
 
-  document.getElementById('bridgeForm').addEventListener('submit', function(e) {
-    e.preventDefault();
+  document.getElementById('submitBtn').addEventListener('click', function() {
     if (!validate()) return;
 
     const btn = document.getElementById('submitBtn');
