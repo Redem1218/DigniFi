@@ -851,13 +851,33 @@
 
     console.log('Bridge Form Payload:', JSON.stringify(payload, null, 2));
 
-    // TODO: Replace with actual endpoint
-    // fetch('https://YOUR_ENDPOINT', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) })
-
-    setTimeout(() => {
-      showStep(successEl);
-      document.getElementById('successRef').innerHTML = `<strong>${payload.name}</strong>`;
-    }, 1500);
+    // ── FormCarry Integration ──
+    // Replace YOUR_FORMCARRY_ID with the ID from your FormCarry dashboard
+    fetch('https://formcarry.com/s/mjZcw5zwzOR', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+      body: JSON.stringify(payload)
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.code === 200) {
+        showStep(successEl);
+        document.getElementById('successRef').innerHTML = `<strong>${payload.name}</strong>`;
+      } else {
+        alert('Something went wrong. Please try again.');
+        btn.classList.remove('loading');
+        btn.disabled = false;
+      }
+    })
+    .catch(error => {
+      console.error('Submission error:', error);
+      alert('Something went wrong. Please try again.');
+      btn.classList.remove('loading');
+      btn.disabled = false;
+    });
   });
 </script>
 
