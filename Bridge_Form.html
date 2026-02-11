@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DigniFi — Service Center Enrollment</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,700;1,9..40,400&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --navy: #0B2535;
+      --teal: #1A6B7A;
+      --teal-light: #E6F4F6;
+      --red: #E8503A;
+      --surface: #F5F7FA;
+      --white: #FFFFFF;
+      --border: #DDE3EA;
+      --border-focus: #1A6B7A;
+      --text: #0B2535;
+      --text-secondary: #5A6B7B;
+      --text-muted: #8E9BAA;
+      --success: #16A34A;
+      --success-bg: #ECFDF5;
+      --error: #DC2626;
+      --radius: 10px;
+      --radius-sm: 6px;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--surface);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── Header ── */
+    .header {
+      background: var(--navy);
+      padding: 20px 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .header-inner {
+      max-width: 680px;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .logo {
+      font-size: 22px;
+      font-weight: 700;
+      color: #FFF;
+      letter-spacing: -0.3px;
+    }
+
+    .header-divider {
+      width: 1px;
+      height: 24px;
+      background: rgba(255,255,255,0.15);
+    }
+
+    .header-label {
+      font-size: 13px;
+      color: rgba(255,255,255,0.6);
+      font-weight: 500;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+
+    /* ── Main Content ── */
+    .main {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      padding: 40px 24px 60px;
+    }
+
+    .form-container {
+      max-width: 680px;
+      width: 100%;
+    }
+
+    /* ── Intro Section ── */
+    .intro {
+      margin-bottom: 32px;
+    }
+
+    .intro h1 {
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--text);
+      letter-spacing: -0.5px;
+      margin-bottom: 12px;
+      line-height: 1.2;
+    }
+
+    .intro p {
+      font-size: 15px;
+      color: var(--text-secondary);
+      line-height: 1.65;
+    }
+
+    .intro-highlight {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      background: var(--teal-light);
+      border: 1px solid rgba(26,107,122,0.15);
+      border-radius: var(--radius);
+      padding: 16px 20px;
+      margin-top: 20px;
+    }
+
+    .intro-highlight-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: var(--teal);
+      color: #FFF;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    .intro-highlight-text {
+      font-size: 13px;
+      color: var(--teal);
+      line-height: 1.55;
+      font-weight: 500;
+    }
+
+    .intro-highlight-text strong {
+      display: block;
+      font-size: 14px;
+      font-weight: 700;
+      margin-bottom: 2px;
+    }
+
+    /* ── Form Card ── */
+    .form-card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      box-shadow: 0 2px 12px rgba(11,37,53,0.05);
+      overflow: hidden;
+    }
+
+    .form-section {
+      padding: 28px 32px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .form-section:last-child {
+      border-bottom: none;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 22px;
+    }
+
+    .section-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 15px;
+      flex-shrink: 0;
+    }
+
+    .section-icon.signer { background: #FEF2F0; color: var(--red); }
+    .section-icon.business { background: var(--teal-light); color: var(--teal); }
+
+    .section-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .section-subtitle {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 1px;
+    }
+
+    /* ── Form Fields ── */
+    .field-row {
+      display: grid;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+
+    .field-row.cols-2 { grid-template-columns: 1fr 1fr; }
+    .field-row.cols-3 { grid-template-columns: 2fr 1fr 1fr; }
+
+    .field-row:last-child { margin-bottom: 0; }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .field-label {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .field-label .req {
+      color: var(--red);
+      font-size: 13px;
+      line-height: 1;
+    }
+
+    .field-input {
+      width: 100%;
+      padding: 11px 14px;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-sm);
+      font-family: inherit;
+      font-size: 14px;
+      color: var(--text);
+      background: var(--surface);
+      transition: all 0.2s;
+    }
+
+    .field-input:focus {
+      outline: none;
+      border-color: var(--border-focus);
+      background: var(--white);
+      box-shadow: 0 0 0 3px rgba(26,107,122,0.08);
+    }
+
+    .field-input::placeholder { color: var(--text-muted); }
+
+    .field-input.error {
+      border-color: var(--error);
+      box-shadow: 0 0 0 3px rgba(220,38,38,0.08);
+    }
+
+    .field-error {
+      font-size: 11px;
+      color: var(--error);
+      margin-top: 4px;
+      display: none;
+    }
+
+    .field-error.visible { display: block; }
+
+    .field-hint {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: 4px;
+      line-height: 1.4;
+    }
+
+    select.field-input {
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%238E9BAA' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 14px center;
+      padding-right: 36px;
+      cursor: pointer;
+    }
+
+    /* ── Submit Area ── */
+    .submit-section {
+      padding: 28px 32px;
+      background: #FAFBFC;
+      border-top: 1px solid var(--border);
+    }
+
+    .submit-btn {
+      width: 100%;
+      padding: 16px;
+      background: var(--red);
+      color: #FFF;
+      border: none;
+      border-radius: var(--radius);
+      font-family: inherit;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .submit-btn:hover:not(:disabled) {
+      background: #D4432F;
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(232,80,58,0.3);
+    }
+
+    .submit-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .submit-note {
+      font-size: 12px;
+      color: var(--text-muted);
+      text-align: center;
+      margin-top: 14px;
+      line-height: 1.5;
+    }
+
+    .submit-note a {
+      color: var(--teal);
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    /* ── Success State ── */
+    .success-state {
+      display: none;
+      text-align: center;
+      padding: 60px 40px;
+    }
+
+    .success-state.visible { display: block; }
+
+    .success-icon {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      background: var(--success-bg);
+      color: var(--success);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 32px;
+      margin: 0 auto 24px;
+      border: 2px solid rgba(22,163,74,0.15);
+    }
+
+    .success-state h2 {
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 12px;
+    }
+
+    .success-state p {
+      font-size: 15px;
+      color: var(--text-secondary);
+      line-height: 1.6;
+      max-width: 440px;
+      margin: 0 auto;
+    }
+
+    .success-details {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px 24px;
+      margin: 28px auto 0;
+      max-width: 400px;
+      text-align: left;
+    }
+
+    .success-details-title {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      margin-bottom: 12px;
+    }
+
+    .success-detail-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 6px 0;
+      font-size: 13px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .success-detail-row:last-child { border-bottom: none; }
+
+    .success-detail-row .label { color: var(--text-muted); }
+    .success-detail-row .value { color: var(--text); font-weight: 600; }
+
+    /* ── Footer ── */
+    .footer {
+      padding: 20px 32px;
+      text-align: center;
+      font-size: 12px;
+      color: var(--text-muted);
+      border-top: 1px solid var(--border);
+      background: var(--white);
+    }
+
+    .footer a { color: var(--teal); text-decoration: none; font-weight: 600; }
+
+    /* ── Responsive ── */
+    @media (max-width: 600px) {
+      .main { padding: 24px 16px 40px; }
+      .form-section { padding: 22px 20px; }
+      .submit-section { padding: 22px 20px; }
+      .field-row.cols-2,
+      .field-row.cols-3 { grid-template-columns: 1fr; }
+      .intro h1 { font-size: 24px; }
+      .header { padding: 16px 20px; }
+    }
+
+    /* ── Animations ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .form-container { animation: fadeUp 0.4s ease; }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="header">
+    <div class="header-inner">
+      <div class="logo">DigniFi</div>
+      <div class="header-divider"></div>
+      <div class="header-label">Service Center Enrollment</div>
+    </div>
+  </header>
+
+  <!-- Main -->
+  <main class="main">
+    <div class="form-container">
+
+      <!-- Intro -->
+      <div class="intro">
+        <h1>Complete Your DigniFi Enrollment</h1>
+        <p>You've been invited to join DigniFi's Buy Now, Pay Later network through our partnership with Endurance Warranty. Complete the form below to begin accepting BNPL financing for vehicle repairs at your service center.</p>
+
+        <div class="intro-highlight">
+          <div class="intro-highlight-icon">🔐</div>
+          <div class="intro-highlight-text">
+            <strong>Authorized Signer Required</strong>
+            Please provide the contact information of the person authorized to sign the DigniFi Merchant Services Agreement. This is typically the business owner or general manager — not a shared or group email.
+          </div>
+        </div>
+      </div>
+
+      <!-- Form Card -->
+      <div class="form-card" id="formCard">
+        <form id="bridgeForm" autocomplete="off" novalidate>
+
+          <!-- Section 1: Authorized Signer -->
+          <div class="form-section">
+            <div class="section-header">
+              <div class="section-icon signer">✍️</div>
+              <div>
+                <div class="section-title">Authorized Signer</div>
+                <div class="section-subtitle">The individual authorized to sign the merchant agreement</div>
+              </div>
+            </div>
+
+            <div class="field-row cols-2">
+              <div class="field">
+                <label class="field-label">First Name <span class="req">*</span></label>
+                <input type="text" class="field-input" id="signerFirst" placeholder="First name" required>
+                <div class="field-error" id="signerFirstError">First name is required</div>
+              </div>
+              <div class="field">
+                <label class="field-label">Last Name <span class="req">*</span></label>
+                <input type="text" class="field-input" id="signerLast" placeholder="Last name" required>
+                <div class="field-error" id="signerLastError">Last name is required</div>
+              </div>
+            </div>
+
+            <div class="field-row">
+              <div class="field">
+                <label class="field-label">Email Address <span class="req">*</span></label>
+                <input type="email" class="field-input" id="signerEmail" placeholder="signer@yourbusiness.com" required>
+                <div class="field-error" id="signerEmailError">Please enter a valid email address</div>
+                <div class="field-hint">The merchant services agreement will be sent to this email. Please use a direct email — not a shared or group inbox.</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Section 2: Business Information -->
+          <div class="form-section">
+            <div class="section-header">
+              <div class="section-icon business">🏪</div>
+              <div>
+                <div class="section-title">Business Information</div>
+                <div class="sect
