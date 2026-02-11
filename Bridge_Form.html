@@ -731,6 +731,49 @@
     </form>
 
     <!-- ══════════════════════════════════════ -->
+    <!-- OPT-OUT FORM                          -->
+    <!-- ══════════════════════════════════════ -->
+    <div class="form-step hidden" id="stepOptOut">
+      <div class="section">
+        <div class="section-header">
+          <div class="section-icon removed-icon" style="background: rgba(78,106,122,0.08); color: var(--text-secondary);">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+          </div>
+          <div>
+            <div class="section-title">Opt Out of Enrollment</div>
+            <div class="section-subtitle">Please provide your details so we can remove you from future outreach</div>
+          </div>
+        </div>
+
+        <div class="field-row single">
+          <div class="field">
+            <label>Business Name <span class="required">*</span></label>
+            <input type="text" id="optOutBizName" placeholder="e.g. Main Street Auto Care">
+            <span class="error-msg" id="err-optOutBizName">Business name is required</span>
+          </div>
+        </div>
+
+        <div class="field-row single">
+          <div class="field">
+            <label>Email Address <span class="required">*</span></label>
+            <input type="email" id="optOutEmail" placeholder="e.g. owner@example.com">
+            <span class="error-msg" id="err-optOutEmail">Please enter a valid email address</span>
+          </div>
+        </div>
+
+        <div style="padding-top: 8px; display: flex; flex-direction: column; gap: 10px;">
+          <button type="button" class="submit-btn" id="optOutSubmitBtn" style="background: var(--text-secondary);">
+            <span class="btn-text">Confirm Removal</span>
+            <span class="spinner"></span>
+          </button>
+          <button type="button" class="elig-optout-btn" id="optOutBackBtn" style="border-color: var(--border); color: var(--text-secondary);">
+            ← Go Back to Eligibility
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════ -->
     <!-- END STATES                             -->
     <!-- ══════════════════════════════════════ -->
 
@@ -766,13 +809,14 @@
 </div>
 
 <script>
-  const stepElig  = document.getElementById('stepEligibility');
-  const stepForm  = document.getElementById('bridgeForm');
-  const successEl = document.getElementById('successState');
-  const removedEl = document.getElementById('removedState');
+  const stepElig   = document.getElementById('stepEligibility');
+  const stepForm   = document.getElementById('bridgeForm');
+  const stepOptOut = document.getElementById('stepOptOut');
+  const successEl  = document.getElementById('successState');
+  const removedEl  = document.getElementById('removedState');
 
   function showStep(step) {
-    [stepElig, stepForm, successEl, removedEl].forEach(el => {
+    [stepElig, stepForm, stepOptOut, successEl, removedEl].forEach(el => {
       el.classList.add('hidden');
     });
     step.classList.remove('hidden');
@@ -780,7 +824,71 @@
   }
 
   document.getElementById('eligConfirmBtn').addEventListener('click', () => showStep(stepForm));
-  document.getElementById('eligOptOutBtn').addEventListener('click', () => showStep(removedEl));
+  document.getElementById('eligOptOutBtn').addEventListener('click', () => showStep(stepOptOut));
+  document.getElementById('optOutBackBtn').addEventListener('click', () => showStep(stepElig));
+
+  // Opt-out form submission
+  document.getElementById('optOutSubmitBtn').addEventListener('click', function() {
+    const bizName = document.getElementById('optOutBizName');
+    const email   = document.getElementById('optOutEmail');
+    let valid = true;
+
+    if (!bizName.value.trim()) {
+      bizName.classList.add('error');
+      document.getElementById('err-optOutBizName').classList.add('visible');
+      valid = false;
+    } else {
+      bizName.classList.remove('error');
+      document.getElementById('err-optOutBizName').classList.remove('visible');
+    }
+
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value)) {
+      email.classList.add('error');
+      document.getElementById('err-optOutEmail').classList.add('visible');
+      valid = false;
+    } else {
+      email.classList.remove('error');
+      document.getElementById('err-optOutEmail').classList.remove('visible');
+    }
+
+    if (!valid) return;
+
+    const btn = this;
+    btn.classList.add('loading');
+    btn.disabled = true;
+
+    const payload = {
+      type: 'opt-out',
+      businessName: bizName.value.trim(),
+      email: email.value.trim()
+    };
+
+    fetch('https://formcarry.com/s/mjZcw5zwzOR', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+      body: JSON.stringify(payload)
+    })
+    .then(response => response.json())
+    .then(data => {
+      showStep(removedEl);
+    })
+    .catch(error => {
+      console.error('Opt-out submission error:', error);
+      showStep(removedEl);
+    });
+  });
+
+  // Clear errors on input for opt-out fields
+  ['optOutBizName', 'optOutEmail'].forEach(id => {
+    document.getElementById(id).addEventListener('input', function() {
+      this.classList.remove('error');
+      const err = document.getElementById(`err-${id}`);
+      if (err) err.classList.remove('visible');
+    });
+  });
 
   // Phone formatting
   document.getElementById('phone').addEventListener('input', function(e) {
