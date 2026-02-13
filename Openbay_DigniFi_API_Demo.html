@@ -1,0 +1,918 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Openbay × DigniFi – Embedded Financing Demo</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ob-blue: #1a73e8;
+  --ob-blue-dark: #1557b0;
+  --ob-navy: #0d1b2a;
+  --ob-slate: #1b2838;
+  --ob-gray-100: #f4f6f9;
+  --ob-gray-200: #e2e7ee;
+  --ob-gray-300: #c4cdd8;
+  --ob-gray-500: #6b7a8d;
+  --ob-gray-700: #3a4a5c;
+  --ob-white: #ffffff;
+  --df-green: #00c97b;
+  --df-green-dark: #00a865;
+  --df-green-light: #e6faf2;
+  --df-purple: #6c5ce7;
+  --df-orange: #ff9f43;
+  --df-red: #ff6b6b;
+  --radius: 12px;
+  --radius-lg: 16px;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.08), 0 2px 4px rgba(0,0,0,0.04);
+  --shadow-lg: 0 12px 40px rgba(0,0,0,0.12), 0 4px 12px rgba(0,0,0,0.06);
+  --shadow-xl: 0 20px 60px rgba(0,0,0,0.15), 0 8px 20px rgba(0,0,0,0.08);
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  background: var(--ob-gray-100);
+  color: var(--ob-navy);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(30px) scale(0.97); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+@keyframes pulse-ring {
+  0% { box-shadow: 0 0 0 0 rgba(0,201,123,0.4); }
+  70% { box-shadow: 0 0 0 12px rgba(0,201,123,0); }
+  100% { box-shadow: 0 0 0 0 rgba(0,201,123,0); }
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.demo-banner {
+  background: linear-gradient(135deg, var(--ob-navy) 0%, #1a3a5c 50%, var(--df-green-dark) 100%);
+  color: white; padding: 14px 24px; text-align: center;
+  font-size: 13px; font-weight: 500; letter-spacing: 0.3px;
+  position: sticky; top: 0; z-index: 1000;
+  display: flex; align-items: center; justify-content: center; gap: 12px;
+}
+.demo-banner .badge {
+  background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.25);
+  padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 700;
+  letter-spacing: 1px; text-transform: uppercase;
+}
+.demo-banner .reset-btn {
+  position: absolute; right: 24px;
+  background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3);
+  color: white; padding: 5px 14px; border-radius: 6px;
+  font-size: 12px; cursor: pointer; font-family: inherit; transition: all 0.2s;
+}
+.demo-banner .reset-btn:hover { background: rgba(255,255,255,0.25); }
+
+.topbar {
+  background: var(--ob-white); border-bottom: 1px solid var(--ob-gray-200);
+  padding: 0 32px; height: 64px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.topbar-logo { display: flex; align-items: center; gap: 10px; font-size: 22px; font-weight: 700; color: var(--ob-navy); }
+.topbar-logo .logo-icon {
+  width: 36px; height: 36px; background: var(--ob-blue); border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  color: white; font-weight: 700; font-size: 18px;
+}
+.topbar-nav { display: flex; gap: 4px; }
+.topbar-nav a {
+  padding: 8px 16px; border-radius: 8px; text-decoration: none;
+  color: var(--ob-gray-500); font-size: 14px; font-weight: 500;
+  transition: all 0.2s; cursor: pointer;
+}
+.topbar-nav a:hover { background: var(--ob-gray-100); color: var(--ob-navy); }
+.topbar-nav a.active { background: var(--ob-blue); color: white; }
+.topbar-user { display: flex; align-items: center; gap: 10px; }
+.topbar-user .avatar {
+  width: 36px; height: 36px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--ob-blue), var(--df-purple));
+  display: flex; align-items: center; justify-content: center;
+  color: white; font-weight: 600; font-size: 14px;
+}
+.topbar-user .name { font-size: 14px; font-weight: 500; }
+
+.main { max-width: 1200px; margin: 0 auto; padding: 32px 24px; }
+
+.vehicle-hero {
+  background: var(--ob-white); border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md); padding: 28px 32px;
+  display: flex; align-items: center; gap: 28px;
+  margin-bottom: 28px; position: relative; overflow: hidden;
+  transition: padding-top 0.4s ease;
+}
+.vehicle-hero::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0;
+  height: 4px; background: linear-gradient(90deg, var(--ob-blue), var(--df-green)); z-index: 2;
+}
+.vehicle-img {
+  width: 140px; height: 90px;
+  background: linear-gradient(135deg, #e8edf3, #d1d9e6);
+  border-radius: var(--radius);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 42px; flex-shrink: 0;
+}
+.vehicle-info h2 { font-size: 22px; font-weight: 700; margin-bottom: 4px; }
+.vehicle-info .meta { font-size: 14px; color: var(--ob-gray-500); margin-bottom: 8px; }
+.vehicle-info .tags { display: flex; gap: 8px; }
+.vehicle-info .tag {
+  background: var(--ob-gray-100); padding: 4px 12px; border-radius: 20px;
+  font-size: 12px; font-weight: 500; color: var(--ob-gray-700);
+}
+.vehicle-info .tag.due { background: #fff3e0; color: #e65100; }
+.vehicle-stats { margin-left: auto; display: flex; gap: 32px; text-align: center; }
+.vehicle-stat-val { font-size: 24px; font-weight: 700; color: var(--ob-navy); }
+.vehicle-stat-label { font-size: 12px; color: var(--ob-gray-500); margin-top: 2px; }
+
+.grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 28px; }
+.card {
+  background: var(--ob-white); border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm); padding: 24px; transition: all 0.3s;
+}
+.card:hover { box-shadow: var(--shadow-md); }
+.card h3 {
+  font-size: 15px; font-weight: 600; color: var(--ob-gray-500);
+  text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 16px;
+  display: flex; align-items: center; gap: 8px;
+}
+
+.service-item {
+  display: flex; align-items: center; gap: 14px;
+  padding: 12px 0; border-bottom: 1px solid var(--ob-gray-100);
+}
+.service-item:last-child { border-bottom: none; }
+.service-icon {
+  width: 40px; height: 40px; border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px; flex-shrink: 0;
+}
+.service-icon.green { background: var(--df-green-light); }
+.service-icon.blue { background: #e8f0fe; }
+.service-icon.orange { background: #fff3e0; }
+.service-detail { flex: 1; }
+.service-detail .name { font-weight: 600; font-size: 14px; }
+.service-detail .date { font-size: 12px; color: var(--ob-gray-500); margin-top: 2px; }
+.service-cost { font-weight: 700; font-size: 14px; color: var(--ob-navy); }
+
+.upcoming-item {
+  background: var(--ob-gray-100); border-radius: var(--radius);
+  padding: 14px 16px; margin-bottom: 10px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.upcoming-item:last-child { margin-bottom: 0; }
+.upcoming-left { display: flex; align-items: center; gap: 12px; }
+.upcoming-left .emoji { font-size: 20px; }
+.upcoming-left .text .name { font-weight: 600; font-size: 14px; }
+.upcoming-left .text .due { font-size: 12px; color: var(--df-orange); font-weight: 500; }
+.upcoming-price { font-weight: 700; font-size: 15px; color: var(--ob-navy); }
+
+.essentials-section { margin-bottom: 28px; }
+.section-header {
+  display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;
+}
+.section-header h3 {
+  font-size: 15px; font-weight: 600; color: var(--ob-gray-500);
+  text-transform: uppercase; letter-spacing: 0.5px;
+  display: flex; align-items: center; gap: 8px;
+}
+.essentials-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+.essential-card {
+  background: var(--ob-white); border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm); padding: 24px 20px; text-align: center;
+  cursor: pointer; transition: all 0.3s; border: 2px solid transparent; position: relative;
+}
+.essential-card:hover { box-shadow: var(--shadow-md); transform: translateY(-2px); }
+.essential-card .icon { font-size: 32px; margin-bottom: 12px; }
+.essential-card .e-title { font-weight: 600; font-size: 14px; margin-bottom: 4px; }
+.essential-card .desc { font-size: 12px; color: var(--ob-gray-500); }
+.essential-card.dignifi {
+  background: linear-gradient(135deg, #f0fdf7 0%, #ecfdf5 50%, #f0eeff 100%);
+  border: 2px solid var(--df-green); overflow: hidden;
+}
+.essential-card.dignifi::after {
+  content: ''; position: absolute; top: -50%; right: -50%;
+  width: 100%; height: 100%;
+  background: radial-gradient(circle, rgba(0,201,123,0.08) 0%, transparent 70%);
+  pointer-events: none;
+}
+.essential-card.dignifi:hover {
+  border-color: var(--df-green-dark);
+  box-shadow: 0 8px 24px rgba(0,201,123,0.2); transform: translateY(-4px);
+}
+.essential-card .powered {
+  display: inline-block; background: var(--df-green); color: white;
+  font-size: 10px; font-weight: 700; letter-spacing: 0.5px;
+  padding: 3px 8px; border-radius: 4px; margin-top: 8px; text-transform: uppercase;
+}
+.essential-card.dignifi .e-title { color: var(--df-green-dark); }
+
+/* Modal */
+.modal-overlay {
+  display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(13,27,42,0.6); backdrop-filter: blur(8px);
+  z-index: 2000; align-items: center; justify-content: center;
+  animation: fadeIn 0.3s ease;
+}
+.modal-overlay.active { display: flex; }
+.modal {
+  background: var(--ob-white); border-radius: 20px;
+  box-shadow: var(--shadow-xl); width: 480px; max-height: 90vh;
+  overflow-y: auto; animation: slideUp 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.modal-header {
+  background: linear-gradient(135deg, var(--ob-navy) 0%, #1a3a5c 100%);
+  color: white; padding: 28px 32px 24px; border-radius: 20px 20px 0 0;
+  position: relative; overflow: hidden;
+}
+.modal-header::before {
+  content: ''; position: absolute; bottom: -20px; right: -20px;
+  width: 120px; height: 120px;
+  background: radial-gradient(circle, rgba(0,201,123,0.2) 0%, transparent 70%);
+}
+.modal-header .close-btn {
+  position: absolute; top: 16px; right: 16px;
+  background: rgba(255,255,255,0.15); border: none; color: white;
+  width: 32px; height: 32px; border-radius: 8px; cursor: pointer;
+  font-size: 18px; display: flex; align-items: center; justify-content: center;
+  transition: all 0.2s;
+}
+.modal-header .close-btn:hover { background: rgba(255,255,255,0.25); }
+.modal-header .df-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: var(--df-green); padding: 5px 12px; border-radius: 8px;
+  font-size: 12px; font-weight: 700; margin-bottom: 12px;
+}
+.modal-header h2 { font-size: 22px; font-weight: 700; margin-bottom: 4px; }
+.modal-header p { font-size: 14px; opacity: 0.8; }
+.modal-body { padding: 28px 32px 32px; }
+
+.form-group { margin-bottom: 18px; }
+.form-group label { display: block; font-size: 13px; font-weight: 600; color: var(--ob-gray-700); margin-bottom: 6px; }
+.form-group input, .form-group select {
+  width: 100%; padding: 12px 14px; border: 2px solid var(--ob-gray-200);
+  border-radius: 10px; font-size: 14px; font-family: inherit;
+  transition: all 0.2s; background: var(--ob-white);
+}
+.form-group input:focus, .form-group select:focus {
+  outline: none; border-color: var(--df-green);
+  box-shadow: 0 0 0 3px rgba(0,201,123,0.15);
+}
+.form-group input[readonly] { background: var(--ob-gray-100); color: var(--ob-gray-700); }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+
+.delivery-toggle { display: flex; gap: 10px; margin-bottom: 18px; }
+.delivery-option {
+  flex: 1; padding: 14px; border: 2px solid var(--ob-gray-200);
+  border-radius: 10px; text-align: center; cursor: pointer; transition: all 0.2s;
+}
+.delivery-option:hover { border-color: var(--ob-gray-300); }
+.delivery-option.selected { border-color: var(--df-green); background: var(--df-green-light); }
+.delivery-option .d-icon { font-size: 22px; margin-bottom: 4px; }
+.delivery-option .d-label { font-size: 13px; font-weight: 600; color: var(--ob-navy); }
+.delivery-option .d-sub { font-size: 11px; color: var(--ob-gray-500); }
+.delivery-option.selected .d-label { color: var(--df-green-dark); }
+
+.btn-primary {
+  width: 100%; padding: 14px; border: none; border-radius: 12px;
+  font-size: 15px; font-weight: 700; font-family: inherit; cursor: pointer;
+  transition: all 0.3s; display: flex; align-items: center; justify-content: center; gap: 8px;
+}
+.btn-primary.green { background: var(--df-green); color: white; }
+.btn-primary.green:hover { background: var(--df-green-dark); transform: translateY(-1px); box-shadow: 0 4px 16px rgba(0,201,123,0.3); }
+.btn-primary.blue { background: var(--ob-blue); color: white; }
+.btn-primary.blue:hover { background: var(--ob-blue-dark); }
+
+.invite-sent { display: none; text-align: center; padding: 10px 0; animation: fadeIn 0.4s ease; }
+.invite-sent.active { display: block; }
+.invite-sent .sent-icon {
+  width: 64px; height: 64px; border-radius: 50%; background: var(--df-green-light);
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 16px; font-size: 32px;
+}
+.invite-sent h3 { font-size: 18px; font-weight: 700; color: var(--df-green-dark); margin-bottom: 6px; text-transform: none; letter-spacing: 0; }
+.invite-sent .sent-detail { font-size: 13px; color: var(--ob-gray-500); line-height: 1.6; margin-bottom: 20px; }
+.invite-sent .sent-to {
+  background: var(--ob-gray-100); border-radius: 8px; padding: 10px 16px;
+  font-size: 14px; font-weight: 600; color: var(--ob-navy); display: inline-block; margin-bottom: 16px;
+}
+.spinner {
+  display: inline-block; width: 20px; height: 20px;
+  border: 3px solid rgba(255,255,255,0.3); border-top-color: white;
+  border-radius: 50%; animation: spin 0.8s linear infinite;
+}
+
+/* Tracker */
+.financing-tracker {
+  display: none; background: var(--ob-white); border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md); border: 2px solid var(--df-green);
+  margin-bottom: 28px; overflow: hidden; animation: slideUp 0.5s ease;
+}
+.financing-tracker.active { display: block; }
+.tracker-header {
+  background: linear-gradient(135deg, var(--ob-navy) 0%, #1a3a5c 100%);
+  color: white; padding: 20px 28px;
+  display: flex; align-items: center; justify-content: space-between;
+  position: relative; overflow: hidden;
+}
+.tracker-header::before {
+  content: ''; position: absolute; bottom: -30px; right: -30px;
+  width: 120px; height: 120px;
+  background: radial-gradient(circle, rgba(0,201,123,0.15) 0%, transparent 70%);
+}
+.tracker-header-left { display: flex; align-items: center; gap: 14px; }
+.tracker-header-left .df-badge { background: var(--df-green); padding: 5px 12px; border-radius: 8px; font-size: 12px; font-weight: 700; }
+.tracker-header-left h3 { font-size: 16px; font-weight: 700; text-transform: none; letter-spacing: 0; }
+.tracker-header-left .sub { font-size: 13px; opacity: 0.7; margin-top: 2px; }
+.tracker-header .live-indicator { display: flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 600; color: var(--df-green); }
+.live-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--df-green); animation: pulse-ring 1.5s infinite; }
+.tracker-body { padding: 28px; }
+
+.journey-steps {
+  display: flex; align-items: flex-start; justify-content: space-between;
+  margin-bottom: 24px; position: relative;
+}
+.journey-steps::before {
+  content: ''; position: absolute; top: 24px; left: 48px; right: 48px;
+  height: 3px; background: var(--ob-gray-200); z-index: 0;
+}
+.journey-step {
+  display: flex; flex-direction: column; align-items: center;
+  text-align: center; position: relative; z-index: 1; flex: 1;
+}
+.step-circle {
+  width: 48px; height: 48px; border-radius: 50%;
+  background: var(--ob-gray-200); display: flex; align-items: center;
+  justify-content: center; font-size: 20px; margin-bottom: 10px;
+  transition: all 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+  border: 3px solid transparent;
+}
+.step-circle.waiting { background: var(--ob-gray-100); border-color: var(--ob-gray-200); color: var(--ob-gray-500); }
+.step-circle.active { background: #fff; border-color: var(--df-green); color: var(--df-green); animation: pulse-ring 2s infinite; }
+.step-circle.complete { background: var(--df-green); border-color: var(--df-green); color: white; }
+.step-label { font-size: 12px; font-weight: 600; color: var(--ob-gray-500); max-width: 90px; transition: all 0.3s; }
+.step-label.active { color: var(--df-green-dark); }
+.step-label.complete { color: var(--df-green-dark); }
+.step-status { font-size: 10px; color: var(--ob-gray-500); margin-top: 4px; font-family: 'Space Mono', monospace; }
+.step-status.active { color: var(--df-green); font-weight: 700; }
+.step-status.complete { color: var(--df-green); }
+
+.demo-advance-btn {
+  display: none; margin-top: 16px; width: 100%; padding: 12px;
+  border: 2px dashed var(--ob-gray-300); border-radius: var(--radius);
+  background: var(--ob-gray-100); color: var(--ob-gray-700);
+  font-size: 13px; font-weight: 600; font-family: inherit;
+  cursor: pointer; transition: all 0.2s; text-align: center;
+}
+.demo-advance-btn.active { display: block; }
+.demo-advance-btn:hover { border-color: var(--df-green); background: var(--df-green-light); color: var(--df-green-dark); }
+.demo-advance-btn .hint { font-size: 11px; font-weight: 400; color: var(--ob-gray-500); display: block; margin-top: 2px; }
+
+/* Approval */
+.approval-result { display: none; margin-top: 20px; animation: slideUp 0.5s ease; }
+.approval-result.active { display: block; }
+.approval-card {
+  background: linear-gradient(135deg, #f0fdf7 0%, #ecfdf5 100%);
+  border: 2px solid var(--df-green); border-radius: var(--radius-lg); padding: 24px;
+}
+.approval-card-header { display: flex; align-items: center; gap: 14px; margin-bottom: 18px; }
+.approval-card-header .check-circle {
+  width: 48px; height: 48px; border-radius: 50%; background: var(--df-green);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 24px; color: white; flex-shrink: 0;
+}
+.approval-card-header h4 { font-size: 18px; font-weight: 700; color: var(--df-green-dark); text-transform: none; letter-spacing: 0; }
+.approval-card-header .approval-sub { font-size: 13px; color: var(--ob-gray-500); margin-top: 2px; }
+.approval-amount-row {
+  display: flex; align-items: center; justify-content: space-between;
+  background: var(--ob-white); border-radius: var(--radius); padding: 18px 22px; margin-bottom: 14px;
+}
+.approval-amount-row .label { font-size: 13px; color: var(--ob-gray-500); font-weight: 500; }
+.approval-amount-row .amount { font-size: 32px; font-weight: 800; color: var(--ob-navy); }
+.approval-details-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px; }
+.approval-detail { background: var(--ob-white); border-radius: 8px; padding: 12px 14px; }
+.approval-detail .label { font-size: 11px; color: var(--ob-gray-500); text-transform: uppercase; letter-spacing: 0.3px; margin-bottom: 2px; }
+.approval-detail .value { font-size: 15px; font-weight: 700; color: var(--ob-navy); }
+.approval-detail .value.green { color: var(--df-green-dark); }
+.expiration-notice {
+  padding: 12px 16px; background: #fff8e6; border-radius: 8px;
+  border: 1px solid #ffe0a0; font-size: 12px; color: #7a5c00; line-height: 1.5;
+}
+
+.webhook-section { background: var(--ob-slate); border-radius: var(--radius); overflow: hidden; margin-top: 16px; }
+.webhook-header {
+  padding: 12px 18px; display: flex; align-items: center; justify-content: space-between;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+.webhook-header h4 {
+  color: var(--df-green); font-family: 'Space Mono', monospace;
+  font-size: 11px; font-weight: 700; letter-spacing: 0.5px;
+  display: flex; align-items: center; gap: 8px;
+}
+.webhook-header .toggle-label { font-family: 'Space Mono', monospace; font-size: 10px; color: var(--ob-gray-500); }
+.webhook-log { padding: 12px 18px; max-height: 200px; overflow-y: auto; }
+.webhook-entry {
+  font-family: 'Space Mono', monospace; font-size: 11px; padding: 5px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+  display: flex; align-items: center; gap: 10px; animation: fadeIn 0.3s ease;
+}
+.webhook-entry .time { color: var(--ob-gray-500); white-space: nowrap; }
+.webhook-entry .event { color: var(--df-green); font-weight: 700; }
+.webhook-entry .status { margin-left: auto; font-size: 10px; }
+.webhook-entry .status.success { color: var(--df-green); }
+
+.approval-banner {
+  position: absolute; top: 4px; left: 0; right: 0; padding: 10px 32px;
+  background: linear-gradient(135deg, #00c97b, #00a865);
+  display: flex; align-items: center; justify-content: space-between;
+  animation: fadeIn 0.5s ease; z-index: 1;
+}
+
+@media (max-width: 768px) {
+  .essentials-grid { grid-template-columns: 1fr 1fr; }
+  .grid { grid-template-columns: 1fr; }
+  .vehicle-hero { flex-direction: column; text-align: center; }
+  .vehicle-stats { margin-left: 0; }
+  .modal { width: 95%; margin: 0 10px; }
+  .journey-steps { flex-wrap: wrap; gap: 10px; }
+  .journey-steps::before { display: none; }
+}
+</style>
+</head>
+<body>
+
+<div class="demo-banner">
+  <span class="badge">DEMO</span>
+  Openbay × DigniFi — Invite to Checkout: Consumer receives PreQual invite → completes on device → approval shows on dashboard
+  <button class="reset-btn" onclick="resetDemo()">↻ Reset</button>
+</div>
+
+<div class="topbar">
+  <div class="topbar-logo"><div class="logo-icon">O</div> Openbay</div>
+  <div class="topbar-nav">
+    <a href="#" class="active">Dashboard</a>
+    <a href="#">My Vehicles</a>
+    <a href="#">Find Service</a>
+    <a href="#">Service History</a>
+    <a href="#">Openbay+</a>
+  </div>
+  <div class="topbar-user"><div class="avatar">JS</div><span class="name">Jason S.</span></div>
+</div>
+
+<div class="main">
+
+  <div class="vehicle-hero" id="vehicleHero">
+    <div class="vehicle-img">🚗</div>
+    <div class="vehicle-info">
+      <h2>2021 Honda Accord Sport</h2>
+      <div class="meta">VIN: 1HGCV1F34MA••••12 &nbsp;·&nbsp; License: TN-4R2 8K1</div>
+      <div class="tags">
+        <span class="tag">Sedan</span>
+        <span class="tag">1.5T CVT</span>
+        <span class="tag due">⚠ Service Due</span>
+      </div>
+    </div>
+    <div class="vehicle-stats">
+      <div><div class="vehicle-stat-val">47,283</div><div class="vehicle-stat-label">Miles</div></div>
+      <div><div class="vehicle-stat-val">6</div><div class="vehicle-stat-label">Service Visits</div></div>
+      <div><div class="vehicle-stat-val">$2,140</div><div class="vehicle-stat-label">Total Spent</div></div>
+    </div>
+  </div>
+
+  <!-- Tracker -->
+  <div class="financing-tracker" id="financingTracker">
+    <div class="tracker-header">
+      <div class="tracker-header-left">
+        <span class="df-badge">⚡ DigniFi</span>
+        <div>
+          <h3 id="trackerTitle">PreQual Invite Sent — Awaiting Consumer</h3>
+          <div class="sub" id="trackerSub">Consumer is completing prequalification on their device via DigniFi</div>
+        </div>
+      </div>
+      <div class="live-indicator" id="liveIndicator"><span class="live-dot"></span> LIVE</div>
+    </div>
+    <div class="tracker-body">
+      <div class="journey-steps">
+        <div class="journey-step">
+          <div class="step-circle complete" id="jStep1">📨</div>
+          <div class="step-label complete" id="jLabel1">Invite Sent</div>
+          <div class="step-status complete" id="jStatus1"></div>
+        </div>
+        <div class="journey-step">
+          <div class="step-circle waiting" id="jStep2">📱</div>
+          <div class="step-label" id="jLabel2">Link Opened</div>
+          <div class="step-status" id="jStatus2"></div>
+        </div>
+        <div class="journey-step">
+          <div class="step-circle waiting" id="jStep3">📋</div>
+          <div class="step-label" id="jLabel3">Info Submitted</div>
+          <div class="step-status" id="jStatus3"></div>
+        </div>
+        <div class="journey-step">
+          <div class="step-circle waiting" id="jStep4">🔍</div>
+          <div class="step-label" id="jLabel4">Prequalification</div>
+          <div class="step-status" id="jStatus4"></div>
+        </div>
+        <div class="journey-step">
+          <div class="step-circle waiting" id="jStep5">✅</div>
+          <div class="step-label" id="jLabel5">Decision</div>
+          <div class="step-status" id="jStatus5"></div>
+        </div>
+      </div>
+
+      <button class="demo-advance-btn active" id="advanceBtn" onclick="advanceJourney()">
+        ▶ Simulate: Consumer opens the link on their device
+        <span class="hint">Click to simulate the consumer progressing through DigniFi's prequalification</span>
+      </button>
+
+      <div class="approval-result" id="approvalResult">
+        <div class="approval-card">
+          <div class="approval-card-header">
+            <div class="check-circle">✓</div>
+            <div>
+              <h4>Consumer PreApproved!</h4>
+              <div class="approval-sub">Approval received via DigniFi webhook — now displayed on consumer's dashboard</div>
+            </div>
+          </div>
+          <div class="approval-amount-row">
+            <span class="label">PreApproved BNPL Amount</span>
+            <span class="amount">$5,000</span>
+          </div>
+          <div class="approval-details-grid">
+            <div class="approval-detail"><div class="label">Consumer</div><div class="value">Jason Simmons</div></div>
+            <div class="approval-detail"><div class="label">Status</div><div class="value green">✓ PreApproved</div></div>
+            <div class="approval-detail"><div class="label">Available Plans</div><div class="value">0% – 12.99% APR</div></div>
+            <div class="approval-detail"><div class="label">Terms</div><div class="value">12 / 24 / 36 months</div></div>
+          </div>
+          <div class="expiration-notice">
+            ⏳ <strong>This preapproval expires in 30 days.</strong> The consumer's approved BNPL amount of $5,000 is now displayed on their Openbay dashboard. They can apply this amount to any service booked through Openbay within the approval window. Final loan terms (APR, monthly payment, term length) are determined at time of checkout when the consumer selects a specific service and payment plan. Subject to final verification.
+          </div>
+        </div>
+      </div>
+
+      <div class="webhook-section">
+        <div class="webhook-header">
+          <h4><span class="live-dot"></span> WEBHOOK EVENTS RECEIVED BY OPENBAY</h4>
+          <span class="toggle-label">api log</span>
+        </div>
+        <div class="webhook-log" id="webhookLog"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Auto Essentials -->
+  <div class="essentials-section">
+    <div class="section-header"><h3>⚡ Auto Essentials</h3></div>
+    <div class="essentials-grid">
+      <div class="essential-card">
+        <div class="icon">🔧</div><div class="e-title">Book Service</div><div class="desc">Compare quotes & schedule</div>
+      </div>
+      <div class="essential-card">
+        <div class="icon">🛡️</div><div class="e-title">Warranty Info</div><div class="desc">Coverage & claims</div>
+      </div>
+      <div class="essential-card dignifi" id="dignifiCard" onclick="openInviteModal()">
+        <div class="icon">💳</div>
+        <div class="e-title">Finance Your Service</div>
+        <div class="desc">Buy Now, Pay Later — 0% APR options</div>
+        <span class="powered">Powered by DigniFi</span>
+      </div>
+      <div class="essential-card">
+        <div class="icon">📋</div><div class="e-title">Vehicle Report</div><div class="desc">Inspection & health score</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Grid -->
+  <div class="grid">
+    <div class="card">
+      <h3>📋 Recent Service History</h3>
+      <div class="service-item">
+        <div class="service-icon green">🔧</div>
+        <div class="service-detail"><div class="name">Brake Pad Replacement (Front)</div><div class="date">Dec 14, 2025 · Precision Auto, Nashville</div></div>
+        <div class="service-cost">$389.00</div>
+      </div>
+      <div class="service-item">
+        <div class="service-icon blue">🛢️</div>
+        <div class="service-detail"><div class="name">Full Synthetic Oil Change</div><div class="date">Oct 2, 2025 · Honda of Spring Hill</div></div>
+        <div class="service-cost">$79.99</div>
+      </div>
+      <div class="service-item">
+        <div class="service-icon orange">🔋</div>
+        <div class="service-detail"><div class="name">Battery Replacement</div><div class="date">Aug 18, 2025 · AutoZone, Franklin</div></div>
+        <div class="service-cost">$189.99</div>
+      </div>
+    </div>
+    <div class="card">
+      <h3>📅 Upcoming & Recommended</h3>
+      <div class="upcoming-item">
+        <div class="upcoming-left"><span class="emoji">🛞</span><div class="text"><div class="name">Tire Rotation + Alignment</div><div class="due">Due in ~500 miles</div></div></div>
+        <div class="upcoming-price">~$120</div>
+      </div>
+      <div class="upcoming-item">
+        <div class="upcoming-left"><span class="emoji">💨</span><div class="text"><div class="name">Cabin & Engine Air Filter</div><div class="due">Due at 50,000 mi</div></div></div>
+        <div class="upcoming-price">~$85</div>
+      </div>
+      <div class="upcoming-item">
+        <div class="upcoming-left"><span class="emoji">⚙️</span><div class="text"><div class="name">Transmission Fluid Service</div><div class="due">Recommended at 50K</div></div></div>
+        <div class="upcoming-price">~$250</div>
+      </div>
+      <div class="upcoming-item" id="financeCta" style="background: linear-gradient(135deg, #f0fdf7, #f0eeff); border: 1px solid rgba(0,201,123,0.2); cursor: pointer;" onclick="openInviteModal()">
+        <div class="upcoming-left">
+          <span class="emoji">💳</span>
+          <div class="text">
+            <div class="name" style="color: var(--df-green-dark);">Need help paying?</div>
+            <div class="due" style="color: var(--df-green);">Check financing options →</div>
+          </div>
+        </div>
+        <span style="background: var(--df-green); color: white; font-size: 10px; font-weight: 700; padding: 3px 8px; border-radius: 4px; letter-spacing: 0.5px;">DIGNIFI</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Invite Modal -->
+<div class="modal-overlay" id="inviteModal">
+  <div class="modal">
+    <div class="modal-header">
+      <button class="close-btn" onclick="closeInviteModal()">✕</button>
+      <div class="df-badge">⚡ DigniFi</div>
+      <h2>Get PreQualified for Financing</h2>
+      <p>We'll send you a secure link — no impact to your credit score</p>
+    </div>
+    <div class="modal-body">
+      <div id="inviteForm">
+        <div class="form-group"><label>How would you like to receive your prequalification invite?</label></div>
+        <div class="delivery-toggle">
+          <div class="delivery-option selected" id="optSms" onclick="selectDelivery('sms')">
+            <div class="d-icon">📱</div><div class="d-label">Text Message</div><div class="d-sub">Fastest option</div>
+          </div>
+          <div class="delivery-option" id="optEmail" onclick="selectDelivery('email')">
+            <div class="d-icon">📧</div><div class="d-label">Email</div><div class="d-sub">Check your inbox</div>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label>First Name</label><input type="text" value="Jason" readonly></div>
+          <div class="form-group"><label>Last Name</label><input type="text" value="Simmons" readonly></div>
+        </div>
+        <div class="form-group" id="phoneGroup">
+          <label>Mobile Phone</label>
+          <input type="tel" id="phoneInput" value="(615) 555-0142">
+        </div>
+        <div class="form-group" id="emailGroup" style="display: none;">
+          <label>Email Address</label>
+          <input type="email" id="emailInput" value="jason.simmons@email.com">
+        </div>
+        <p style="font-size: 11px; color: var(--ob-gray-500); margin-bottom: 18px; line-height: 1.5;">
+          By continuing, you consent to receive a one-time prequalification link from DigniFi. 
+          This is a <strong>soft credit inquiry</strong> and will <strong>not</strong> affect your credit score. 
+          Message and data rates may apply.
+        </p>
+        <button class="btn-primary green" id="sendInviteBtn" onclick="sendInvite()">Send PreQual Invite →</button>
+      </div>
+      <div class="invite-sent" id="inviteSent">
+        <div class="sent-icon">📨</div>
+        <h3>PreQual Invite Sent!</h3>
+        <div class="sent-to" id="sentToDisplay">📱 (615) 555-0142</div>
+        <p class="sent-detail">
+          A secure DigniFi prequalification link has been sent to your device. 
+          Open the link and complete a few quick steps — it only takes about 60 seconds. 
+          Your results will appear on your Openbay dashboard automatically.
+        </p>
+        <button class="btn-primary blue" onclick="closeInviteModal()">Return to Dashboard</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+let journeyStep = 0;
+let deliveryMethod = 'sms';
+const webhookLog = document.getElementById('webhookLog');
+
+const journeyConfig = [
+  {
+    stepNum: 2, status: 'on device',
+    webhook: { event: 'checkout.link_opened', detail: 'consumer opened link on device' },
+    nextBtn: '▶ Simulate: Consumer submits their information',
+    nextHint: 'Consumer is entering personal info on DigniFi\'s secure checkout'
+  },
+  {
+    stepNum: 3, status: 'submitted',
+    webhook: { event: 'checkout.info_submitted', detail: 'consumer info received' },
+    nextBtn: '▶ Simulate: DigniFi runs prequalification (soft pull)',
+    nextHint: 'Soft credit inquiry is being processed — no impact to consumer\'s score'
+  },
+  {
+    stepNum: 4, status: 'processing...',
+    webhook: { event: 'decision.processing', detail: 'soft pull initiated' },
+    autoAdvance: true
+  },
+  {
+    stepNum: 5, status: 'preapproved ✓',
+    webhook: { event: 'decision.preapproved', detail: 'amount: $5,000 | expires: 30 days' },
+    final: true
+  }
+];
+
+function selectDelivery(m) {
+  deliveryMethod = m;
+  document.getElementById('optSms').classList.toggle('selected', m === 'sms');
+  document.getElementById('optEmail').classList.toggle('selected', m === 'email');
+  document.getElementById('phoneGroup').style.display = m === 'sms' ? 'block' : 'none';
+  document.getElementById('emailGroup').style.display = m === 'email' ? 'block' : 'none';
+}
+
+function openInviteModal() { document.getElementById('inviteModal').classList.add('active'); }
+function closeInviteModal() { document.getElementById('inviteModal').classList.remove('active'); }
+
+function sendInvite() {
+  const btn = document.getElementById('sendInviteBtn');
+  btn.innerHTML = '<span class="spinner"></span> Sending invite...';
+  btn.style.pointerEvents = 'none';
+  setTimeout(() => {
+    document.getElementById('inviteForm').style.display = 'none';
+    document.getElementById('inviteSent').classList.add('active');
+    const sentTo = document.getElementById('sentToDisplay');
+    sentTo.textContent = deliveryMethod === 'sms'
+      ? '📱 ' + document.getElementById('phoneInput').value
+      : '📧 ' + document.getElementById('emailInput').value;
+
+    document.getElementById('financingTracker').classList.add('active');
+    addWebhook('checkout.session_created', 'session: ob-prequal-00482');
+    setTimeout(() => {
+      const dest = deliveryMethod === 'sms' ? 'SMS to (615) 555-0142' : 'email to jason.simmons@email.com';
+      addWebhook('invite.sent', dest);
+      setStepState(1, 'complete', deliveryMethod === 'sms' ? 'via SMS' : 'via email');
+    }, 500);
+
+    const card = document.getElementById('dignifiCard');
+    card.style.opacity = '0.5';
+    card.style.pointerEvents = 'none';
+    card.querySelector('.e-title').textContent = 'Invite Sent — Awaiting...';
+  }, 1500);
+}
+
+function advanceJourney() {
+  if (journeyStep >= journeyConfig.length) return;
+  const cfg = journeyConfig[journeyStep];
+  const btn = document.getElementById('advanceBtn');
+  btn.style.pointerEvents = 'none';
+  btn.style.opacity = '0.5';
+
+  if (journeyStep > 0) {
+    const prev = journeyConfig[journeyStep - 1];
+    if (!prev.autoAdvance) setStepState(prev.stepNum, 'complete', prev.status);
+  }
+
+  setStepState(cfg.stepNum, 'active', cfg.status);
+
+  setTimeout(() => {
+    addWebhook(cfg.webhook.event, cfg.webhook.detail);
+
+    if (cfg.final) {
+      setStepState(cfg.stepNum, 'complete', cfg.status);
+      btn.classList.remove('active');
+      document.getElementById('approvalResult').classList.add('active');
+      document.getElementById('trackerTitle').textContent = 'Consumer PreApproved ✓';
+      document.getElementById('trackerSub').textContent = 'PreApproval amount now displayed on consumer\'s Openbay dashboard — expires in 30 days';
+      document.getElementById('liveIndicator').innerHTML = '<span style="color: var(--df-green); font-weight: 700;">✓ COMPLETE</span>';
+      setTimeout(() => addWebhook('approval.displayed_on_dashboard', '$5,000 | expires: ' + getExpDate()), 600);
+      setTimeout(() => showApprovalOnDashboard(), 1000);
+    } else if (cfg.autoAdvance) {
+      setTimeout(() => {
+        setStepState(cfg.stepNum, 'complete', 'complete');
+        journeyStep++;
+        advanceJourney();
+      }, 2000);
+      return;
+    } else {
+      const next = journeyConfig[journeyStep + 1];
+      if (next && !next.autoAdvance && !next.final) {
+        btn.innerHTML = `${next.nextBtn}<span class="hint">${next.nextHint}</span>`;
+      } else if (next) {
+        btn.innerHTML = `${cfg.nextBtn}<span class="hint">${cfg.nextHint}</span>`;
+      }
+      btn.style.pointerEvents = '';
+      btn.style.opacity = '';
+    }
+    journeyStep++;
+  }, 800);
+}
+
+function setStepState(n, state, statusText) {
+  const c = document.getElementById('jStep' + n);
+  const l = document.getElementById('jLabel' + n);
+  const s = document.getElementById('jStatus' + n);
+  c.classList.remove('waiting', 'active', 'complete');
+  l.classList.remove('active', 'complete');
+  c.classList.add(state);
+  l.classList.add(state);
+  if (statusText) { s.textContent = statusText; s.className = 'step-status ' + state; }
+}
+
+function showApprovalOnDashboard() {
+  const card = document.getElementById('dignifiCard');
+  card.style.opacity = '1'; card.style.pointerEvents = ''; card.onclick = null; card.style.cursor = 'default';
+  card.innerHTML = `
+    <div class="icon">✅</div>
+    <div class="e-title" style="color: var(--df-green-dark);">You're PreApproved!</div>
+    <div style="font-size: 28px; font-weight: 800; color: var(--ob-navy); margin: 6px 0 2px;">$5,000</div>
+    <div class="desc" style="color: var(--df-green-dark); font-weight: 600;">Available BNPL Credit</div>
+    <div style="font-size: 10px; color: var(--ob-gray-500); margin-top: 8px; line-height: 1.4;">
+      ⏳ Expires <strong>${getExpDate()}</strong><br>
+      <span style="font-size: 9px;">Subject to final verification at checkout</span>
+    </div>
+    <span class="powered" style="background: var(--df-green); color: white; font-size: 10px; font-weight: 700; letter-spacing: 0.5px; padding: 3px 8px; border-radius: 4px; margin-top: 8px; text-transform: uppercase; display: inline-block;">Powered by DigniFi</span>
+  `;
+  const hero = document.getElementById('vehicleHero');
+  if (!document.getElementById('approvalBanner')) {
+    const b = document.createElement('div');
+    b.id = 'approvalBanner';
+    b.className = 'approval-banner';
+    b.innerHTML = `
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <span style="font-size: 18px;">💳</span>
+        <span style="color: white; font-weight: 700; font-size: 14px;">BNPL PreApproved: Up to $5,000</span>
+        <span style="color: rgba(255,255,255,0.85); font-size: 12px; margin-left: 12px;">Use at any Openbay service provider</span>
+      </div>
+      <div style="color: rgba(255,255,255,0.9); font-size: 11px; font-weight: 500;">⏳ Expires ${getExpDate()}</div>
+    `;
+    hero.appendChild(b);
+    hero.style.paddingTop = '56px';
+  }
+  const cta = document.getElementById('financeCta');
+  if (cta) {
+    cta.style.background = 'linear-gradient(135deg, #f0fdf7, #ecfdf5)';
+    cta.style.border = '2px solid var(--df-green)';
+    cta.style.cursor = 'default'; cta.onclick = null;
+    cta.innerHTML = `
+      <div class="upcoming-left"><span class="emoji">✅</span><div class="text">
+        <div class="name" style="color: var(--df-green-dark);">PreApproved for up to $5,000</div>
+        <div class="due" style="color: var(--ob-gray-500);">Apply to any upcoming service · Expires ${getExpDate()}</div>
+      </div></div>
+      <span style="background: var(--df-green); color: white; font-size: 10px; font-weight: 700; padding: 3px 8px; border-radius: 4px; letter-spacing: 0.5px;">DIGNIFI</span>
+    `;
+  }
+}
+
+function getExpDate() {
+  const d = new Date(); d.setDate(d.getDate() + 30);
+  return d.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+}
+
+function addWebhook(event, detail) {
+  const now = new Date();
+  const t = now.toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' });
+  const ms = String(now.getMilliseconds()).padStart(3, '0');
+  const e = document.createElement('div');
+  e.className = 'webhook-entry';
+  e.innerHTML = `<span class="time">${t}.${ms}</span><span class="event">${event}</span><span class="status success">${detail}</span>`;
+  webhookLog.appendChild(e);
+  webhookLog.scrollTop = webhookLog.scrollHeight;
+}
+
+function resetDemo() {
+  journeyStep = 0;
+  document.getElementById('financingTracker').classList.remove('active');
+  document.getElementById('approvalResult').classList.remove('active');
+  for (let i = 1; i <= 5; i++) {
+    document.getElementById('jStep' + i).classList.remove('active', 'complete');
+    document.getElementById('jStep' + i).classList.add('waiting');
+    document.getElementById('jLabel' + i).classList.remove('active', 'complete');
+    document.getElementById('jStatus' + i).textContent = '';
+    document.getElementById('jStatus' + i).className = 'step-status';
+  }
+  webhookLog.innerHTML = '';
+  const btn = document.getElementById('advanceBtn');
+  btn.classList.add('active'); btn.style.pointerEvents = ''; btn.style.opacity = '';
+  btn.innerHTML = '▶ Simulate: Consumer opens the link on their device<span class="hint">Click to simulate the consumer progressing through DigniFi\'s prequalification</span>';
+  document.getElementById('trackerTitle').textContent = 'PreQual Invite Sent — Awaiting Consumer';
+  document.getElementById('trackerSub').textContent = 'Consumer is completing prequalification on their device via DigniFi';
+  document.getElementById('liveIndicator').innerHTML = '<span class="live-dot"></span> LIVE';
+  document.getElementById('inviteModal').classList.remove('active');
+  document.getElementById('inviteForm').style.display = '';
+  document.getElementById('inviteSent').classList.remove('active');
+  document.getElementById('sendInviteBtn').innerHTML = 'Send PreQual Invite →';
+  document.getElementById('sendInviteBtn').style.pointerEvents = '';
+  const card = document.getElementById('dignifiCard');
+  card.style.opacity = ''; card.style.pointerEvents = ''; card.style.cursor = 'pointer'; card.onclick = openInviteModal;
+  card.innerHTML = '<div class="icon">💳</div><div class="e-title" style="color: var(--df-green-dark);">Finance Your Service</div><div class="desc">Buy Now, Pay Later — 0% APR options</div><span class="powered" style="background: var(--df-green); color: white; font-size: 10px; font-weight: 700; letter-spacing: 0.5px; padding: 3px 8px; border-radius: 4px; margin-top: 8px; text-transform: uppercase; display: inline-block;">Powered by DigniFi</span>';
+  const banner = document.getElementById('approvalBanner');
+  if (banner) banner.remove();
+  document.getElementById('vehicleHero').style.paddingTop = '28px';
+  const cta = document.getElementById('financeCta');
+  if (cta) {
+    cta.style.background = 'linear-gradient(135deg, #f0fdf7, #f0eeff)';
+    cta.style.border = '1px solid rgba(0,201,123,0.2)';
+    cta.style.cursor = 'pointer'; cta.onclick = openInviteModal;
+    cta.innerHTML = '<div class="upcoming-left"><span class="emoji">💳</span><div class="text"><div class="name" style="color: var(--df-green-dark);">Need help paying?</div><div class="due" style="color: var(--df-green);">Check financing options →</div></div></div><span style="background: var(--df-green); color: white; font-size: 10px; font-weight: 700; padding: 3px 8px; border-radius: 4px; letter-spacing: 0.5px;">DIGNIFI</span>';
+  }
+}
+</script>
+</body>
+</html>
