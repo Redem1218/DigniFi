@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>DigniFi · AM Performance Dashboard</title>
+<title>DigniFi · Sales Performance Dashboard</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <style>
   :root {
@@ -16,7 +16,9 @@
     --sf-red-bg: #ffdde1;
     --sf-orange: #fe9339;
     --sf-orange-bg: #fff3e0;
+    --sf-yellow: #fcc003;
     --sf-gray: #f3f3f3;
+    --sf-dark-gray: #5d5d5d;
     --sf-border: #dddbda;
     --sf-text: #181818;
     --sf-muted: #3e3e3c;
@@ -33,322 +35,226 @@
   }
 
   /* ── Top Nav ── */
-  .topnav {
-    background: var(--sf-navy);
-    color: white;
-    padding: 10px 24px;
-    display: flex;
-    align-items: center;
-    gap: 20px;
-    border-bottom: 3px solid var(--sf-blue);
-  }
-  .topnav-logo {
-    display: flex; align-items: center; gap: 10px;
-  }
-  .topnav-logo-icon {
-    width: 30px; height: 30px; border-radius: 6px;
+  .topnav { background: var(--sf-navy); color: white; padding: 10px 24px;
+    display: flex; align-items: center; gap: 20px; border-bottom: 3px solid var(--sf-blue); }
+  .topnav-logo { display: flex; align-items: center; gap: 10px; }
+  .topnav-logo-icon { width: 30px; height: 30px; border-radius: 6px;
     background: var(--sf-blue); color: white;
     display: flex; align-items: center; justify-content: center;
-    font-weight: 700; font-size: 14px;
-  }
+    font-weight: 700; font-size: 14px; }
   .topnav-title { font-size: 15px; font-weight: 600; }
   .topnav-title span { opacity: 0.6; }
   .topnav-spacer { flex: 1; }
-  .topnav-identity {
-    display: flex; align-items: center; gap: 10px; font-size: 12px;
-  }
+  .topnav-identity { display: flex; align-items: center; gap: 10px; font-size: 12px; }
   .topnav-identity label { opacity: 0.7; }
   .topnav-identity select {
-    background: rgba(255,255,255,0.1);
-    color: white;
+    background: rgba(255,255,255,0.1); color: white;
     border: 1px solid rgba(255,255,255,0.2);
-    padding: 5px 10px;
-    border-radius: 4px;
-    font-size: 12px;
-    cursor: pointer;
+    padding: 5px 10px; border-radius: 4px; font-size: 12px; cursor: pointer;
+    min-width: 240px;
   }
   .topnav-identity select option { color: black; }
 
   /* ── Page Header ── */
-  .pageheader {
-    background: white;
-    padding: 16px 24px;
+  .pageheader { background: white; padding: 16px 24px;
     border-bottom: 1px solid var(--sf-border);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-  .breadcrumb {
-    font-size: 11px; color: var(--sf-muted);
-    text-transform: uppercase; letter-spacing: 0.4px; font-weight: 600;
-  }
-  .breadcrumb .crumb-link {
-    cursor: pointer;
-  }
+    display: flex; align-items: center; justify-content: space-between; }
+  .breadcrumb { font-size: 11px; color: var(--sf-muted);
+    text-transform: uppercase; letter-spacing: 0.4px; font-weight: 600; }
+  .breadcrumb .crumb-link { cursor: pointer; }
   .breadcrumb .crumb-link:hover { color: var(--sf-blue); }
   .breadcrumb .sep { opacity: 0.5; margin: 0 4px; }
-  .pageheader-title {
-    font-size: 22px; font-weight: 700; color: var(--sf-navy);
-    margin-top: 2px;
-  }
-  .pageheader-sub {
-    font-size: 12px; color: var(--sf-muted); margin-top: 2px;
-  }
-  .btn-back {
-    font-size: 12px; background: white;
-    border: 1px solid var(--sf-blue);
-    color: var(--sf-blue);
-    padding: 6px 14px; border-radius: 4px;
-    cursor: pointer; font-weight: 600;
-  }
+  .pageheader-title { font-size: 22px; font-weight: 700; color: var(--sf-navy); margin-top: 2px; }
+  .pageheader-sub { font-size: 12px; color: var(--sf-muted); margin-top: 2px; }
+  .btn-back { font-size: 12px; background: white;
+    border: 1px solid var(--sf-blue); color: var(--sf-blue);
+    padding: 6px 14px; border-radius: 4px; cursor: pointer; font-weight: 600; }
   .btn-back:hover { background: #f0f7fc; }
 
-  /* ── Main Content ── */
-  .main {
-    padding: 20px;
-    max-width: 1480px;
-    margin: 0 auto;
+  /* ── Tabs ── */
+  .tabs {
+    background: white;
+    padding: 0 24px;
+    border-bottom: 1px solid var(--sf-border);
     display: flex;
-    flex-direction: column;
-    gap: 16px;
+    gap: 0;
+  }
+  .tab {
+    padding: 12px 20px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--sf-muted);
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+    transition: all 0.15s;
+  }
+  .tab:hover { color: var(--sf-blue); }
+  .tab.active {
+    color: var(--sf-blue);
+    border-bottom-color: var(--sf-blue);
+  }
+  .tab-badge {
+    background: var(--sf-red);
+    color: white;
+    border-radius: 10px;
+    padding: 1px 7px;
+    font-size: 10px;
+    margin-left: 6px;
   }
 
+  /* ── Main Content ── */
+  .main { padding: 20px; max-width: 1480px; margin: 0 auto;
+    display: flex; flex-direction: column; gap: 16px; }
+
   /* ── Card ── */
-  .card {
-    background: white;
-    border: 1px solid var(--sf-border);
-    border-radius: 6px;
-    box-shadow: 0 1px 2px rgba(0,0,0,0.04);
-  }
-  .card-title {
-    padding: 12px 16px;
+  .card { background: white; border: 1px solid var(--sf-border);
+    border-radius: 6px; box-shadow: 0 1px 2px rgba(0,0,0,0.04); }
+  .card-title { padding: 12px 16px;
     border-bottom: 1px solid var(--sf-border);
     display: flex; justify-content: space-between; align-items: center;
-    background: #fafaf9;
-    border-radius: 6px 6px 0 0;
-  }
-  .card-title-text {
-    font-size: 13px; font-weight: 700;
-    color: var(--sf-navy); letter-spacing: 0.2px;
-    text-transform: uppercase;
-  }
+    background: #fafaf9; border-radius: 6px 6px 0 0; }
+  .card-title-text { font-size: 13px; font-weight: 700;
+    color: var(--sf-navy); letter-spacing: 0.2px; text-transform: uppercase; }
   .card-title-action { font-size: 11px; color: var(--sf-muted); }
   .card-body { padding: 16px; }
   .card-body.no-pad { padding: 0; }
 
-  /* ── KPI Tile ── */
-  .kpi-grid {
-    display: grid;
-    grid-template-columns: repeat(6, 1fr);
-    gap: 12px;
+  /* ── Pending Banner ── */
+  .pending-banner {
+    background: #fff4d5;
+    border: 1px solid #f5c518;
+    border-left: 4px solid #f5c518;
+    padding: 10px 14px;
+    border-radius: 4px;
+    font-size: 12px;
+    color: #5a4a00;
+    margin-bottom: 12px;
   }
+  .pending-banner strong { color: #3a2e00; }
+
+  /* ── KPI Tiles ── */
+  .kpi-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px; }
   @media (max-width: 1200px) { .kpi-grid { grid-template-columns: repeat(3, 1fr); } }
   @media (max-width: 700px)  { .kpi-grid { grid-template-columns: repeat(2, 1fr); } }
 
-  .kpi-tile {
-    background: white;
-    border: 1px solid var(--sf-border);
-    border-left: 3px solid var(--sf-green);
-    border-radius: 4px;
-    padding: 12px 14px;
-  }
+  .kpi-tile { background: white; border: 1px solid var(--sf-border);
+    border-left: 3px solid var(--sf-green); border-radius: 4px; padding: 12px 14px; }
   .kpi-tile.green  { border-left-color: var(--sf-green); }
   .kpi-tile.yellow { border-left-color: var(--sf-orange); }
   .kpi-tile.red    { border-left-color: var(--sf-red); }
-  .kpi-tile-label {
-    font-size: 10px; font-weight: 700; color: var(--sf-muted);
-    text-transform: uppercase; letter-spacing: 0.4px; margin-bottom: 6px;
-  }
-  .kpi-tile-value {
-    font-size: 24px; font-weight: 700; color: var(--sf-navy); line-height: 1;
-  }
-  .kpi-tile-sub {
-    font-size: 11px; color: var(--sf-muted); margin-top: 4px;
-  }
-  .kpi-tile-target {
-    font-size: 10px; color: var(--sf-light); margin-top: 4px;
-  }
+  .kpi-tile.neutral { border-left-color: var(--sf-dark-gray); }
+  .kpi-tile-label { font-size: 10px; font-weight: 700; color: var(--sf-muted);
+    text-transform: uppercase; letter-spacing: 0.4px; margin-bottom: 6px; }
+  .kpi-tile-value { font-size: 24px; font-weight: 700; color: var(--sf-navy); line-height: 1; }
+  .kpi-tile-sub { font-size: 11px; color: var(--sf-muted); margin-top: 4px; }
+  .kpi-tile-target { font-size: 10px; color: var(--sf-light); margin-top: 4px; }
 
-  /* ── Status Dot + Pill ── */
-  .dot {
-    display: inline-block;
-    width: 8px; height: 8px;
-    border-radius: 50%;
-    margin-right: 6px;
-    box-shadow: 0 0 0 2px transparent;
-  }
+  /* ── Dots + Pills ── */
+  .dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%;
+    margin-right: 6px; box-shadow: 0 0 0 2px transparent; }
   .dot.small { width: 6px; height: 6px; }
   .dot.green  { background: var(--sf-green);  box-shadow: 0 0 0 2px var(--sf-green-bg); }
   .dot.yellow { background: var(--sf-orange); box-shadow: 0 0 0 2px var(--sf-orange-bg); }
   .dot.red    { background: var(--sf-red);    box-shadow: 0 0 0 2px var(--sf-red-bg); }
 
-  .pill {
-    display: inline-flex;
-    align-items: center;
-    font-size: 11px; font-weight: 600;
-    padding: 3px 10px;
-    border-radius: 12px;
-  }
+  .pill { display: inline-flex; align-items: center; font-size: 11px; font-weight: 600;
+    padding: 3px 10px; border-radius: 12px; }
   .pill.green  { background: var(--sf-green-bg);  color: var(--sf-green);  border: 1px solid var(--sf-green); }
   .pill.yellow { background: var(--sf-orange-bg); color: var(--sf-orange); border: 1px solid var(--sf-orange); }
   .pill.red    { background: var(--sf-red-bg);    color: var(--sf-red);    border: 1px solid var(--sf-red); }
+  .pill.rm     { background: #e3f2fd; color: #01579b; border: 1px solid #0288d1; }
+  .pill.am     { background: #f3e5f5; color: #4a148c; border: 1px solid #7b1fa2; }
 
   /* ── Avatar ── */
-  .avatar {
-    border-radius: 50%;
+  .avatar { border-radius: 50%;
     background: linear-gradient(135deg, var(--sf-blue) 0%, var(--sf-navy) 100%);
-    color: white;
-    font-weight: 700;
+    color: white; font-weight: 700;
     display: flex; align-items: center; justify-content: center;
-    position: relative;
-    flex-shrink: 0;
+    position: relative; flex-shrink: 0; }
+  .avatar.rm {
+    background: linear-gradient(135deg, #0288d1 0%, #01579b 100%);
   }
-  .avatar-status {
-    position: absolute;
-    bottom: -1px; right: -1px;
-    border-radius: 50%;
-    border: 2px solid white;
-  }
+  .avatar-status { position: absolute; bottom: -1px; right: -1px;
+    border-radius: 50%; border: 2px solid white; }
   .avatar-status.green  { background: var(--sf-green); }
   .avatar-status.yellow { background: var(--sf-orange); }
   .avatar-status.red    { background: var(--sf-red); }
 
   /* ── Leaderboard Table ── */
-  .leader-table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 13px;
-  }
-  .leader-table thead {
-    background: #fafaf9;
-    border-bottom: 2px solid var(--sf-border);
-  }
-  .leader-table th {
-    padding: 10px 12px; text-align: center;
+  .leader-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .leader-table thead { background: #fafaf9; border-bottom: 2px solid var(--sf-border); }
+  .leader-table th { padding: 10px 12px; text-align: center;
     font-size: 11px; font-weight: 700; color: var(--sf-muted);
-    text-transform: uppercase; letter-spacing: 0.3px;
-  }
+    text-transform: uppercase; letter-spacing: 0.3px; }
   .leader-table th.left { text-align: left; }
-  .leader-table tbody tr {
-    border-bottom: 1px solid var(--sf-border);
-    cursor: pointer;
-    transition: background 0.15s;
-  }
+  .leader-table tbody tr { border-bottom: 1px solid var(--sf-border);
+    cursor: pointer; transition: background 0.15s; }
   .leader-table tbody tr:hover { background: #f7fafd; }
-  .leader-table td {
-    padding: 12px; text-align: center;
-    font-size: 13px; color: var(--sf-text);
-  }
+  .leader-table td { padding: 12px; text-align: center;
+    font-size: 13px; color: var(--sf-text); }
   .leader-table td.left { text-align: left; }
 
-  .rank-badge {
-    width: 24px; height: 24px; border-radius: 50%;
-    background: var(--sf-gray);
-    color: var(--sf-navy);
+  .rank-badge { width: 24px; height: 24px; border-radius: 50%;
+    background: var(--sf-gray); color: var(--sf-navy);
     display: flex; align-items: center; justify-content: center;
-    font-size: 11px; font-weight: 700;
-    margin: 0 auto;
-  }
+    font-size: 11px; font-weight: 700; margin: 0 auto; }
   .rank-badge.gold   { background: #ffd700; color: var(--sf-navy); }
   .rank-badge.bottom { background: var(--sf-red-bg); color: var(--sf-red); }
 
-  /* ── Tier Bar ── */
-  .tierbar {
-    display: flex;
-    width: 100%;
-    height: 22px;
-    border-radius: 4px;
-    overflow: hidden;
-    border: 1px solid var(--sf-border);
-  }
-  .tierbar-seg {
-    color: white;
-    font-size: 10px; font-weight: 700;
-    display: flex; align-items: center; justify-content: center;
-  }
+  /* ── Tier Bar (5 tiers now) ── */
+  .tierbar { display: flex; width: 100%; height: 22px;
+    border-radius: 4px; overflow: hidden; border: 1px solid var(--sf-border); }
+  .tierbar-seg { color: white; font-size: 10px; font-weight: 700;
+    display: flex; align-items: center; justify-content: center; }
   .tierbar-seg.he { background: var(--sf-green); }
   .tierbar-seg.me { background: var(--sf-teal); }
   .tierbar-seg.le { background: var(--sf-orange); }
   .tierbar-seg.d  { background: var(--sf-red); }
+  .tierbar-seg.na { background: #4a148c; }
 
-  .btn-link {
-    font-size: 11px;
-    background: transparent;
-    border: none;
-    color: var(--sf-blue);
-    cursor: pointer;
-    font-weight: 600;
-  }
+  .btn-link { font-size: 11px; background: transparent; border: none;
+    color: var(--sf-blue); cursor: pointer; font-weight: 600; }
   .btn-link:hover { text-decoration: underline; }
-
-  .btn-primary {
-    font-size: 11px;
-    background: var(--sf-blue);
-    border: none;
-    color: white;
-    padding: 5px 12px;
-    border-radius: 4px;
-    cursor: pointer;
-    font-weight: 600;
-  }
+  .btn-primary { font-size: 11px; background: var(--sf-blue); border: none; color: white;
+    padding: 5px 12px; border-radius: 4px; cursor: pointer; font-weight: 600; }
   .btn-primary:hover { background: #0156a3; }
+  .btn-escalate {
+    font-size: 10px; background: #fff3e0; border: 1px solid var(--sf-orange); color: var(--sf-orange);
+    padding: 3px 8px; border-radius: 3px; cursor: pointer; font-weight: 600;
+    margin-left: 6px;
+  }
+  .btn-escalate:hover { background: var(--sf-orange); color: white; }
 
-  /* ── Trend Chart ── */
-  .chart-container {
-    position: relative;
-    height: 240px;
-  }
-  .chart-footer {
-    font-size: 11px;
-    color: var(--sf-muted);
-    border-top: 1px solid var(--sf-border);
-    padding-top: 10px;
-    margin-top: 8px;
-  }
+  /* ── Chart ── */
+  .chart-container { position: relative; height: 240px; }
+  .chart-footer { font-size: 11px; color: var(--sf-muted);
+    border-top: 1px solid var(--sf-border); padding-top: 10px; margin-top: 8px; }
 
   /* ── Partner Rollup ── */
   .partner-item { margin-bottom: 10px; }
   .partner-item:last-child { margin-bottom: 0; }
-  .partner-header {
-    display: flex; justify-content: space-between;
-    font-size: 12px; margin-bottom: 3px;
-  }
+  .partner-header { display: flex; justify-content: space-between;
+    font-size: 12px; margin-bottom: 3px; }
   .partner-name { font-weight: 600; color: var(--sf-navy); }
   .partner-name-sub { font-weight: 400; color: var(--sf-muted); }
   .partner-rate { font-weight: 700; }
-  .partner-bar-track {
-    position: relative;
-    height: 8px;
-    background: #ececec;
-    border-radius: 4px;
-    overflow: hidden;
-  }
+  .partner-bar-track { position: relative; height: 8px;
+    background: #ececec; border-radius: 4px; overflow: hidden; }
   .partner-bar-fill { height: 100%; }
-  .partner-bar-target {
-    position: absolute; left: 50%; top: -2px; bottom: -2px;
-    width: 2px; background: var(--sf-navy);
-  }
-  .partner-gmv {
-    font-size: 10px; color: var(--sf-muted); margin-top: 2px;
-  }
+  .partner-bar-target { position: absolute; left: 50%; top: -2px; bottom: -2px;
+    width: 2px; background: var(--sf-navy); }
+  .partner-gmv { font-size: 10px; color: var(--sf-muted); margin-top: 2px; }
   .trend-arrow { font-size: 11px; font-weight: 700; margin-left: 4px; }
   .trend-arrow.up   { color: var(--sf-red); }
   .trend-arrow.down { color: var(--sf-green); }
   .trend-arrow.flat { color: var(--sf-light); }
 
-  /* ── Insights Panel ── */
+  /* ── Insights ── */
   .insights { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
   @media (max-width: 900px) { .insights { grid-template-columns: 1fr; } }
-  .insight {
-    padding: 14px;
-    border-radius: 6px;
-    border-left: 4px solid;
-  }
-  .insight-title {
-    font-size: 11px; font-weight: 700;
-    text-transform: uppercase; letter-spacing: 0.4px;
-    margin-bottom: 6px;
-  }
+  .insight { padding: 14px; border-radius: 6px; border-left: 4px solid; }
+  .insight-title { font-size: 11px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.4px; margin-bottom: 6px; }
   .insight-text { font-size: 13px; line-height: 1.45; color: var(--sf-text); }
   .insight.green  { background: rgba(46, 132, 74, 0.05);  border-left-color: var(--sf-green); }
   .insight.green .insight-title { color: var(--sf-green); }
@@ -357,132 +263,98 @@
   .insight.red    { background: rgba(186, 5, 23, 0.05);   border-left-color: var(--sf-red); }
   .insight.red    .insight-title { color: var(--sf-red); }
 
-  /* ── Two-column rows ── */
-  .row-2 {
-    display: grid;
-    grid-template-columns: 1.6fr 1fr;
-    gap: 16px;
-  }
+  /* ── Layout rows ── */
+  .row-2 { display: grid; grid-template-columns: 1.6fr 1fr; gap: 16px; }
   @media (max-width: 900px) { .row-2 { grid-template-columns: 1fr; } }
-
-  .row-2-even {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 16px;
-  }
+  .row-2-even { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
   @media (max-width: 900px) { .row-2-even { grid-template-columns: 1fr; } }
-
-  .row-14 {
-    display: grid;
-    grid-template-columns: 1.4fr 1fr;
-    gap: 16px;
-  }
+  .row-14 { display: grid; grid-template-columns: 1.4fr 1fr; gap: 16px; }
   @media (max-width: 900px) { .row-14 { grid-template-columns: 1fr; } }
 
   /* ── AM Detail Header ── */
-  .am-detail-header {
-    padding: 20px;
-    display: flex;
-    align-items: center;
-    gap: 20px;
-    border-bottom: 1px solid var(--sf-border);
-  }
+  .am-detail-header { padding: 20px; display: flex; align-items: center; gap: 20px;
+    border-bottom: 1px solid var(--sf-border); }
   .am-detail-info { flex: 1; }
-  .am-detail-name-row {
-    display: flex; align-items: center; gap: 10px;
-  }
-  .am-detail-name {
-    font-size: 22px; font-weight: 700; color: var(--sf-navy);
-  }
-  .am-detail-title {
-    font-size: 13px; color: var(--sf-muted); margin-top: 2px;
-  }
+  .am-detail-name-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .am-detail-name { font-size: 22px; font-weight: 700; color: var(--sf-navy); }
+  .am-detail-title { font-size: 13px; color: var(--sf-muted); margin-top: 2px; }
   .am-score-block { text-align: right; }
-  .am-score-label {
-    font-size: 11px; color: var(--sf-muted);
-    text-transform: uppercase; letter-spacing: 0.4px; font-weight: 700;
-  }
-  .am-score-value {
-    font-size: 44px; font-weight: 700; line-height: 1;
-  }
+  .am-score-label { font-size: 11px; color: var(--sf-muted);
+    text-transform: uppercase; letter-spacing: 0.4px; font-weight: 700; }
+  .am-score-value { font-size: 44px; font-weight: 700; line-height: 1; }
   .am-score-breakdown { font-size: 11px; color: var(--sf-muted); }
 
-  .am-detail-stats {
-    padding: 14px 20px;
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 20px;
-    background: #fafaf9;
-  }
+  .am-detail-stats { padding: 14px 20px; display: grid;
+    grid-template-columns: repeat(4, 1fr); gap: 20px; background: #fafaf9; }
   @media (max-width: 700px) { .am-detail-stats { grid-template-columns: repeat(2, 1fr); } }
-  .header-stat-label {
-    font-size: 10px; font-weight: 700; color: var(--sf-muted);
-    text-transform: uppercase; letter-spacing: 0.4px;
-  }
-  .header-stat-value {
-    font-size: 20px; font-weight: 700; color: var(--sf-navy); margin-top: 2px;
-  }
-  .header-stat-sub {
-    font-size: 11px; color: var(--sf-muted); margin-top: 2px;
-  }
+  .header-stat-label { font-size: 10px; font-weight: 700; color: var(--sf-muted);
+    text-transform: uppercase; letter-spacing: 0.4px; }
+  .header-stat-value { font-size: 20px; font-weight: 700; color: var(--sf-navy); margin-top: 2px; }
+  .header-stat-sub { font-size: 11px; color: var(--sf-muted); margin-top: 2px; }
 
-  /* ── KPI Scorecard Grid ── */
-  .kpi-scorecard {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 10px;
-  }
+  /* ── KPI Scorecard ── */
+  .kpi-scorecard { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
   @media (max-width: 900px) { .kpi-scorecard { grid-template-columns: repeat(2, 1fr); } }
-  .kpi-scorecard-item {
-    padding: 12px;
-    border: 1px solid var(--sf-border);
-    border-left: 4px solid var(--sf-green);
-    border-radius: 4px;
-    background: white;
-  }
+  .kpi-scorecard-item { padding: 12px; border: 1px solid var(--sf-border);
+    border-left: 4px solid var(--sf-green); border-radius: 4px; background: white; }
   .kpi-scorecard-item.green  { border-left-color: var(--sf-green); }
   .kpi-scorecard-item.yellow { border-left-color: var(--sf-orange); }
   .kpi-scorecard-item.red    { border-left-color: var(--sf-red); background: rgba(255, 221, 225, 0.25); }
-  .kpi-scorecard-head {
-    display: flex; justify-content: space-between; align-items: center;
-    margin-bottom: 6px;
-  }
-  .kpi-scorecard-label {
-    font-size: 11px; font-weight: 700;
-    color: var(--sf-muted);
-    text-transform: uppercase; letter-spacing: 0.3px;
-  }
-  .kpi-scorecard-body {
-    display: flex; align-items: baseline; justify-content: space-between;
-  }
-  .kpi-scorecard-value {
-    font-size: 22px; font-weight: 700;
-  }
+  .kpi-scorecard-head { display: flex; justify-content: space-between;
+    align-items: center; margin-bottom: 6px; }
+  .kpi-scorecard-label { font-size: 11px; font-weight: 700; color: var(--sf-muted);
+    text-transform: uppercase; letter-spacing: 0.3px; }
+  .kpi-scorecard-body { display: flex; align-items: baseline; justify-content: space-between; }
+  .kpi-scorecard-value { font-size: 22px; font-weight: 700; }
   .kpi-scorecard-value.green  { color: var(--sf-green); }
   .kpi-scorecard-value.yellow { color: var(--sf-orange); }
   .kpi-scorecard-value.red    { color: var(--sf-red); }
-  .kpi-scorecard-target {
-    font-size: 10px; color: var(--sf-muted);
+  .kpi-scorecard-target { font-size: 10px; color: var(--sf-muted); }
+
+  /* ── Comp Plan Tracker ── */
+  .comp-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+  @media (max-width: 700px) { .comp-grid { grid-template-columns: 1fr; } }
+  .comp-tile {
+    border: 1px solid var(--sf-border);
+    border-radius: 6px;
+    padding: 14px;
+    background: white;
+  }
+  .comp-tile-header {
+    display: flex; justify-content: space-between; align-items: flex-start;
+    margin-bottom: 10px;
+  }
+  .comp-tile-category {
+    font-size: 11px; font-weight: 700; color: var(--sf-muted);
+    text-transform: uppercase; letter-spacing: 0.3px;
+  }
+  .comp-tile-progress {
+    font-size: 26px; font-weight: 700; color: var(--sf-navy);
+    line-height: 1;
+  }
+  .comp-tile-goal { font-size: 13px; color: var(--sf-muted); font-weight: 400; }
+  .comp-tile-bar {
+    height: 10px; background: #ececec;
+    border-radius: 5px; overflow: hidden;
+    margin: 8px 0;
+  }
+  .comp-tile-bar-fill { height: 100%; transition: width 0.4s; }
+  .comp-tile-desc {
+    font-size: 11px; color: var(--sf-muted);
+    line-height: 1.5; margin-top: 8px;
   }
 
   /* ── Tier tile ── */
-  .tier-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 10px;
-  }
-  .tier-tile {
-    text-align: center;
-    padding: 12px;
-    border: 1px solid var(--sf-border);
-    border-radius: 4px;
-    border-top: 3px solid;
-  }
+  .tier-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; }
+  @media (max-width: 900px) { .tier-grid { grid-template-columns: repeat(3, 1fr); } }
+  @media (max-width: 500px) { .tier-grid { grid-template-columns: repeat(2, 1fr); } }
+  .tier-tile { text-align: center; padding: 12px;
+    border: 1px solid var(--sf-border); border-radius: 4px; border-top: 3px solid; }
   .tier-tile-count { font-size: 28px; font-weight: 700; }
-  .tier-tile-label { font-size: 12px; font-weight: 600; color: var(--sf-navy); }
+  .tier-tile-label { font-size: 11px; font-weight: 600; color: var(--sf-navy); }
   .tier-tile-sub   { font-size: 10px; color: var(--sf-muted); }
   .tier-tile-pct   { font-size: 10px; color: var(--sf-muted); margin-top: 4px; }
-
+  .tier-tile-owner { font-size: 9px; color: var(--sf-muted); margin-top: 2px; font-style: italic; }
   .tier-tile.he { border-top-color: var(--sf-green); }
   .tier-tile.he .tier-tile-count { color: var(--sf-green); }
   .tier-tile.me { border-top-color: var(--sf-teal); }
@@ -491,62 +363,36 @@
   .tier-tile.le .tier-tile-count { color: var(--sf-orange); }
   .tier-tile.d  { border-top-color: var(--sf-red); }
   .tier-tile.d  .tier-tile-count { color: var(--sf-red); }
+  .tier-tile.na { border-top-color: #4a148c; }
+  .tier-tile.na .tier-tile-count { color: #4a148c; }
 
-  .capture-note {
-    margin-top: 16px;
-    padding: 12px;
-    background: var(--sf-gray);
-    border-radius: 4px;
-    font-size: 12px;
-    color: var(--sf-muted);
-    line-height: 1.5;
-  }
+  .capture-note { margin-top: 16px; padding: 12px;
+    background: var(--sf-gray); border-radius: 4px;
+    font-size: 12px; color: var(--sf-muted); line-height: 1.5; }
   .capture-note strong { color: var(--sf-navy); }
 
   /* ── Partner table ── */
-  .partner-table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 12px;
-  }
-  .partner-table th {
-    padding: 8px;
-    text-align: center;
+  .partner-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  .partner-table th { padding: 8px; text-align: center;
     font-size: 10px; font-weight: 700; color: var(--sf-muted);
-    text-transform: uppercase;
-    border-bottom: 1px solid var(--sf-border);
-  }
+    text-transform: uppercase; border-bottom: 1px solid var(--sf-border); }
   .partner-table th.left { text-align: left; }
-  .partner-table td {
-    padding: 6px 8px;
-    text-align: center;
-    border-bottom: 1px solid var(--sf-border);
-  }
+  .partner-table td { padding: 6px 8px; text-align: center;
+    border-bottom: 1px solid var(--sf-border); }
   .partner-table td.left { text-align: left; }
-  .partner-table .dormant-count {
-    font-weight: 700;
-  }
+  .partner-table .dormant-count { font-weight: 700; }
   .partner-table .dormant-count.red   { color: var(--sf-red); }
   .partner-table .dormant-count.green { color: var(--sf-green); }
 
   /* ── Action Queue ── */
-  .queue-empty {
-    padding: 20px;
-    text-align: center;
-    color: var(--sf-green);
-    font-weight: 600;
-  }
-  .queue-item {
-    display: flex;
-    align-items: center;
-    padding: 8px 10px;
-    border-radius: 4px;
-    border-left: 3px solid;
-    margin-bottom: 6px;
-  }
+  .queue-empty { padding: 20px; text-align: center;
+    color: var(--sf-green); font-weight: 600; }
+  .queue-item { display: flex; align-items: center; padding: 8px 10px;
+    border-radius: 4px; border-left: 3px solid; margin-bottom: 6px; }
   .queue-item:last-child { margin-bottom: 0; }
   .queue-item.orange { background: var(--sf-orange-bg); border-left-color: var(--sf-orange); }
   .queue-item.red    { background: rgba(255, 221, 225, 0.5); border-left-color: var(--sf-red); }
+  .queue-item.purple { background: #f3e5f5; border-left-color: #4a148c; }
   .queue-item-info { flex: 1; }
   .queue-item-name { font-size: 12px; font-weight: 600; color: var(--sf-navy); }
   .queue-item-sub  { font-size: 11px; color: var(--sf-muted); }
@@ -555,33 +401,32 @@
   .queue-item-days.red    { color: var(--sf-red); }
 
   /* ── Coaching Note ── */
-  .coaching-note {
-    padding: 14px;
-    border-radius: 6px;
-    border-left: 4px solid;
-    font-size: 13px;
-    color: var(--sf-text);
-    line-height: 1.55;
-  }
+  .coaching-note { padding: 14px; border-radius: 6px;
+    border-left: 4px solid; font-size: 13px; color: var(--sf-text); line-height: 1.55; }
   .coaching-note.green  { background: rgba(205, 239, 196, 0.4); border-left-color: var(--sf-green); }
   .coaching-note.yellow { background: rgba(255, 243, 224, 0.6); border-left-color: var(--sf-orange); }
   .coaching-note.red    { background: rgba(255, 221, 225, 0.4); border-left-color: var(--sf-red); }
 
-  /* ── Footer ── */
-  .footer {
-    text-align: center;
-    padding: 16px 0 24px;
-    font-size: 11px;
-    color: var(--sf-light);
+  /* ── Escalation Tracker ── */
+  .escalation-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  .escalation-table th { padding: 10px 8px; text-align: left;
+    font-size: 10px; font-weight: 700; color: var(--sf-muted);
+    text-transform: uppercase; border-bottom: 2px solid var(--sf-border); }
+  .escalation-table td { padding: 10px 8px; border-bottom: 1px solid var(--sf-border); }
+  .escalation-stage {
+    display: inline-block; font-size: 10px; font-weight: 700;
+    padding: 2px 8px; border-radius: 10px;
   }
+  .escalation-stage.day15 { background: #fff3e0; color: var(--sf-orange); }
+  .escalation-stage.day30 { background: #ffdde1; color: var(--sf-red); }
+  .escalation-stage.day60 { background: #4a148c; color: white; }
+
+  /* ── Footer ── */
+  .footer { text-align: center; padding: 16px 0 24px;
+    font-size: 11px; color: var(--sf-light); }
 
   /* ── Legend ── */
-  .legend {
-    display: flex;
-    gap: 12px;
-    font-size: 11px;
-    color: var(--sf-muted);
-  }
+  .legend { display: flex; gap: 12px; font-size: 11px; color: var(--sf-muted); }
   .legend span { display: inline-flex; align-items: center; }
 </style>
 </head>
@@ -591,19 +436,28 @@
 <div class="topnav">
   <div class="topnav-logo">
     <div class="topnav-logo-icon">☁</div>
-    <div class="topnav-title">DigniFi · Sales <span>/</span> AM Performance</div>
+    <div class="topnav-title">DigniFi · Sales <span>/</span> Performance Dashboard</div>
   </div>
   <div class="topnav-spacer"></div>
   <div class="topnav-identity">
     <label>Viewing as:</label>
     <select id="identity-select">
-      <option value="exec">👔 Executive (Full Access)</option>
-      <optgroup label="Individual AM View">
+      <option value="exec">👔 Tearsa Burgess — VP, National Sales (Full Access)</option>
+      <optgroup label="AM Team Lead">
         <option value="jerome">Jerome Carthen — AM Team Lead</option>
+      </optgroup>
+      <optgroup label="Account Managers">
         <option value="megan">Megan Buell — Account Manager</option>
+        <option value="ashlee">Ashlee Adams — Account Manager</option>
         <option value="kelsey">Kelsey Rookard — Account Manager</option>
         <option value="roman">Roman Mitchell — Account Manager</option>
         <option value="carlos">Carlos Miller — Account Manager</option>
+      </optgroup>
+      <optgroup label="Regional Managers">
+        <option value="anthony">Anthony Rinaldi — Regional Manager</option>
+        <option value="lindsey">Lindsey Halik — Regional Manager</option>
+        <option value="michele">Michele Miller — Regional Manager</option>
+        <option value="michelle">Michelle Perl — Regional Manager</option>
       </optgroup>
     </select>
   </div>
@@ -612,25 +466,31 @@
 <!-- Page header -->
 <div class="pageheader">
   <div>
-    <div class="breadcrumb" id="breadcrumb">Account Management</div>
-    <div class="pageheader-title" id="pageheader-title">AM Performance Dashboard</div>
-    <div class="pageheader-sub" id="pageheader-sub">Executive rollup · Full access to all AMs and merchants · Period: Feb 1 – Feb 28, 2026</div>
+    <div class="breadcrumb" id="breadcrumb">Sales Performance</div>
+    <div class="pageheader-title" id="pageheader-title">Sales Performance Dashboard</div>
+    <div class="pageheader-sub" id="pageheader-sub">Executive rollup · Full access to all AMs, RMs, and merchants · Period: Feb 1 – Feb 28, 2026</div>
   </div>
   <button class="btn-back" id="btn-back" style="display:none;" onclick="goExec()">← Back to Team Rollup</button>
 </div>
 
-<!-- Main content target -->
+<!-- Tabs -->
+<div class="tabs" id="tabs" style="display: none;">
+  <div class="tab active" data-tab="am" onclick="switchTab('am')">AM Performance</div>
+  <div class="tab" data-tab="rm" onclick="switchTab('rm')">RM Performance</div>
+  <div class="tab" data-tab="esc" onclick="switchTab('esc')">Escalations <span class="tab-badge" id="esc-badge">12</span></div>
+</div>
+
+<!-- Main content -->
 <div class="main" id="main"></div>
 
 <div class="footer">
-  DigniFi · AM Performance Dashboard · Salesforce Lightning · Data refreshed daily at 6:00 AM CT
+  DigniFi · Sales Performance Dashboard · Salesforce Lightning · Data refreshed daily at 6:00 AM CT
 </div>
 
 <script>
 // ═══════════════════════════════════════════════════════════════════════
-// DATA
+// THRESHOLDS
 // ═══════════════════════════════════════════════════════════════════════
-
 const THRESHOLDS = {
   touchCoverage:  { green: 100, yellow: 80 },
   dormancy:       { green: 20,  yellow: 35, inverse: true },
@@ -643,6 +503,10 @@ const THRESHOLDS = {
   daysToTraining: { green: 7,   yellow: 10, inverse: true },
   retraining:     { green: 14,  yellow: 21, inverse: true },
   cadenceComp:    { green: 95,  yellow: 80 },
+  // New comp plan metrics (goals from screenshot)
+  onboarding:     { green: 20,  yellow: 15 },  // goal 20/mo
+  retrains:       { green: 20,  yellow: 15 },  // goal 20/mo
+  accountReviews: { green: 10,  yellow: 7 }    // goal 10/mo
 };
 
 function statusOf(val, t) {
@@ -659,57 +523,122 @@ function statusLabel(s) {
   return s === "green" ? "On Track" : s === "yellow" ? "Watch" : "At Risk";
 }
 
+// ═══════════════════════════════════════════════════════════════════════
+// DATA — ACCOUNT MANAGERS (own Low / Dormant / Never Active book)
+// ═══════════════════════════════════════════════════════════════════════
 const AMs = [
-  { id: "jerome", name: "Jerome Carthen", initials: "JC", title: "AM Team Lead", accounts: 48,
-    tierHE: 20, tierME: 18, tierLE: 7, tierD: 3,
+  { id: "jerome", name: "Jerome Carthen", initials: "JC", title: "AM Team Lead", role: "AM",
+    accounts: 48, tierHE: 20, tierME: 18, tierLE: 5, tierD: 3, tierNA: 2,
     touchCoverage: 97, dormancy: 6, captureRate: 64, gmvAtRisk: 18000, gmvGrowth: 14,
     neverActive60: 0, crmLogging: 100, daysToTraining: 5, retraining: 9, cadenceComp: 98,
+    onboarding: 19, retrains: 18, accountReviews: 10,
     gmvMTD: 322500, ytdGrowth: 42 },
-  { id: "megan", name: "Megan Buell", initials: "MB", title: "Account Manager", accounts: 52,
-    tierHE: 24, tierME: 16, tierLE: 7, tierD: 5,
+  { id: "megan", name: "Megan Buell", initials: "MB", title: "Account Manager", role: "AM",
+    accounts: 52, tierHE: 24, tierME: 16, tierLE: 5, tierD: 4, tierNA: 3,
     touchCoverage: 92, dormancy: 10, captureRate: 58, gmvAtRisk: 34000, gmvGrowth: 9,
     neverActive60: 1, crmLogging: 96, daysToTraining: 6, retraining: 12, cadenceComp: 94,
+    onboarding: 17, retrains: 16, accountReviews: 9,
     gmvMTD: 287000, ytdGrowth: 31 },
-  { id: "kelsey", name: "Kelsey Rookard", initials: "KR", title: "Account Manager", accounts: 45,
-    tierHE: 14, tierME: 17, tierLE: 9, tierD: 5,
+  { id: "ashlee", name: "Ashlee Adams", initials: "AA", title: "Account Manager", role: "AM",
+    accounts: 46, tierHE: 16, tierME: 19, tierLE: 6, tierD: 3, tierNA: 2,
+    touchCoverage: 88, dormancy: 11, captureRate: 51, gmvAtRisk: 42000, gmvGrowth: 8,
+    neverActive60: 1, crmLogging: 92, daysToTraining: 7, retraining: 13, cadenceComp: 90,
+    onboarding: 15, retrains: 14, accountReviews: 8,
+    gmvMTD: 211000, ytdGrowth: 22 },
+  { id: "kelsey", name: "Kelsey Rookard", initials: "KR", title: "Account Manager", role: "AM",
+    accounts: 45, tierHE: 14, tierME: 17, tierLE: 6, tierD: 5, tierNA: 3,
     touchCoverage: 84, dormancy: 19, captureRate: 47, gmvAtRisk: 58000, gmvGrowth: 6,
     neverActive60: 2, crmLogging: 89, daysToTraining: 8, retraining: 17, cadenceComp: 86,
+    onboarding: 14, retrains: 12, accountReviews: 7,
     gmvMTD: 182500, ytdGrowth: 18 },
-  { id: "roman", name: "Roman Mitchell", initials: "RM", title: "Account Manager", accounts: 42,
-    tierHE: 9, tierME: 15, tierLE: 11, tierD: 7,
+  { id: "roman", name: "Roman Mitchell", initials: "RoM", title: "Account Manager", role: "AM",
+    accounts: 42, tierHE: 9, tierME: 15, tierLE: 7, tierD: 7, tierNA: 4,
     touchCoverage: 76, dormancy: 21, captureRate: 38, gmvAtRisk: 82000, gmvGrowth: 2,
     neverActive60: 3, crmLogging: 78, daysToTraining: 9, retraining: 22, cadenceComp: 74,
+    onboarding: 11, retrains: 9, accountReviews: 5,
     gmvMTD: 127500, ytdGrowth: 8 },
-  { id: "carlos", name: "Carlos Miller", initials: "CM", title: "Account Manager", accounts: 38,
-    tierHE: 6, tierME: 12, tierLE: 10, tierD: 10,
+  { id: "carlos", name: "Carlos Miller", initials: "CM", title: "Account Manager", role: "AM",
+    accounts: 38, tierHE: 6, tierME: 12, tierLE: 7, tierD: 10, tierNA: 3,
     touchCoverage: 68, dormancy: 28, captureRate: 31, gmvAtRisk: 104000, gmvGrowth: -3,
     neverActive60: 4, crmLogging: 71, daysToTraining: 11, retraining: 26, cadenceComp: 68,
+    onboarding: 8, retrains: 6, accountReviews: 3,
     gmvMTD: 89500, ytdGrowth: -4 }
+];
+
+// ═══════════════════════════════════════════════════════════════════════
+// DATA — REGIONAL MANAGERS (primary: sell new accounts; secondary: escalations)
+// ═══════════════════════════════════════════════════════════════════════
+const RMs = [
+  { id: "anthony", name: "Anthony Rinaldi", initials: "AR", title: "Regional Manager", role: "RM",
+    newAccountsSigned: 14, newAccountsGoal: 10,
+    escalationsOpen: 2, escalationsResolved: 6, escalationsOverdue: 0,
+    gmvMTD: 186000, gmvGrowth: 22,
+    coveredAMs: ["jerome", "megan"]
+  },
+  { id: "lindsey", name: "Lindsey Halik", initials: "LH", title: "Regional Manager", role: "RM",
+    newAccountsSigned: 11, newAccountsGoal: 10,
+    escalationsOpen: 3, escalationsResolved: 4, escalationsOverdue: 1,
+    gmvMTD: 142000, gmvGrowth: 14,
+    coveredAMs: ["ashlee", "kelsey"]
+  },
+  { id: "michele", name: "Michele Miller", initials: "MM", title: "Regional Manager", role: "RM",
+    newAccountsSigned: 8, newAccountsGoal: 10,
+    escalationsOpen: 4, escalationsResolved: 3, escalationsOverdue: 2,
+    gmvMTD: 98000, gmvGrowth: 4,
+    coveredAMs: ["roman"]
+  },
+  { id: "michelle", name: "Michelle Perl", initials: "MP", title: "Regional Manager", role: "RM",
+    newAccountsSigned: 12, newAccountsGoal: 10,
+    escalationsOpen: 3, escalationsResolved: 2, escalationsOverdue: 2,
+    gmvMTD: 124000, gmvGrowth: 9,
+    coveredAMs: ["carlos"]
+  }
+];
+
+// ═══════════════════════════════════════════════════════════════════════
+// ESCALATIONS (AM → RM, tied to specific merchant accounts)
+// ═══════════════════════════════════════════════════════════════════════
+const ESCALATIONS = [
+  { id: "e1", account: "Brown Mazda Amityville",    fromAM: "carlos", toRM: "michelle", stage: "day60", daysOpen: 62, reason: "Dormant 60+ days, no response to retraining attempts" },
+  { id: "e2", account: "Koons Xtime Annapolis",     fromAM: "carlos", toRM: "michelle", stage: "day30", daysOpen: 34, reason: "No transaction after relaunch attempt" },
+  { id: "e3", account: "Len Stoler Endurance",      fromAM: "carlos", toRM: "michelle", stage: "day30", daysOpen: 31, reason: "Staff turnover blocking retraining" },
+  { id: "e4", account: "Ted Britt Endurance Fairfax",fromAM:"roman",   toRM: "michele",  stage: "day60", daysOpen: 68, reason: "Integration issue, technical escalation" },
+  { id: "e5", account: "Jack Taylor Xtime Leesburg", fromAM:"roman",   toRM: "michele",  stage: "day30", daysOpen: 28, reason: "Management resistance, needs RM relationship" },
+  { id: "e6", account: "Safford EVE Dulles",         fromAM:"roman",   toRM: "michele",  stage: "day15", daysOpen: 17, reason: "No submissions after training" },
+  { id: "e7", account: "Hall EVE Chesterfield",      fromAM:"kelsey",  toRM: "lindsey",  stage: "day30", daysOpen: 32, reason: "$0 GMV 30+ days post-retraining" },
+  { id: "e8", account: "West Broad Endurance",       fromAM:"kelsey",  toRM: "lindsey",  stage: "day15", daysOpen: 16, reason: "Post-retrain activity check" },
+  { id: "e9", account: "Brown Xtime Glen Allen",     fromAM:"kelsey",  toRM: "lindsey",  stage: "day15", daysOpen: 18, reason: "Flat GMV 60 days" },
+  { id: "e10",account: "Tate EVE Glen Burnie",       fromAM:"carlos",  toRM: "michelle", stage: "day60", daysOpen: 74, reason: "Never-active, 30+ days since relaunch" },
+  { id: "e11",account: "Battlefield MyKaarma",       fromAM:"roman",   toRM: "michele",  stage: "day15", daysOpen: 22, reason: "Low engaged, declining trend" },
+  { id: "e12",account: "Darcars EVE Silver Spring",  fromAM:"megan",   toRM: "anthony",  stage: "day15", daysOpen: 16, reason: "Low Engaged, preventive escalation" }
 ];
 
 function scoreAM(am) {
   const kpiMap = {
-    touchCoverage: THRESHOLDS.touchCoverage,
-    dormancy: THRESHOLDS.dormancy,
-    captureRate: THRESHOLDS.captureRate,
-    gmvAtRisk: THRESHOLDS.gmvAtRisk,
-    gmvGrowth: THRESHOLDS.gmvGrowth,
-    neverActive60: THRESHOLDS.neverActive60,
-    crmLogging: THRESHOLDS.crmLogging,
-    daysToTraining: THRESHOLDS.daysToTraining,
-    retraining: THRESHOLDS.retraining,
-    cadenceComp: THRESHOLDS.cadenceComp
+    touchCoverage: THRESHOLDS.touchCoverage, dormancy: THRESHOLDS.dormancy,
+    captureRate: THRESHOLDS.captureRate, gmvAtRisk: THRESHOLDS.gmvAtRisk,
+    gmvGrowth: THRESHOLDS.gmvGrowth, neverActive60: THRESHOLDS.neverActive60,
+    crmLogging: THRESHOLDS.crmLogging, daysToTraining: THRESHOLDS.daysToTraining,
+    retraining: THRESHOLDS.retraining, cadenceComp: THRESHOLDS.cadenceComp
   };
   let g = 0, y = 0, r = 0;
   Object.keys(kpiMap).forEach(k => {
     const s = statusOf(am[k], kpiMap[k]);
-    if (s === "green") g++;
-    else if (s === "yellow") y++;
-    else r++;
+    if (s === "green") g++; else if (s === "yellow") y++; else r++;
   });
   const score = Math.round(((g + y * 0.5) / 10) * 100);
   const status = r >= 2 ? "red" : y >= 3 ? "yellow" : g >= 7 ? "green" : "yellow";
   return { score, status, g, y, r };
+}
+
+function scoreRM(rm) {
+  // Simplified RM scoring: new account quota + escalation management
+  const quotaPct = rm.newAccountsSigned / rm.newAccountsGoal;
+  const overdue = rm.escalationsOverdue;
+  let status = "green";
+  if (quotaPct < 0.8 || overdue >= 2) status = "red";
+  else if (quotaPct < 1.0 || overdue >= 1) status = "yellow";
+  return { status };
 }
 
 const PARTNERS = [
@@ -738,7 +667,7 @@ const MERCHANTS_BY_AM = {
     { name: "Rosenthal Xtime Tysons",      partner: "Xtime",    tier: "ME", gmv: 4800,  lastTouch: 6 },
     { name: "Passport EVE Alexandria",     partner: "EVE",      tier: "LE", gmv: 1800,  lastTouch: 14 },
     { name: "Lindsay Endurance Manassas",  partner: "Endurance",tier: "D",  gmv: 0,     lastTouch: 9 },
-    { name: "Fitzgerald Mazda Frederick",  partner: "Mazda",    tier: "D",  gmv: 0,     lastTouch: 7 }
+    { name: "Fitzgerald Mazda Frederick",  partner: "Mazda",    tier: "NA", gmv: 0,     lastTouch: 7 }
   ],
   megan: [
     { name: "Ourisman CDK Bethesda",       partner: "CDK",      tier: "HE", gmv: 31400, lastTouch: 3 },
@@ -747,6 +676,14 @@ const MERCHANTS_BY_AM = {
     { name: "Easterns Xtime Laurel",       partner: "Xtime",    tier: "ME", gmv: 6200,  lastTouch: 11 },
     { name: "Darcars EVE Silver Spring",   partner: "EVE",      tier: "LE", gmv: 920,   lastTouch: 16 },
     { name: "Jim Coleman Endurance",       partner: "Endurance",tier: "D",  gmv: 0,     lastTouch: 12 }
+  ],
+  ashlee: [
+    { name: "Safford CDK Vienna",          partner: "CDK",      tier: "HE", gmv: 17800, lastTouch: 5 },
+    { name: "Hendrick Mazda Charlotte",    partner: "Mazda",    tier: "HE", gmv: 13400, lastTouch: 6 },
+    { name: "Fitz MyKaarma Clearwater",    partner: "MyKaarma", tier: "ME", gmv: 5600,  lastTouch: 9 },
+    { name: "Murgado Xtime Miami",         partner: "Xtime",    tier: "ME", gmv: 4200,  lastTouch: 12 },
+    { name: "Rick Hendrick EVE Raleigh",   partner: "EVE",      tier: "LE", gmv: 1400,  lastTouch: 17 },
+    { name: "Germain Endurance Cincinnati",partner: "Endurance",tier: "D",  gmv: 0,     lastTouch: 14 }
   ],
   kelsey: [
     { name: "Thompson CDK Richmond",       partner: "CDK",      tier: "HE", gmv: 19800, lastTouch: 4 },
@@ -763,14 +700,14 @@ const MERCHANTS_BY_AM = {
     { name: "Battlefield MyKaarma",          partner: "MyKaarma", tier: "LE", gmv: 1200,  lastTouch: 22 },
     { name: "Safford EVE Dulles",            partner: "EVE",      tier: "D",  gmv: 0,     lastTouch: 19 },
     { name: "Ted Britt Endurance Fairfax",   partner: "Endurance",tier: "D",  gmv: 0,     lastTouch: 24 },
-    { name: "Jack Taylor Xtime Leesburg",    partner: "Xtime",    tier: "D",  gmv: 0,     lastTouch: 28 }
+    { name: "Jack Taylor Xtime Leesburg",    partner: "Xtime",    tier: "NA", gmv: 0,     lastTouch: 28 }
   ],
   carlos: [
     { name: "Sheehy CDK Marlow Heights",    partner: "CDK",      tier: "ME", gmv: 6800, lastTouch: 11 },
     { name: "Heritage Xtime Owings Mills",  partner: "Xtime",    tier: "ME", gmv: 3100, lastTouch: 18 },
     { name: "Ourisman Mazda Laurel",        partner: "Mazda",    tier: "LE", gmv: 1600, lastTouch: 23 },
     { name: "Antwerpen MyKaarma",           partner: "MyKaarma", tier: "LE", gmv: 900,  lastTouch: 26 },
-    { name: "Tate EVE Glen Burnie",         partner: "EVE",      tier: "D",  gmv: 0,    lastTouch: 31 },
+    { name: "Tate EVE Glen Burnie",         partner: "EVE",      tier: "NA", gmv: 0,    lastTouch: 31 },
     { name: "Len Stoler Endurance",         partner: "Endurance",tier: "D",  gmv: 0,    lastTouch: 34 },
     { name: "Koons Xtime Annapolis",        partner: "Xtime",    tier: "D",  gmv: 0,    lastTouch: 29 },
     { name: "Brown Mazda Amityville",       partner: "Mazda",    tier: "D",  gmv: 0,    lastTouch: 38 }
@@ -785,8 +722,6 @@ const fmt$ = (n) =>
   : n >= 1000 ? "$" + (n/1000).toFixed(1) + "K"
   : "$" + n.toLocaleString();
 const fmt$full = (n) => "$" + n.toLocaleString();
-
-// Escape HTML
 function esc(s) {
   return String(s).replace(/[&<>"']/g, c => ({
     "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
@@ -794,28 +729,36 @@ function esc(s) {
 }
 
 // ═══════════════════════════════════════════════════════════════════════
-// STATE MANAGEMENT
+// STATE
 // ═══════════════════════════════════════════════════════════════════════
 let state = {
-  identity: "exec",   // who is "logged in"
-  view: "exec",       // "exec" | "am-<id>"
+  identity: "exec",
+  view: "exec",
+  activeTab: "am",
   drilledFromExec: false
 };
 
 function switchIdentity(id) {
   state.identity = id;
-  if (id === "exec") state.view = "exec";
-  else state.view = "am-" + id;
   state.drilledFromExec = false;
+  if (id === "exec") state.view = "exec";
+  else state.view = (AMs.find(a => a.id === id) ? "am-" : "rm-") + id;
   render();
 }
-
+function switchTab(tab) {
+  state.activeTab = tab;
+  render();
+}
 function goAM(amId, fromExec) {
   state.view = "am-" + amId;
   state.drilledFromExec = fromExec || false;
   render();
 }
-
+function goRM(rmId, fromExec) {
+  state.view = "rm-" + rmId;
+  state.drilledFromExec = fromExec || false;
+  render();
+}
 function goExec() {
   state.view = "exec";
   state.drilledFromExec = false;
@@ -823,12 +766,12 @@ function goExec() {
 }
 
 // ═══════════════════════════════════════════════════════════════════════
-// EXECUTIVE VIEW
+// EXECUTIVE VIEW — AM Tab
 // ═══════════════════════════════════════════════════════════════════════
-function renderExec() {
+function renderExecAMTab() {
   const accounts = AMs.reduce((s, a) => s + a.accounts, 0);
   const gmv      = AMs.reduce((s, a) => s + a.gmvMTD, 0);
-  const dormant  = AMs.reduce((s, a) => s + a.tierD, 0);
+  const dormant  = AMs.reduce((s, a) => s + a.tierD + a.tierNA, 0);
   const he       = AMs.reduce((s, a) => s + a.tierHE, 0);
   const avgTouch = Math.round(AMs.reduce((s, a) => s + a.touchCoverage * a.accounts, 0) / accounts);
   const dormancy = Math.round((dormant / accounts) * 100);
@@ -839,9 +782,12 @@ function renderExec() {
                     .sort((a, b) => b.score - a.score);
 
   return `
-    <!-- 6 KPI tiles -->
+    <div class="pending-banner">
+      <strong>⚠ Comp plan metrics (Onboarding / Retrains / Account Reviews):</strong> Progress tracker displayed below. Payout weights pending finalization — scoring will incorporate these metrics in a future release.
+    </div>
+
     <div class="kpi-grid">
-      ${kpiTile("Team GMV · MTD", fmt$(gmv), "5 AMs · Feb run-rate", "green")}
+      ${kpiTile("Team GMV · MTD", fmt$(gmv), AMs.length + " AMs · Feb run-rate", "green")}
       ${kpiTile("Active Dealer Book", accounts, he + " Highly Engaged ($10K+)", "green")}
       ${kpiTile("Team Dormancy Rate", dormancy + "%", dormant + " stores at $0",
                 statusOf(dormancy, THRESHOLDS.dormancy), "&lt; 20%")}
@@ -852,7 +798,6 @@ function renderExec() {
       ${kpiTile("Team GMV at Risk", fmt$(atRisk), "Dormant + never-active", "red", "&lt; $25K/AM")}
     </div>
 
-    <!-- Leaderboard -->
     <div class="card">
       <div class="card-title">
         <div class="card-title-text">Account Manager Performance Leaderboard</div>
@@ -869,29 +814,26 @@ function renderExec() {
               <th>Rank</th>
               <th class="left">Account Manager</th>
               <th>Score</th>
-              <th class="left">Portfolio Composition</th>
+              <th class="left">Portfolio (5-Tier)</th>
               <th>Touch</th>
               <th>Dormancy</th>
               <th>Capture</th>
               <th>GMV MTD</th>
-              <th>At Risk</th>
+              <th>Comp Plan</th>
               <th>Status</th>
               <th></th>
             </tr>
           </thead>
           <tbody>
-            ${ranked.map((am, i) => renderLeaderRow(am, i, ranked.length)).join("")}
+            ${ranked.map((am, i) => renderLeaderRowAM(am, i, ranked.length)).join("")}
           </tbody>
         </table>
       </div>
     </div>
 
-    <!-- Trend + Partner Rollup -->
     <div class="row-2">
       <div class="card">
-        <div class="card-title">
-          <div class="card-title-text">Team GMV &amp; Dormancy · 6-Month Trend</div>
-        </div>
+        <div class="card-title"><div class="card-title-text">Team GMV & Dormancy · 6-Month Trend</div></div>
         <div class="card-body">
           <div class="chart-container"><canvas id="trend-chart"></canvas></div>
           <div class="chart-footer">
@@ -901,22 +843,16 @@ function renderExec() {
           </div>
         </div>
       </div>
-
       <div class="card">
-        <div class="card-title">
-          <div class="card-title-text">Partner Rollup · Dormancy vs 20% Target</div>
-        </div>
+        <div class="card-title"><div class="card-title-text">Partner Rollup · Dormancy vs 20% Target</div></div>
         <div class="card-body">
           ${[...PARTNERS].sort((a,b) => b.dormRate - a.dormRate).map(renderPartnerItem).join("")}
         </div>
       </div>
     </div>
 
-    <!-- Coaching signals -->
     <div class="card">
-      <div class="card-title">
-        <div class="card-title-text">Executive Coaching Signals</div>
-      </div>
+      <div class="card-title"><div class="card-title-text">Executive Coaching Signals</div></div>
       <div class="card-body">
         <div class="insights">
           <div class="insight green">
@@ -929,7 +865,7 @@ function renderExec() {
           </div>
           <div class="insight red">
             <div class="insight-title">At Risk</div>
-            <div class="insight-text">Carlos is red on 4 KPIs. $104K GMV at risk. Trigger an immediate PIP + portfolio reallocation of the 8 dormant stores to Jerome/Megan.</div>
+            <div class="insight-text">Carlos is red on 4 KPIs. $104K GMV at risk. 10 dormant + 3 never-active stores. Trigger an immediate PIP + portfolio reallocation.</div>
           </div>
         </div>
       </div>
@@ -938,31 +874,29 @@ function renderExec() {
 }
 
 function kpiTile(label, value, sub, status, target) {
-  return `
-    <div class="kpi-tile ${status}">
+  return `<div class="kpi-tile ${status}">
       <div class="kpi-tile-label">${label}</div>
       <div class="kpi-tile-value">${value}</div>
       ${sub ? `<div class="kpi-tile-sub">${sub}</div>` : ""}
       ${target ? `<div class="kpi-tile-target">Target: ${target}</div>` : ""}
-    </div>
-  `;
+    </div>`;
 }
 
-function renderLeaderRow(am, i, total) {
+function renderLeaderRowAM(am, i, total) {
   const touchS   = statusOf(am.touchCoverage, THRESHOLDS.touchCoverage);
   const dormS    = statusOf(am.dormancy, THRESHOLDS.dormancy);
   const captureS = statusOf(am.captureRate, THRESHOLDS.captureRate);
-  const riskS    = statusOf(am.gmvAtRisk, THRESHOLDS.gmvAtRisk);
   const rankClass = i === 0 ? "gold" : i === total - 1 ? "bottom" : "";
+  const compTotal = am.onboarding + am.retrains + am.accountReviews;
+  const compMax = 50;
+  const compPct = Math.round((compTotal / compMax) * 100);
 
   return `
     <tr onclick="goAM('${am.id}', true)">
-      <td>
-        <div class="rank-badge ${rankClass}">${i + 1}</div>
-      </td>
+      <td><div class="rank-badge ${rankClass}">${i + 1}</div></td>
       <td class="left">
         <div style="display: flex; align-items: center; gap: 10px;">
-          ${avatarHtml(am.initials, am.status, 34)}
+          ${avatarHtml(am.initials, am.status, 34, "am")}
           <div>
             <div style="font-weight: 600; color: var(--sf-navy);">${esc(am.name)}</div>
             <div style="font-size: 11px; color: var(--sf-muted);">${esc(am.title)} · ${am.accounts} accts</div>
@@ -973,10 +907,10 @@ function renderLeaderRow(am, i, total) {
         <div style="font-size: 20px; font-weight: 700; color: var(--sf-${am.status === 'green' ? 'green' : am.status === 'yellow' ? 'orange' : 'red'});">${am.score}</div>
         <div style="font-size: 10px; color: var(--sf-muted);">${am.g}G · ${am.y}Y · ${am.r}R</div>
       </td>
-      <td class="left" style="min-width: 160px;">
-        ${tierBarHtml(am.tierHE, am.tierME, am.tierLE, am.tierD)}
+      <td class="left" style="min-width: 180px;">
+        ${tierBarHtml(am.tierHE, am.tierME, am.tierLE, am.tierD, am.tierNA)}
         <div style="font-size: 10px; color: var(--sf-muted); margin-top: 3px;">
-          HE ${am.tierHE} · ME ${am.tierME} · LE ${am.tierLE} · D ${am.tierD}
+          HE ${am.tierHE} · ME ${am.tierME} · LE ${am.tierLE} · D ${am.tierD} · NA ${am.tierNA}
         </div>
       </td>
       <td><div style="font-weight: 700; color: ${colorFor(touchS)};">${am.touchCoverage}%</div></td>
@@ -988,7 +922,10 @@ function renderLeaderRow(am, i, total) {
           ${am.gmvGrowth >= 0 ? '▲' : '▼'} ${Math.abs(am.gmvGrowth)}% MoM
         </div>
       </td>
-      <td><div style="font-weight: 700; color: ${colorFor(riskS)};">${fmt$(am.gmvAtRisk)}</div></td>
+      <td>
+        <div style="font-weight: 700; font-size: 12px;">${am.onboarding}/${am.retrains}/${am.accountReviews}</div>
+        <div style="font-size: 10px; color: var(--sf-muted);">${compPct}% · O/R/AR</div>
+      </td>
       <td><span class="pill ${am.status}"><span class="dot small ${am.status}"></span>${statusLabel(am.status)}</span></td>
       <td><button class="btn-link" onclick="event.stopPropagation(); goAM('${am.id}', true)">Drill →</button></td>
     </tr>
@@ -996,23 +933,20 @@ function renderLeaderRow(am, i, total) {
 }
 
 function colorFor(status) {
-  return status === "green" ? "var(--sf-green)"
-       : status === "yellow" ? "var(--sf-orange)"
-       : "var(--sf-red)";
+  return status === "green" ? "var(--sf-green)" : status === "yellow" ? "var(--sf-orange)" : "var(--sf-red)";
 }
-
-function avatarHtml(initials, status, size) {
+function avatarHtml(initials, status, size, type) {
   const statusSize = size * 0.32;
+  const typeClass = type === "rm" ? "rm" : "";
   return `
-    <div class="avatar" style="width:${size}px; height:${size}px; font-size:${size * 0.38}px;">
+    <div class="avatar ${typeClass}" style="width:${size}px; height:${size}px; font-size:${size * 0.38}px;">
       ${initials}
       ${status ? `<div class="avatar-status ${status}" style="width:${statusSize}px; height:${statusSize}px;"></div>` : ""}
     </div>
   `;
 }
-
-function tierBarHtml(he, me, le, d) {
-  const total = he + me + le + d;
+function tierBarHtml(he, me, le, d, na) {
+  const total = he + me + le + d + na;
   const seg = (count, cls) => {
     if (count === 0) return "";
     const pct = (count / total) * 100;
@@ -1020,11 +954,10 @@ function tierBarHtml(he, me, le, d) {
   };
   return `
     <div class="tierbar">
-      ${seg(he, "he")}${seg(me, "me")}${seg(le, "le")}${seg(d, "d")}
+      ${seg(he, "he")}${seg(me, "me")}${seg(le, "le")}${seg(d, "d")}${seg(na, "na")}
     </div>
   `;
 }
-
 function renderPartnerItem(p) {
   const s = p.dormRate < 20 ? "green" : p.dormRate < 35 ? "yellow" : "red";
   const fillPct = Math.min(100, (p.dormRate / 40) * 100);
@@ -1046,6 +979,171 @@ function renderPartnerItem(p) {
 }
 
 // ═══════════════════════════════════════════════════════════════════════
+// EXECUTIVE VIEW — RM Tab
+// ═══════════════════════════════════════════════════════════════════════
+function renderExecRMTab() {
+  const totalSigned = RMs.reduce((s, r) => s + r.newAccountsSigned, 0);
+  const totalGoal = RMs.reduce((s, r) => s + r.newAccountsGoal, 0);
+  const totalOpen = RMs.reduce((s, r) => s + r.escalationsOpen, 0);
+  const totalResolved = RMs.reduce((s, r) => s + r.escalationsResolved, 0);
+  const totalOverdue = RMs.reduce((s, r) => s + r.escalationsOverdue, 0);
+  const totalGMV = RMs.reduce((s, r) => s + r.gmvMTD, 0);
+
+  const ranked = RMs.map(rm => Object.assign({}, rm, scoreRM(rm)))
+    .sort((a, b) => (b.newAccountsSigned / b.newAccountsGoal) - (a.newAccountsSigned / a.newAccountsGoal));
+
+  return `
+    <div class="pending-banner">
+      <strong>Regional Manager scope:</strong> RMs primarily own new-account acquisition. Secondary responsibility is double-coverage escalation management on AM-escalated accounts (Day 15 / 30 / 60 triggers).
+    </div>
+
+    <div class="kpi-grid">
+      ${kpiTile("New Accounts Signed", totalSigned + " / " + totalGoal, RMs.length + " RMs · Feb",
+                totalSigned >= totalGoal ? "green" : totalSigned >= totalGoal * 0.8 ? "yellow" : "red",
+                totalGoal + " team goal")}
+      ${kpiTile("Open Escalations", totalOpen, "Active AM escalations", totalOpen > 10 ? "yellow" : "green")}
+      ${kpiTile("Resolved This Month", totalResolved, "Closed out to green", "green")}
+      ${kpiTile("Overdue Escalations", totalOverdue, "Past SLA without action",
+                totalOverdue >= 4 ? "red" : totalOverdue >= 2 ? "yellow" : "green", "0")}
+      ${kpiTile("New-Account GMV", fmt$(totalGMV), "From accounts signed this cycle", "green")}
+      ${kpiTile("Team Attainment", Math.round((totalSigned / totalGoal) * 100) + "%", "vs. quota",
+                totalSigned >= totalGoal ? "green" : totalSigned >= totalGoal * 0.8 ? "yellow" : "red")}
+    </div>
+
+    <div class="card">
+      <div class="card-title">
+        <div class="card-title-text">Regional Manager Performance</div>
+      </div>
+      <div class="card-body no-pad">
+        <table class="leader-table">
+          <thead>
+            <tr>
+              <th>Rank</th>
+              <th class="left">Regional Manager</th>
+              <th>New Accounts</th>
+              <th>Attainment</th>
+              <th>GMV MTD</th>
+              <th>Open Escalations</th>
+              <th>Resolved</th>
+              <th>Overdue</th>
+              <th class="left">AM Coverage</th>
+              <th>Status</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            ${ranked.map((rm, i) => renderLeaderRowRM(rm, i)).join("")}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  `;
+}
+
+function renderLeaderRowRM(rm, i) {
+  const attainmentPct = Math.round((rm.newAccountsSigned / rm.newAccountsGoal) * 100);
+  const attainStatus = attainmentPct >= 100 ? "green" : attainmentPct >= 80 ? "yellow" : "red";
+  const coveredNames = rm.coveredAMs.map(id => {
+    const am = AMs.find(a => a.id === id);
+    return am ? am.name.split(" ")[0] : id;
+  }).join(", ");
+  const rankClass = i === 0 ? "gold" : "";
+
+  return `
+    <tr onclick="goRM('${rm.id}', true)">
+      <td><div class="rank-badge ${rankClass}">${i + 1}</div></td>
+      <td class="left">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          ${avatarHtml(rm.initials, rm.status, 34, "rm")}
+          <div>
+            <div style="font-weight: 600; color: var(--sf-navy);">${esc(rm.name)}</div>
+            <div style="font-size: 11px; color: var(--sf-muted);">${esc(rm.title)}</div>
+          </div>
+        </div>
+      </td>
+      <td><div style="font-weight: 700; font-size: 16px;">${rm.newAccountsSigned} / ${rm.newAccountsGoal}</div></td>
+      <td><div style="font-weight: 700; color: ${colorFor(attainStatus)}; font-size: 16px;">${attainmentPct}%</div></td>
+      <td>
+        <div style="font-weight: 700;">${fmt$(rm.gmvMTD)}</div>
+        <div style="font-size: 10px; color: ${rm.gmvGrowth >= 0 ? 'var(--sf-green)' : 'var(--sf-red)'};">
+          ${rm.gmvGrowth >= 0 ? '▲' : '▼'} ${Math.abs(rm.gmvGrowth)}% MoM
+        </div>
+      </td>
+      <td><div style="font-weight: 700;">${rm.escalationsOpen}</div></td>
+      <td><div style="font-weight: 700; color: var(--sf-green);">${rm.escalationsResolved}</div></td>
+      <td><div style="font-weight: 700; color: ${rm.escalationsOverdue > 0 ? 'var(--sf-red)' : 'var(--sf-muted)'};">${rm.escalationsOverdue}</div></td>
+      <td class="left" style="font-size: 11px; color: var(--sf-muted);">${esc(coveredNames)}</td>
+      <td><span class="pill ${rm.status}"><span class="dot small ${rm.status}"></span>${statusLabel(rm.status)}</span></td>
+      <td><button class="btn-link" onclick="event.stopPropagation(); goRM('${rm.id}', true)">Drill →</button></td>
+    </tr>
+  `;
+}
+
+// ═══════════════════════════════════════════════════════════════════════
+// EXECUTIVE VIEW — Escalations Tab
+// ═══════════════════════════════════════════════════════════════════════
+function renderExecEscTab() {
+  const byStage = {
+    day15: ESCALATIONS.filter(e => e.stage === "day15"),
+    day30: ESCALATIONS.filter(e => e.stage === "day30"),
+    day60: ESCALATIONS.filter(e => e.stage === "day60")
+  };
+
+  return `
+    <div class="pending-banner">
+      <strong>Escalation Framework (from Playbook):</strong> Day 15 = post-retrain flag · Day 30 = RM joins next call · Day 60 = Partner Success escalation. Overdue escalations are at risk of customer churn.
+    </div>
+
+    <div class="kpi-grid">
+      ${kpiTile("Open Escalations", ESCALATIONS.length, "Across all AMs and RMs", ESCALATIONS.length > 10 ? "yellow" : "green")}
+      ${kpiTile("Day 15 Stage", byStage.day15.length, "Post-retraining check", "yellow")}
+      ${kpiTile("Day 30 Stage", byStage.day30.length, "RM active involvement", "red")}
+      ${kpiTile("Day 60 Stage", byStage.day60.length, "Partner Success level", "red")}
+      ${kpiTile("Avg Days Open", Math.round(ESCALATIONS.reduce((s,e) => s + e.daysOpen, 0) / ESCALATIONS.length) + "d", "From initial escalation", "yellow")}
+      ${kpiTile("Roman + Carlos", byStage.day15.length + byStage.day30.length + byStage.day60.length > 0 ? ESCALATIONS.filter(e => e.fromAM === "roman" || e.fromAM === "carlos").length : 0, "Concentration of risk", "red")}
+    </div>
+
+    <div class="card">
+      <div class="card-title">
+        <div class="card-title-text">All Open Escalations</div>
+      </div>
+      <div class="card-body no-pad" style="padding: 0 16px 16px;">
+        <table class="escalation-table">
+          <thead>
+            <tr>
+              <th>Stage</th>
+              <th>Days Open</th>
+              <th>Account</th>
+              <th>From AM</th>
+              <th>To RM</th>
+              <th>Reason</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            ${ESCALATIONS.sort((a, b) => b.daysOpen - a.daysOpen).map(e => {
+              const am = AMs.find(a => a.id === e.fromAM);
+              const rm = RMs.find(r => r.id === e.toRM);
+              return `
+                <tr>
+                  <td><span class="escalation-stage ${e.stage}">${e.stage.replace('day', 'Day ')}</span></td>
+                  <td style="font-weight: 700; color: ${e.daysOpen > 30 ? 'var(--sf-red)' : 'var(--sf-orange)'};">${e.daysOpen}d</td>
+                  <td style="font-weight: 600;">${esc(e.account)}</td>
+                  <td>${am ? esc(am.name.split(' ')[0]) : ''}</td>
+                  <td>${rm ? esc(rm.name) : ''}</td>
+                  <td style="color: var(--sf-muted); font-size: 11px;">${esc(e.reason)}</td>
+                  <td><button class="btn-primary">Review</button></td>
+                </tr>
+              `;
+            }).join("")}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  `;
+}
+
+// ═══════════════════════════════════════════════════════════════════════
 // AM DETAIL VIEW
 // ═══════════════════════════════════════════════════════════════════════
 function renderAM(amId, isExec) {
@@ -1053,45 +1151,45 @@ function renderAM(amId, isExec) {
   if (!am) return "<div>AM not found</div>";
   const merchants = MERCHANTS_BY_AM[am.id] || [];
   const score = scoreAM(am);
+  const myEscalations = ESCALATIONS.filter(e => e.fromAM === am.id);
 
   const kpis = [
-    { label: "Touch Coverage",   value: am.touchCoverage + "%", status: statusOf(am.touchCoverage, THRESHOLDS.touchCoverage), target: "100%" },
-    { label: "Dormancy Rate",    value: am.dormancy + "%",      status: statusOf(am.dormancy, THRESHOLDS.dormancy),           target: "&lt; 20%" },
+    { label: "Touch Coverage", value: am.touchCoverage + "%", status: statusOf(am.touchCoverage, THRESHOLDS.touchCoverage), target: "100%" },
+    { label: "Dormancy Rate", value: am.dormancy + "%", status: statusOf(am.dormancy, THRESHOLDS.dormancy), target: "&lt; 20%" },
     { label: "Highly Engaged %", value: Math.round(am.tierHE / am.accounts * 100) + "%", status: statusOf(Math.round(am.tierHE / am.accounts * 100), THRESHOLDS.highlyEngaged), target: "≥ 40%" },
-    { label: "Capture Rate",     value: am.captureRate + "%",   status: statusOf(am.captureRate, THRESHOLDS.captureRate),     target: "≥ 60%" },
-    { label: "GMV at Risk",      value: fmt$(am.gmvAtRisk),     status: statusOf(am.gmvAtRisk, THRESHOLDS.gmvAtRisk),         target: "&lt; $25K" },
-    { label: "GMV Growth MoM",   value: (am.gmvGrowth >= 0 ? "+" : "") + am.gmvGrowth + "%", status: statusOf(am.gmvGrowth, THRESHOLDS.gmvGrowth), target: "≥ 10%" },
-    { label: "Never-Active > 60d", value: am.neverActive60,     status: statusOf(am.neverActive60, THRESHOLDS.neverActive60), target: "0" },
-    { label: "CRM Logging (24h)",  value: am.crmLogging + "%",  status: statusOf(am.crmLogging, THRESHOLDS.crmLogging),       target: "100%" },
-    { label: "Days to Training",   value: am.daysToTraining + "d", status: statusOf(am.daysToTraining, THRESHOLDS.daysToTraining), target: "&lt; 7d" },
-    { label: "Retraining SLA",     value: am.retraining + "d",  status: statusOf(am.retraining, THRESHOLDS.retraining),       target: "&lt; 14d" },
-    { label: "Cadence Completion", value: am.cadenceComp + "%", status: statusOf(am.cadenceComp, THRESHOLDS.cadenceComp),     target: "≥ 95%" }
+    { label: "Capture Rate", value: am.captureRate + "%", status: statusOf(am.captureRate, THRESHOLDS.captureRate), target: "≥ 60%" },
+    { label: "GMV at Risk", value: fmt$(am.gmvAtRisk), status: statusOf(am.gmvAtRisk, THRESHOLDS.gmvAtRisk), target: "&lt; $25K" },
+    { label: "GMV Growth MoM", value: (am.gmvGrowth >= 0 ? "+" : "") + am.gmvGrowth + "%", status: statusOf(am.gmvGrowth, THRESHOLDS.gmvGrowth), target: "≥ 10%" },
+    { label: "Never-Active > 60d", value: am.neverActive60, status: statusOf(am.neverActive60, THRESHOLDS.neverActive60), target: "0" },
+    { label: "CRM Logging (24h)", value: am.crmLogging + "%", status: statusOf(am.crmLogging, THRESHOLDS.crmLogging), target: "100%" },
+    { label: "Days to Training", value: am.daysToTraining + "d", status: statusOf(am.daysToTraining, THRESHOLDS.daysToTraining), target: "&lt; 7d" },
+    { label: "Retraining SLA", value: am.retraining + "d", status: statusOf(am.retraining, THRESHOLDS.retraining), target: "&lt; 14d" },
+    { label: "Cadence Completion", value: am.cadenceComp + "%", status: statusOf(am.cadenceComp, THRESHOLDS.cadenceComp), target: "≥ 95%" }
   ];
 
   const untouched = merchants.filter(m => m.lastTouch > 7).sort((a,b) => b.lastTouch - a.lastTouch);
-  const dormant   = merchants.filter(m => m.tier === "D");
+  const atRiskMerchants = merchants.filter(m => m.tier === "D" || m.tier === "NA");
 
-  // Partner breakdown for this AM
   const partnerCounts = {};
   merchants.forEach(m => {
     if (!partnerCounts[m.partner]) partnerCounts[m.partner] = { gmv: 0, stores: 0, dormant: 0 };
     partnerCounts[m.partner].gmv += m.gmv;
     partnerCounts[m.partner].stores++;
-    if (m.tier === "D") partnerCounts[m.partner].dormant++;
+    if (m.tier === "D" || m.tier === "NA") partnerCounts[m.partner].dormant++;
   });
 
   return `
-    <!-- AM header card -->
     <div class="card">
       <div class="am-detail-header">
-        ${avatarHtml(am.initials, score.status, 64)}
+        ${avatarHtml(am.initials, score.status, 64, "am")}
         <div class="am-detail-info">
           <div class="am-detail-name-row">
             <div class="am-detail-name">${esc(am.name)}</div>
+            <span class="pill am">AM</span>
             <span class="pill ${score.status}"><span class="dot small ${score.status}"></span>${statusLabel(score.status)}</span>
           </div>
           <div class="am-detail-title">
-            ${esc(am.title)} · ${am.accounts} dealer accounts${am.id !== "jerome" ? " · Reporting to Jerome Carthen (AM Team Lead)" : ""}
+            ${esc(am.title)} · ${am.accounts} dealer accounts · Reporting to Jerome Carthen (AM Team Lead)
           </div>
         </div>
         <div class="am-score-block">
@@ -1118,11 +1216,9 @@ function renderAM(amId, isExec) {
           <div class="header-stat-sub">${Math.round(am.tierHE / am.accounts * 100)}% of book</div>
         </div>
         <div>
-          <div class="header-stat-label">Dormant ($0)</div>
-          <div class="header-stat-value">${am.tierD}</div>
-          <div class="header-stat-sub" style="color: ${colorFor(statusOf(am.dormancy, THRESHOLDS.dormancy))};">
-            ${am.dormancy}% dormancy rate
-          </div>
+          <div class="header-stat-label">At Risk (D + NA)</div>
+          <div class="header-stat-value">${am.tierD + am.tierNA}</div>
+          <div class="header-stat-sub" style="color: var(--sf-red);">${am.tierD} dormant · ${am.tierNA} never-active</div>
         </div>
         <div>
           <div class="header-stat-label">GMV at Risk</div>
@@ -1132,11 +1228,27 @@ function renderAM(amId, isExec) {
       </div>
     </div>
 
-    <!-- 11-KPI Scorecard -->
+    <!-- Comp Plan Tracker -->
     <div class="card">
       <div class="card-title">
-        <div class="card-title-text">KPI Scorecard · AM Playbook Thresholds</div>
+        <div class="card-title-text">Monthly Comp Plan Tracker</div>
+        <div class="card-title-action">⚠ Payout weights pending finalization</div>
       </div>
+      <div class="card-body">
+        <div class="comp-grid">
+          ${compTile("Onboarding / Launching", am.onboarding, 20,
+            "Onboarding for newly active CDK, Endurance, and other future partner accounts.")}
+          ${compTile("Farming / Dealer Retrains", am.retrains, 20,
+            "MoM GMV $0 — dealer prompted for retrain within 14 days of following month.")}
+          ${compTile("Farming / Account Reviews", am.accountReviews, 10,
+            "Review active accounts with only 1 loan. Review trends — last 3 months GMV, current month, avg loan, apps, approval rate, funded rate.")}
+        </div>
+      </div>
+    </div>
+
+    <!-- KPI Scorecard -->
+    <div class="card">
+      <div class="card-title"><div class="card-title-text">KPI Scorecard · AM Playbook Thresholds</div></div>
       <div class="card-body">
         <div class="kpi-scorecard">
           ${kpis.map(k => `
@@ -1155,61 +1267,86 @@ function renderAM(amId, isExec) {
       </div>
     </div>
 
-    <!-- Portfolio composition + partner distribution -->
     <div class="row-14">
       <div class="card">
-        <div class="card-title">
-          <div class="card-title-text">Portfolio Composition by Engagement Tier</div>
-        </div>
+        <div class="card-title"><div class="card-title-text">Portfolio Composition · 5-Tier Model</div></div>
         <div class="card-body">
           <div style="margin-bottom: 16px;">
-            ${tierBarHtml(am.tierHE, am.tierME, am.tierLE, am.tierD)}
+            ${tierBarHtml(am.tierHE, am.tierME, am.tierLE, am.tierD, am.tierNA)}
           </div>
           <div class="tier-grid">
-            ${tierTile("Highly Engaged", am.tierHE, "$10K+ / mo", "he", am.accounts)}
-            ${tierTile("Mid Engaged",    am.tierME, "$2.5K–$10K", "me", am.accounts)}
-            ${tierTile("Low Engaged",    am.tierLE, "&lt; $2.5K",  "le", am.accounts)}
-            ${tierTile("Dormant",        am.tierD,  "$0",          "d",  am.accounts)}
+            ${tierTile("Highly Engaged", am.tierHE, "$10K+", "he", am.accounts, "RM")}
+            ${tierTile("Mid Engaged", am.tierME, "$2.5K–$10K", "me", am.accounts, "RM")}
+            ${tierTile("Low Engaged", am.tierLE, "&lt; $2.5K", "le", am.accounts, "AM")}
+            ${tierTile("Dormant", am.tierD, "$0 · 60+ days", "d", am.accounts, "AM")}
+            ${tierTile("Never Active", am.tierNA, "$0 · never", "na", am.accounts, "AM")}
           </div>
           <div class="capture-note">
-            <strong>GMV Capture Model:</strong>
-            Max potential = (book × $10K floor) = <strong>${fmt$(am.accounts * 10000)}/mo</strong>.
-            Current capture at ${am.captureRate}% implies
-            <strong>${fmt$(Math.round(am.accounts * 10000 * (1 - am.captureRate/100)))}</strong>
-            in recoverable upside.
+            <strong>Tier Ownership:</strong> Per Playbook v1.0, RMs own Highly Engaged and Mid Engaged (protect & grow). AMs own Low Engaged, Dormant, and Never Active (activate & recover). <br><br>
+            <strong>GMV Capture Model:</strong> Max potential = (book × $10K floor) = <strong>${fmt$(am.accounts * 10000)}/mo</strong>.
+            Current capture at ${am.captureRate}% implies <strong>${fmt$(Math.round(am.accounts * 10000 * (1 - am.captureRate/100)))}</strong> in recoverable upside.
           </div>
         </div>
       </div>
-
       <div class="card">
-        <div class="card-title">
-          <div class="card-title-text">Partner Distribution</div>
-        </div>
+        <div class="card-title"><div class="card-title-text">Partner Distribution</div></div>
         <div class="card-body">
           <table class="partner-table">
-            <thead>
-              <tr>
-                <th class="left">Partner</th>
-                <th>Stores</th>
-                <th>GMV</th>
-                <th>Dormant</th>
-              </tr>
-            </thead>
+            <thead><tr>
+              <th class="left">Partner</th><th>Stores</th><th>GMV</th><th>At Risk</th>
+            </tr></thead>
             <tbody>
               ${Object.keys(partnerCounts).map(name => {
                 const p = partnerCounts[name];
-                return `
-                  <tr>
+                return `<tr>
                     <td class="left" style="font-weight: 600;">${esc(name)}</td>
                     <td>${p.stores}</td>
                     <td>${fmt$(p.gmv)}</td>
                     <td class="dormant-count ${p.dormant > 0 ? 'red' : 'green'}">${p.dormant}</td>
+                  </tr>`;
+              }).join("")}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Escalations for this AM -->
+    <div class="card">
+      <div class="card-title">
+        <div class="card-title-text">My Escalations to Regional Manager (${myEscalations.length})</div>
+        <div class="card-title-action">Visible to both AM and Exec views</div>
+      </div>
+      <div class="card-body no-pad" style="padding: 0 16px 16px;">
+        ${myEscalations.length === 0 ? `
+          <div class="queue-empty">No active escalations ✓</div>
+        ` : `
+          <table class="escalation-table">
+            <thead>
+              <tr>
+                <th>Stage</th>
+                <th>Days Open</th>
+                <th>Account</th>
+                <th>RM Assigned</th>
+                <th>Reason</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${myEscalations.sort((a,b) => b.daysOpen - a.daysOpen).map(e => {
+                const rm = RMs.find(r => r.id === e.toRM);
+                return `
+                  <tr>
+                    <td><span class="escalation-stage ${e.stage}">${e.stage.replace('day', 'Day ')}</span></td>
+                    <td style="font-weight: 700; color: ${e.daysOpen > 30 ? 'var(--sf-red)' : 'var(--sf-orange)'};">${e.daysOpen}d</td>
+                    <td style="font-weight: 600;">${esc(e.account)}</td>
+                    <td>${rm ? esc(rm.name) : ''}</td>
+                    <td style="color: var(--sf-muted); font-size: 11px;">${esc(e.reason)}</td>
                   </tr>
                 `;
               }).join("")}
             </tbody>
           </table>
-        </div>
+        `}
       </div>
     </div>
 
@@ -1227,10 +1364,11 @@ function renderAM(amId, isExec) {
                 <div class="queue-item ${m.lastTouch > 20 ? 'red' : 'orange'}">
                   <div class="queue-item-info">
                     <div class="queue-item-name">${esc(m.name)}</div>
-                    <div class="queue-item-sub">${esc(m.partner)} · Tier ${m.tier} · ${m.gmv === 0 ? "Dormant" : fmt$(m.gmv)}</div>
+                    <div class="queue-item-sub">${esc(m.partner)} · Tier ${m.tier} · ${m.gmv === 0 ? (m.tier === "NA" ? "Never Active" : "Dormant") : fmt$(m.gmv)}</div>
                   </div>
                   <div class="queue-item-days ${m.lastTouch > 20 ? 'red' : 'orange'}">${m.lastTouch}d</div>
                   <button class="btn-primary">Log Touch</button>
+                  ${m.lastTouch > 15 ? `<button class="btn-escalate">Escalate</button>` : ''}
                 </div>
               `).join("")}
         </div>
@@ -1238,42 +1376,60 @@ function renderAM(amId, isExec) {
 
       <div class="card">
         <div class="card-title">
-          <div class="card-title-text">Dormant Accounts ($0 GMV) (${dormant.length})</div>
-          <div class="card-title-action" style="color: var(--sf-red);">14-day retraining trigger</div>
+          <div class="card-title-text">At-Risk Accounts — Dormant + Never Active (${atRiskMerchants.length})</div>
+          <div class="card-title-action" style="color: var(--sf-red);">AM-owned per Playbook</div>
         </div>
         <div class="card-body">
-          ${dormant.length === 0
-            ? `<div class="queue-empty">No dormant accounts ✓</div>`
-            : dormant.map(m => `
-                <div class="queue-item red">
+          ${atRiskMerchants.length === 0
+            ? `<div class="queue-empty">No at-risk accounts ✓</div>`
+            : atRiskMerchants.map(m => `
+                <div class="queue-item ${m.tier === 'NA' ? 'purple' : 'red'}">
                   <div class="queue-item-info">
                     <div class="queue-item-name">${esc(m.name)}</div>
-                    <div class="queue-item-sub">${esc(m.partner)} · GMV at Risk: <strong style="color: var(--sf-red);">$10K/mo</strong></div>
+                    <div class="queue-item-sub">${esc(m.partner)} · ${m.tier === 'NA' ? 'Never Active — Day 7 goal' : 'Dormant — retrain required'} · $10K/mo at risk</div>
                   </div>
-                  <button class="btn-primary">Schedule Retraining</button>
+                  <button class="btn-primary">${m.tier === 'NA' ? 'Schedule Relaunch' : 'Schedule Retraining'}</button>
                 </div>
               `).join("")}
         </div>
       </div>
     </div>
 
-    <!-- Coaching note (exec only) -->
     ${isExec ? `
       <div class="card">
-        <div class="card-title">
-          <div class="card-title-text">Manager Coaching Note · Exec Only</div>
-        </div>
+        <div class="card-title"><div class="card-title-text">Manager Coaching Note · Exec Only</div></div>
         <div class="card-body">
-          <div class="coaching-note ${score.status}">
-            ${coachingNote(am, score)}
-          </div>
+          <div class="coaching-note ${score.status}">${coachingNote(am, score)}</div>
         </div>
       </div>
     ` : ""}
   `;
 }
 
-function tierTile(label, count, sub, cls, total) {
+function compTile(category, value, goal, description) {
+  const pct = Math.min(100, (value / goal) * 100);
+  const status = value >= goal ? "green" : value >= goal * 0.75 ? "yellow" : "red";
+  return `
+    <div class="comp-tile">
+      <div class="comp-tile-header">
+        <div>
+          <div class="comp-tile-category">${category}</div>
+          <div style="margin-top: 6px;">
+            <span class="comp-tile-progress">${value}</span>
+            <span class="comp-tile-goal">/ ${goal}</span>
+          </div>
+        </div>
+        <span class="pill ${status}"><span class="dot small ${status}"></span>${value >= goal ? 'Met' : value >= goal * 0.75 ? 'Close' : 'Behind'}</span>
+      </div>
+      <div class="comp-tile-bar">
+        <div class="comp-tile-bar-fill" style="width: ${pct}%; background: ${colorFor(status)};"></div>
+      </div>
+      <div class="comp-tile-desc">${description}</div>
+    </div>
+  `;
+}
+
+function tierTile(label, count, sub, cls, total, owner) {
   const pct = Math.round((count / total) * 100);
   return `
     <div class="tier-tile ${cls}">
@@ -1281,6 +1437,7 @@ function tierTile(label, count, sub, cls, total) {
       <div class="tier-tile-label">${label}</div>
       <div class="tier-tile-sub">${sub}</div>
       <div class="tier-tile-pct">${pct}% of book</div>
+      <div class="tier-tile-owner">Owner: ${owner}</div>
     </div>
   `;
 }
@@ -1297,11 +1454,170 @@ function coachingNote(am, score) {
     if (am.retraining > 14) weak.push("retraining SLA");
     return `${first} is mixed — ${score.g} green, ${score.y} yellow, ${score.r} red. Weakest areas: ${weak.join(", ")}. Recommendation: 30-day focus plan on untouched accounts + retraining backlog. Revisit in weekly 1:1.`;
   }
-  return `${first} is red on ${score.r} KPIs with $${(am.gmvAtRisk/1000).toFixed(0)}K GMV at risk. Recommendation: formal PIP, reassignment of ${am.tierD} dormant stores to a top-performing AM, and a cadence audit this week. Escalate to VP if no green-zone KPI recovery within 30 days.`;
+  return `${first} is red on ${score.r} KPIs with $${(am.gmvAtRisk/1000).toFixed(0)}K GMV at risk. Recommendation: formal PIP, reassignment of ${am.tierD + am.tierNA} at-risk stores to a top-performing AM, and a cadence audit this week. Escalate to Tearsa if no green-zone KPI recovery within 30 days.`;
 }
 
 // ═══════════════════════════════════════════════════════════════════════
-// CHART (recreated on each exec render)
+// RM DETAIL VIEW
+// ═══════════════════════════════════════════════════════════════════════
+function renderRM(rmId, isExec) {
+  const rm = RMs.find(r => r.id === rmId);
+  if (!rm) return "<div>RM not found</div>";
+  const rmStatus = scoreRM(rm);
+  const myEscalations = ESCALATIONS.filter(e => e.toRM === rm.id);
+  const coveredAMs = rm.coveredAMs.map(id => AMs.find(a => a.id === id)).filter(a => a);
+  const attainmentPct = Math.round((rm.newAccountsSigned / rm.newAccountsGoal) * 100);
+  const attainStatus = attainmentPct >= 100 ? "green" : attainmentPct >= 80 ? "yellow" : "red";
+
+  return `
+    <div class="pending-banner">
+      <strong>RM Role:</strong> Primary responsibility is new-account acquisition. Secondary is escalation support for AMs covering merchants in your region.
+    </div>
+
+    <div class="card">
+      <div class="am-detail-header">
+        ${avatarHtml(rm.initials, rmStatus.status, 64, "rm")}
+        <div class="am-detail-info">
+          <div class="am-detail-name-row">
+            <div class="am-detail-name">${esc(rm.name)}</div>
+            <span class="pill rm">RM</span>
+            <span class="pill ${rmStatus.status}"><span class="dot small ${rmStatus.status}"></span>${statusLabel(rmStatus.status)}</span>
+          </div>
+          <div class="am-detail-title">
+            ${esc(rm.title)} · Reporting to Tearsa Burgess (VP National Sales) · Covering AMs: ${coveredAMs.map(a => esc(a.name.split(" ")[0])).join(", ")}
+          </div>
+        </div>
+        <div class="am-score-block">
+          <div class="am-score-label">Quota Attainment</div>
+          <div class="am-score-value" style="color: ${colorFor(attainStatus)};">${attainmentPct}%</div>
+          <div class="am-score-breakdown">${rm.newAccountsSigned} of ${rm.newAccountsGoal} new accounts</div>
+        </div>
+      </div>
+      <div class="am-detail-stats">
+        <div>
+          <div class="header-stat-label">New GMV · MTD</div>
+          <div class="header-stat-value">${fmt$full(rm.gmvMTD)}</div>
+          <div class="header-stat-sub" style="color: ${rm.gmvGrowth >= 0 ? 'var(--sf-green)' : 'var(--sf-red)'};">
+            ${rm.gmvGrowth >= 0 ? '▲' : '▼'} ${Math.abs(rm.gmvGrowth)}% MoM
+          </div>
+        </div>
+        <div>
+          <div class="header-stat-label">Open Escalations</div>
+          <div class="header-stat-value">${rm.escalationsOpen}</div>
+          <div class="header-stat-sub">Active double-coverage</div>
+        </div>
+        <div>
+          <div class="header-stat-label">Resolved</div>
+          <div class="header-stat-value" style="color: var(--sf-green);">${rm.escalationsResolved}</div>
+          <div class="header-stat-sub">This month</div>
+        </div>
+        <div>
+          <div class="header-stat-label">Overdue</div>
+          <div class="header-stat-value" style="color: ${rm.escalationsOverdue > 0 ? 'var(--sf-red)' : 'var(--sf-muted)'};">${rm.escalationsOverdue}</div>
+          <div class="header-stat-sub" style="color: ${rm.escalationsOverdue > 0 ? 'var(--sf-red)' : 'var(--sf-muted)'};">Past SLA</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- New account quota -->
+    <div class="card">
+      <div class="card-title"><div class="card-title-text">New Account Acquisition · Primary KPI</div></div>
+      <div class="card-body">
+        <div class="comp-grid" style="grid-template-columns: 1fr;">
+          ${compTile("New Accounts Signed · Feb", rm.newAccountsSigned, rm.newAccountsGoal,
+            "Primary RM metric. Monthly new-account acquisition quota. Resets on the 1st of each month.")}
+        </div>
+      </div>
+    </div>
+
+    <!-- Escalations queue -->
+    <div class="card">
+      <div class="card-title">
+        <div class="card-title-text">Active Escalations Assigned (${myEscalations.length})</div>
+        <div class="card-title-action">Double-coverage from AM book</div>
+      </div>
+      <div class="card-body no-pad" style="padding: 0 16px 16px;">
+        ${myEscalations.length === 0 ? `
+          <div class="queue-empty">No active escalations ✓</div>
+        ` : `
+          <table class="escalation-table">
+            <thead>
+              <tr>
+                <th>Stage</th>
+                <th>Days Open</th>
+                <th>Account</th>
+                <th>From AM</th>
+                <th>Reason</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              ${myEscalations.sort((a,b) => b.daysOpen - a.daysOpen).map(e => {
+                const am = AMs.find(a => a.id === e.fromAM);
+                return `
+                  <tr>
+                    <td><span class="escalation-stage ${e.stage}">${e.stage.replace('day', 'Day ')}</span></td>
+                    <td style="font-weight: 700; color: ${e.daysOpen > 30 ? 'var(--sf-red)' : 'var(--sf-orange)'};">${e.daysOpen}d</td>
+                    <td style="font-weight: 600;">${esc(e.account)}</td>
+                    <td>${am ? esc(am.name) : ''}</td>
+                    <td style="color: var(--sf-muted); font-size: 11px;">${esc(e.reason)}</td>
+                    <td><button class="btn-primary">Take Action</button></td>
+                  </tr>
+                `;
+              }).join("")}
+            </tbody>
+          </table>
+        `}
+      </div>
+    </div>
+
+    <!-- AMs covered -->
+    <div class="card">
+      <div class="card-title"><div class="card-title-text">AM Coverage</div></div>
+      <div class="card-body no-pad">
+        <table class="leader-table">
+          <thead>
+            <tr>
+              <th class="left">Account Manager</th>
+              <th>Score</th>
+              <th>Dormancy</th>
+              <th>At Risk</th>
+              <th>Escalations to RM</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${coveredAMs.map(am => {
+              const sc = scoreAM(am);
+              const escCount = ESCALATIONS.filter(e => e.fromAM === am.id && e.toRM === rm.id).length;
+              return `
+                <tr onclick="goAM('${am.id}', true)">
+                  <td class="left">
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                      ${avatarHtml(am.initials, sc.status, 30, "am")}
+                      <div>
+                        <div style="font-weight: 600; color: var(--sf-navy);">${esc(am.name)}</div>
+                        <div style="font-size: 11px; color: var(--sf-muted);">${am.accounts} accts</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td><div style="font-size: 18px; font-weight: 700; color: ${colorFor(sc.status)};">${sc.score}</div></td>
+                  <td><div style="font-weight: 700;">${am.dormancy}%</div></td>
+                  <td><div style="font-weight: 700; color: var(--sf-red);">${fmt$(am.gmvAtRisk)}</div></td>
+                  <td><div style="font-weight: 700;">${escCount}</div></td>
+                  <td><span class="pill ${sc.status}"><span class="dot small ${sc.status}"></span>${statusLabel(sc.status)}</span></td>
+                </tr>
+              `;
+            }).join("")}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  `;
+}
+
+// ═══════════════════════════════════════════════════════════════════════
+// CHART
 // ═══════════════════════════════════════════════════════════════════════
 let trendChart = null;
 function renderTrendChart() {
@@ -1315,33 +1631,21 @@ function renderTrendChart() {
       labels: TREND.map(t => t.month),
       datasets: [
         {
-          label: "GMV ($K)",
-          data: TREND.map(t => t.gmv),
-          borderColor: "#0176d3",
-          backgroundColor: "rgba(1,118,211,0.08)",
-          borderWidth: 3,
-          yAxisID: "y",
-          tension: 0.3,
-          pointRadius: 4,
-          pointHoverRadius: 6
+          label: "GMV ($K)", data: TREND.map(t => t.gmv),
+          borderColor: "#0176d3", backgroundColor: "rgba(1,118,211,0.08)",
+          borderWidth: 3, yAxisID: "y", tension: 0.3,
+          pointRadius: 4, pointHoverRadius: 6
         },
         {
-          label: "Dormancy %",
-          data: TREND.map(t => t.dormancy),
-          borderColor: "#ba0517",
-          backgroundColor: "rgba(186,5,23,0.04)",
-          borderWidth: 2,
-          borderDash: [5, 5],
-          yAxisID: "y1",
-          tension: 0.3,
-          pointRadius: 3,
-          pointHoverRadius: 5
+          label: "Dormancy %", data: TREND.map(t => t.dormancy),
+          borderColor: "#ba0517", backgroundColor: "rgba(186,5,23,0.04)",
+          borderWidth: 2, borderDash: [5, 5], yAxisID: "y1",
+          tension: 0.3, pointRadius: 3, pointHoverRadius: 5
         }
       ]
     },
     options: {
-      responsive: true,
-      maintainAspectRatio: false,
+      responsive: true, maintainAspectRatio: false,
       interaction: { mode: "index", intersect: false },
       plugins: {
         legend: { position: "top", labels: { font: { size: 11 } } },
@@ -1350,14 +1654,12 @@ function renderTrendChart() {
       scales: {
         x: { grid: { color: "#ececec" }, ticks: { color: "#3e3e3c", font: { size: 11 } } },
         y: {
-          type: "linear", position: "left",
-          grid: { color: "#ececec" },
+          type: "linear", position: "left", grid: { color: "#ececec" },
           ticks: { color: "#0176d3", font: { size: 11 } },
           title: { display: true, text: "GMV ($K)", color: "#0176d3", font: { size: 11 } }
         },
         y1: {
-          type: "linear", position: "right",
-          grid: { drawOnChartArea: false },
+          type: "linear", position: "right", grid: { drawOnChartArea: false },
           ticks: { color: "#ba0517", font: { size: 11 } },
           title: { display: true, text: "Dormancy %", color: "#ba0517", font: { size: 11 } }
         }
@@ -1372,56 +1674,82 @@ function renderTrendChart() {
 function render() {
   const isExec = state.identity === "exec";
   const currentAM = state.view.startsWith("am-") ? state.view.slice(3) : null;
+  const currentRM = state.view.startsWith("rm-") ? state.view.slice(3) : null;
 
-  // Update breadcrumb + title
   const breadcrumb = document.getElementById("breadcrumb");
   const title = document.getElementById("pageheader-title");
   const sub = document.getElementById("pageheader-sub");
   const btnBack = document.getElementById("btn-back");
+  const tabsEl = document.getElementById("tabs");
+  const escBadge = document.getElementById("esc-badge");
 
+  if (escBadge) escBadge.textContent = ESCALATIONS.length;
+
+  // Show tabs only on exec rollup view
+  const showTabs = (state.view === "exec" && isExec);
+  tabsEl.style.display = showTabs ? "flex" : "none";
+
+  if (showTabs) {
+    document.querySelectorAll('.tab').forEach(t => {
+      t.classList.toggle('active', t.dataset.tab === state.activeTab);
+    });
+  }
+
+  // Breadcrumb + title
   if (currentAM) {
     const am = AMs.find(a => a.id === currentAM);
     breadcrumb.innerHTML = isExec
-      ? `<span class="crumb-link" onclick="goExec()">Account Management</span> <span class="sep">/</span> ${esc(am.name)}`
-      : `Account Management <span class="sep">/</span> ${esc(am.name)}`;
+      ? `<span class="crumb-link" onclick="goExec()">Sales Performance</span> <span class="sep">/</span> AM <span class="sep">/</span> ${esc(am.name)}`
+      : `Sales Performance <span class="sep">/</span> ${esc(am.name)}`;
     title.textContent = am.name + " · Performance";
+  } else if (currentRM) {
+    const rm = RMs.find(r => r.id === currentRM);
+    breadcrumb.innerHTML = isExec
+      ? `<span class="crumb-link" onclick="goExec()">Sales Performance</span> <span class="sep">/</span> RM <span class="sep">/</span> ${esc(rm.name)}`
+      : `Sales Performance <span class="sep">/</span> ${esc(rm.name)}`;
+    title.textContent = rm.name + " · Performance";
   } else {
-    breadcrumb.innerHTML = "Account Management";
-    title.textContent = "AM Performance Dashboard";
+    breadcrumb.innerHTML = "Sales Performance";
+    title.textContent = "Sales Performance Dashboard";
   }
 
-  sub.innerHTML = (isExec
-    ? "Executive rollup · Full access to all AMs and merchants"
-    : `Account Manager view · ${esc(AMs.find(a => a.id === state.identity).name)}'s book only`
-  ) + " · Period: Feb 1 – Feb 28, 2026";
+  if (isExec && !currentAM && !currentRM) {
+    sub.innerHTML = "Executive rollup · Full access to all AMs, RMs, and merchants · Period: Feb 1 – Feb 28, 2026";
+  } else if (!isExec) {
+    const self = AMs.find(a => a.id === state.identity) || RMs.find(r => r.id === state.identity);
+    sub.innerHTML = `${self.role} view · ${esc(self.name)}'s view only · Period: Feb 1 – Feb 28, 2026`;
+  } else {
+    sub.innerHTML = "Executive drill-in · Period: Feb 1 – Feb 28, 2026";
+  }
 
-  btnBack.style.display = (isExec && currentAM && state.drilledFromExec) ? "inline-block" : "none";
-
-  // Sync identity select
+  btnBack.style.display = (isExec && (currentAM || currentRM) && state.drilledFromExec) ? "inline-block" : "none";
   document.getElementById("identity-select").value = state.identity;
 
-  // Render main body
   const main = document.getElementById("main");
+
   if (state.view === "exec" && isExec) {
-    main.innerHTML = renderExec();
-    // Render chart after DOM is updated
-    setTimeout(renderTrendChart, 0);
-  } else {
+    if (state.activeTab === "am") {
+      main.innerHTML = renderExecAMTab();
+      setTimeout(renderTrendChart, 0);
+    } else if (state.activeTab === "rm") {
+      main.innerHTML = renderExecRMTab();
+    } else {
+      main.innerHTML = renderExecEscTab();
+    }
+  } else if (currentAM || AMs.find(a => a.id === state.identity)) {
     main.innerHTML = renderAM(currentAM || state.identity, isExec);
+  } else {
+    main.innerHTML = renderRM(currentRM || state.identity, isExec);
   }
 
-  // Scroll to top on view change
   window.scrollTo(0, 0);
 }
 
-// Identity selector
 document.getElementById("identity-select").addEventListener("change", (e) => {
   switchIdentity(e.target.value);
 });
 
-// Initial render
 render();
 </script>
-
 </body>
 </html>
