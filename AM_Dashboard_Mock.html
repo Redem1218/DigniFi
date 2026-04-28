@@ -1267,7 +1267,7 @@ function renderExecAMTab() {
             </div>
             <div class="priority-card-gmv">${fmt$(matrixGMV.atRisk)} GMV · trying but failing</div>
             <div class="priority-card-action">
-              <strong>Action:</strong> WebBank approval-rate diagnostic. Audit deal eligibility training. These cancel loudly.
+              <strong>Action:</strong> Approval-rate diagnostic. Audit deal eligibility training. These cancel loudly.
             </div>
           </div>
 
@@ -1445,11 +1445,11 @@ function renderExecAMTab() {
           </div>
           <div class="insight yellow">
             <div class="insight-title">New Risk Signal</div>
-            <div class="insight-text">${matrix.atRisk} at-risk stores team-wide are submitting apps but failing to fund. This is the cohort Tearsa flagged as highest churn risk. Audit deal structure with WebBank, retrain on app eligibility.</div>
+            <div class="insight-text">${matrix.atRisk} at-risk stores team-wide are submitting apps but failing to fund. This is the cohort Tearsa flagged as highest churn risk. Audit deal structure and retrain on app eligibility.</div>
           </div>
           <div class="insight red">
             <div class="insight-title">At Risk</div>
-            <div class="insight-text">Carlos has 4 at-risk stores in his book of 8 — half his portfolio is at high churn risk despite app submission activity. PIP + immediate WebBank approval-rate diagnostic.</div>
+            <div class="insight-text">Carlos has 4 at-risk stores in his book of 8 — half his portfolio is at high churn risk despite app submission activity. PIP + immediate approval-rate diagnostic.</div>
           </div>
         </div>
       </div>
@@ -1860,7 +1860,7 @@ function renderAM(amId, isExec) {
                   ${fmt$(m.gmv)} GMV · Tier ${m.tier} · ${esc(m.partner)}
                 </div>
               </div>
-              <button class="btn-primary">WebBank Diagnostic</button>
+              <button class="btn-primary">Approval Diagnostic</button>
               <button class="btn-escalate">Escalate</button>
             </div>
           `).join("")}
@@ -2413,7 +2413,7 @@ const DRILL_CONFIG = {
     summary: "Stores submitting many applications but failing to convert. Highest churn risk.",
     rule: "<strong>Rule:</strong> ≥10 apps in 30d <strong>AND</strong> &lt;25% funded rate <strong>AND</strong> GMV under $10K",
     filter: m => m.atRisk,
-    actionLabel: "WebBank Diagnostic",
+    actionLabel: "Approval Diagnostic",
     secondaryAction: "Escalate"
   },
   audit: {
