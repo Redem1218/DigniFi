@@ -264,59 +264,111 @@
   .grade-mini.D { background: #ef6c00; }
   .grade-mini.F { background: #b71c1c; }
 
-  /* Health matrix */
-  .health-matrix {
+  /* Health Priority Cards - 5 cards ranked by action priority */
+  .priority-grid {
     display: grid;
-    grid-template-columns: 100px repeat(3, 1fr);
-    gap: 6px;
-    font-size: 11px;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 12px;
   }
-  .health-matrix-header {
-    text-align: center;
-    font-weight: 700;
-    color: var(--sf-muted);
-    text-transform: uppercase;
-    font-size: 10px;
-    padding: 6px;
-  }
-  .health-matrix-row-label {
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    padding-right: 8px;
-    font-weight: 700;
-    color: var(--sf-muted);
-    text-transform: uppercase;
-    font-size: 10px;
-  }
-  .health-matrix-cell {
+  @media (max-width: 1100px) { .priority-grid { grid-template-columns: repeat(3, 1fr); } }
+  @media (max-width: 700px)  { .priority-grid { grid-template-columns: 1fr; } }
+
+  .priority-card {
     background: white;
     border: 1px solid var(--sf-border);
-    border-radius: 4px;
-    padding: 10px 8px;
-    text-align: center;
+    border-top: 4px solid var(--sf-border);
+    border-radius: 6px;
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-height: 200px;
   }
-  .health-matrix-cell-label {
+  .priority-card.atRisk    { border-top-color: #c62828; background: #fff5f5; }
+  .priority-card.audit     { border-top-color: #ef6c00; background: #fff9f0; }
+  .priority-card.star      { border-top-color: #1b5e20; background: #f5fff5; }
+  .priority-card.healthy   { border-top-color: #689f38; background: #f9fff0; }
+  .priority-card.dormant   { border-top-color: #4a148c; background: #faf5fc; }
+
+  .priority-card-header {
+    display: flex; align-items: center; justify-content: space-between;
+    border-bottom: 1px solid rgba(0,0,0,0.08);
+    padding-bottom: 8px;
+  }
+  .priority-card-title {
+    font-size: 13px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.4px;
+  }
+  .priority-card.atRisk .priority-card-title    { color: #b71c1c; }
+  .priority-card.audit .priority-card-title     { color: #e65100; }
+  .priority-card.star .priority-card-title      { color: #1b5e20; }
+  .priority-card.healthy .priority-card-title   { color: #33691e; }
+  .priority-card.dormant .priority-card-title   { color: #4a148c; }
+
+  .priority-card-count {
+    font-size: 32px; font-weight: 700;
+    color: var(--sf-navy);
+    line-height: 1;
+  }
+  .priority-card-rule {
     font-size: 11px;
-    font-weight: 700;
-    margin-bottom: 4px;
+    color: var(--sf-muted);
+    line-height: 1.4;
+    background: rgba(255,255,255,0.7);
+    padding: 6px 8px;
+    border-radius: 4px;
+    border-left: 2px solid rgba(0,0,0,0.1);
   }
-  .health-matrix-cell-count {
-    font-size: 22px;
-    font-weight: 700;
+  .priority-card-rule strong {
     color: var(--sf-navy);
   }
-  .health-matrix-cell.star      { background: #e8f5e9; border-color: #2e7d32; }
-  .health-matrix-cell.star      .health-matrix-cell-label { color: #1b5e20; }
-  .health-matrix-cell.healthy   { background: #f1f8e9; border-color: #689f38; }
-  .health-matrix-cell.healthy   .health-matrix-cell-label { color: #33691e; }
-  .health-matrix-cell.audit     { background: #fff3e0; border-color: #ef6c00; }
-  .health-matrix-cell.audit     .health-matrix-cell-label { color: #e65100; }
-  .health-matrix-cell.atRisk{ background: #ffebee; border-color: #c62828; }
-  .health-matrix-cell.atRisk .health-matrix-cell-label { color: #b71c1c; }
-  .health-matrix-cell.dormant   { background: #f3e5f5; border-color: #7b1fa2; }
-  .health-matrix-cell.dormant   .health-matrix-cell-label { color: #4a148c; }
-  .health-matrix-cell.empty     { background: #fafafa; color: var(--sf-light); }
+  .priority-card-gmv {
+    font-size: 11px;
+    color: var(--sf-text);
+    font-weight: 600;
+  }
+  .priority-card-action {
+    font-size: 11px;
+    color: var(--sf-text);
+    line-height: 1.4;
+    margin-top: auto;
+    padding-top: 4px;
+  }
+  .priority-card-action strong {
+    text-transform: uppercase;
+    font-size: 10px;
+    letter-spacing: 0.3px;
+  }
+  .priority-card.atRisk .priority-card-action strong  { color: #b71c1c; }
+  .priority-card.audit .priority-card-action strong   { color: #e65100; }
+  .priority-card.star .priority-card-action strong    { color: #1b5e20; }
+  .priority-card.healthy .priority-card-action strong { color: #33691e; }
+  .priority-card.dormant .priority-card-action strong { color: #4a148c; }
+
+  /* Scatter plot */
+  .scatter-container {
+    position: relative;
+    height: 360px;
+    width: 100%;
+  }
+  .scatter-legend {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    font-size: 11px;
+    color: var(--sf-muted);
+    padding: 8px 12px;
+    background: #fafaf9;
+    border-radius: 4px;
+    margin-top: 8px;
+  }
+  .scatter-legend-dot {
+    display: inline-block;
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    margin-right: 4px;
+    vertical-align: middle;
+  }
 
   .btn-link { font-size: 11px; background: transparent; border: none;
     color: var(--sf-blue); cursor: pointer; font-weight: 600; }
@@ -1005,11 +1057,17 @@ function renderExecAMTab() {
     ? Math.round(allMerchants.reduce((s, m) => s + m.healthScore, 0) / totalMerchants)
     : 0;
 
-  // Health matrix counts
+  // Health priority counts + GMV per quadrant
   const matrix = {
     star: 0, healthy: 0, audit: 0, atRisk: 0, dormant: 0
   };
-  allMerchants.forEach(m => { matrix[m.quadrant]++; });
+  const matrixGMV = {
+    star: 0, healthy: 0, audit: 0, atRisk: 0, dormant: 0
+  };
+  allMerchants.forEach(m => {
+    matrix[m.quadrant]++;
+    matrixGMV[m.quadrant] += m.gmv;
+  });
 
   const ranked = AMs.map(am => Object.assign({}, am, scoreAM(am)))
                     .sort((a, b) => b.score - a.score);
@@ -1032,52 +1090,112 @@ function renderExecAMTab() {
                 avgHealthScore >= 75 ? "green" : avgHealthScore >= 60 ? "yellow" : "red")}
     </div>
 
-    <!-- NEW: Health Matrix -->
+    <!-- NEW: Health Priority Cards (replaces matrix) -->
+    <div class="card">
+      <div class="card-title">
+        <div class="card-title-text">Merchant Health · Priority View</div>
+        <div class="card-title-action">Stores classified by GMV + Funded Rate · Action priority left to right</div>
+      </div>
+      <div class="card-body">
+        <div style="font-size: 12px; color: var(--sf-muted); margin-bottom: 14px; line-height: 1.5;">
+          Pure GMV tiering misses stores submitting many apps but funding few. Each card below defines its threshold rules, count, and recommended action. <strong style="color: #b71c1c;">At Risk</strong> stores are highest churn priority — they're trying and failing.
+        </div>
+        <div class="priority-grid">
+
+          <!-- AT RISK - leftmost, highest priority -->
+          <div class="priority-card atRisk">
+            <div class="priority-card-header">
+              <div class="priority-card-title">🚨 At Risk</div>
+              <div class="priority-card-count">${matrix.atRisk}</div>
+            </div>
+            <div class="priority-card-rule">
+              <strong>Rule:</strong> ≥10 apps in 30d <strong>AND</strong> &lt;25% funded rate <strong>AND</strong> GMV &lt; $10K
+            </div>
+            <div class="priority-card-gmv">${fmt$(matrixGMV.atRisk)} GMV · trying but failing</div>
+            <div class="priority-card-action">
+              <strong>Action:</strong> WebBank approval-rate diagnostic. Audit deal eligibility training. These cancel loudly.
+            </div>
+          </div>
+
+          <!-- AUDIT - high GMV but broken funded rate -->
+          <div class="priority-card audit">
+            <div class="priority-card-header">
+              <div class="priority-card-title">⚠ Audit</div>
+              <div class="priority-card-count">${matrix.audit}</div>
+            </div>
+            <div class="priority-card-rule">
+              <strong>Rule:</strong> GMV ≥ $2.5K <strong>AND</strong> funded rate &lt; 30%
+            </div>
+            <div class="priority-card-gmv">${fmt$(matrixGMV.audit)} GMV · large deals masking issues</div>
+            <div class="priority-card-action">
+              <strong>Action:</strong> Review deal structure. High GMV from few large funded apps masking conversion issues at scale.
+            </div>
+          </div>
+
+          <!-- STAR - top performers -->
+          <div class="priority-card star">
+            <div class="priority-card-header">
+              <div class="priority-card-title">⭐ Star</div>
+              <div class="priority-card-count">${matrix.star}</div>
+            </div>
+            <div class="priority-card-rule">
+              <strong>Rule:</strong> GMV ≥ $2.5K <strong>AND</strong> funded rate ≥ 30%
+            </div>
+            <div class="priority-card-gmv">${fmt$(matrixGMV.star)} GMV · proof points</div>
+            <div class="priority-card-action">
+              <strong>Action:</strong> Protect & grow. Use as case studies and reference accounts for new merchant acquisition.
+            </div>
+          </div>
+
+          <!-- HEALTHY - low volume, good conversion -->
+          <div class="priority-card healthy">
+            <div class="priority-card-header">
+              <div class="priority-card-title">🌱 Healthy</div>
+              <div class="priority-card-count">${matrix.healthy}</div>
+            </div>
+            <div class="priority-card-rule">
+              <strong>Rule:</strong> GMV &lt; $2.5K <strong>AND</strong> funded rate ≥ 30%
+            </div>
+            <div class="priority-card-gmv">${fmt$(matrixGMV.healthy)} GMV · small but converting</div>
+            <div class="priority-card-action">
+              <strong>Action:</strong> Likely small dealer. Coach on ticket size and pitch frequency, not conversion.
+            </div>
+          </div>
+
+          <!-- DORMANT / NA - zero volume -->
+          <div class="priority-card dormant">
+            <div class="priority-card-header">
+              <div class="priority-card-title">☠ Dormant / NA</div>
+              <div class="priority-card-count">${matrix.dormant}</div>
+            </div>
+            <div class="priority-card-rule">
+              <strong>Rule:</strong> $0 GMV in current month
+            </div>
+            <div class="priority-card-gmv">$0 GMV · checked out</div>
+            <div class="priority-card-action">
+              <strong>Action:</strong> 14-day retraining trigger per Playbook. If no response, escalate to RM at Day 30.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Scatter plot + Top At-Risk Stores side-by-side -->
     <div class="row-2">
       <div class="card">
         <div class="card-title">
-          <div class="card-title-text">Merchant Health Matrix · GMV vs Funded Rate</div>
-          <div class="card-title-action">Tearsa's framework for identifying churn risk</div>
+          <div class="card-title-text">Merchant Distribution · Apps vs Funded Rate</div>
+          <div class="card-title-action">Each dot = one merchant · Size = GMV · Color = Health Grade</div>
         </div>
         <div class="card-body">
-          <div style="font-size: 12px; color: var(--sf-muted); margin-bottom: 14px; line-height: 1.5;">
-            Pure GMV tiering misses the most dangerous cohort: stores submitting many apps but funding few. The matrix below cross-references volume (GMV) with conversion (funded rate). The <strong style="color: #b71c1c;">At Risk</strong> quadrant — high activity, low conversion — is highest churn risk.
-          </div>
-          <div class="health-matrix">
-            <div></div>
-            <div class="health-matrix-header">High Funded Rate (≥30%)</div>
-            <div class="health-matrix-header">Low Funded Rate (&lt;30%)</div>
-            <div class="health-matrix-header">Zero GMV</div>
-
-            <div class="health-matrix-row-label">High GMV</div>
-            <div class="health-matrix-cell star">
-              <div class="health-matrix-cell-label">⭐ Star</div>
-              <div class="health-matrix-cell-count">${matrix.star}</div>
-              <div style="font-size: 10px; color: var(--sf-muted); margin-top: 4px;">Protect & grow</div>
-            </div>
-            <div class="health-matrix-cell audit">
-              <div class="health-matrix-cell-label">⚠ Audit</div>
-              <div class="health-matrix-cell-count">${matrix.audit}</div>
-              <div style="font-size: 10px; color: var(--sf-muted); margin-top: 4px;">Review deal structure</div>
-            </div>
-            <div class="health-matrix-cell empty"><div style="font-size: 11px;">N/A</div></div>
-
-            <div class="health-matrix-row-label">Low GMV</div>
-            <div class="health-matrix-cell healthy">
-              <div class="health-matrix-cell-label">🌱 Healthy</div>
-              <div class="health-matrix-cell-count">${matrix.healthy}</div>
-              <div style="font-size: 10px; color: var(--sf-muted); margin-top: 4px;">Small but converting</div>
-            </div>
-            <div class="health-matrix-cell atRisk">
-              <div class="health-matrix-cell-label">🚨 At Risk</div>
-              <div class="health-matrix-cell-count">${matrix.atRisk}</div>
-              <div style="font-size: 10px; color: #b71c1c; margin-top: 4px; font-weight: 600;">HIGHEST CHURN RISK</div>
-            </div>
-            <div class="health-matrix-cell dormant">
-              <div class="health-matrix-cell-label">☠ Dormant / NA</div>
-              <div class="health-matrix-cell-count">${matrix.dormant}</div>
-              <div style="font-size: 10px; color: var(--sf-muted); margin-top: 4px;">Reactivate or churn</div>
-            </div>
+          <div class="scatter-container"><canvas id="scatter-chart"></canvas></div>
+          <div class="scatter-legend">
+            <span><span class="scatter-legend-dot" style="background: #1b5e20;"></span>A (90+)</span>
+            <span><span class="scatter-legend-dot" style="background: #2e7d32;"></span>B (75-89)</span>
+            <span><span class="scatter-legend-dot" style="background: #f9a825;"></span>C (60-74)</span>
+            <span><span class="scatter-legend-dot" style="background: #ef6c00;"></span>D (40-59)</span>
+            <span><span class="scatter-legend-dot" style="background: #b71c1c;"></span>F (0-39)</span>
+            <span style="margin-left: auto; font-style: italic;">At-Risk cluster: bottom-right of plot</span>
           </div>
         </div>
       </div>
@@ -1986,6 +2104,97 @@ function renderRM(rmId, isExec) {
 }
 
 // ═══════════════════════════════════════════════════════════════════════
+// SCATTER PLOT — Merchant Distribution
+// ═══════════════════════════════════════════════════════════════════════
+let scatterChart = null;
+function renderScatterChart() {
+  const canvas = document.getElementById("scatter-chart");
+  if (!canvas) return;
+  if (scatterChart) { scatterChart.destroy(); scatterChart = null; }
+  const ctx = canvas.getContext("2d");
+
+  const gradeColor = {
+    A: "#1b5e20", B: "#2e7d32", C: "#f9a825", D: "#ef6c00", F: "#b71c1c"
+  };
+
+  // Group merchants by grade for legend coherence
+  const allMerchants = Object.entries(MERCHANTS_BY_AM).flatMap(([amId, list]) =>
+    list.map(m => ({ ...m, amId }))
+  );
+
+  // Build datasets - one per grade for the legend
+  const grades = ["A", "B", "C", "D", "F"];
+  const datasets = grades.map(grade => ({
+    label: `Grade ${grade}`,
+    data: allMerchants.filter(m => m.healthGrade === grade).map(m => ({
+      x: m.submittedApps,
+      y: m.fundedRate,
+      r: Math.max(4, Math.min(20, Math.sqrt(m.gmv / 100))),
+      // Custom for tooltip
+      _name: m.name,
+      _gmv: m.gmv,
+      _funded: m.fundedTransactions,
+      _submitted: m.submittedApps,
+      _grade: m.healthGrade,
+      _atRisk: m.atRisk,
+      _amId: m.amId
+    })),
+    backgroundColor: gradeColor[grade] + "BB",
+    borderColor: gradeColor[grade],
+    borderWidth: 1.5
+  }));
+
+  scatterChart = new Chart(ctx, {
+    type: "bubble",
+    data: { datasets },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { position: "top", labels: { font: { size: 11 }, boxWidth: 12 } },
+        tooltip: {
+          backgroundColor: "#032d60",
+          titleFont: { size: 12 },
+          bodyFont: { size: 11 },
+          padding: 10,
+          callbacks: {
+            title: function(items) {
+              return items[0].raw._name;
+            },
+            label: function(item) {
+              const r = item.raw;
+              const am = AMs.find(a => a.id === r._amId);
+              const lines = [
+                `Grade: ${r._grade}${r._atRisk ? "  ⚠ AT RISK" : ""}`,
+                `Apps: ${r._submitted}  →  Funded: ${r._funded} (${item.parsed.y}%)`,
+                `GMV: $${r._gmv.toLocaleString()}`,
+                `AM: ${am ? am.name : "?"}`
+              ];
+              return lines;
+            }
+          }
+        }
+      },
+      scales: {
+        x: {
+          title: { display: true, text: "Submitted Applications (last 30 days)", color: "#3e3e3c", font: { size: 11, weight: "bold" } },
+          grid: { color: "#ececec" },
+          ticks: { color: "#3e3e3c", font: { size: 11 } },
+          min: 0
+        },
+        y: {
+          title: { display: true, text: "Funded Rate (%)", color: "#3e3e3c", font: { size: 11, weight: "bold" } },
+          grid: { color: "#ececec" },
+          ticks: { color: "#3e3e3c", font: { size: 11 }, callback: v => v + "%" },
+          min: 0,
+          max: 100
+        }
+      }
+    }
+  });
+}
+
+// ═══════════════════════════════════════════════════════════════════════
 // CHART
 // ═══════════════════════════════════════════════════════════════════════
 let trendChart = null;
@@ -2099,7 +2308,7 @@ function render() {
   if (state.view === "exec" && isExec) {
     if (state.activeTab === "am") {
       main.innerHTML = renderExecAMTab();
-      setTimeout(renderTrendChart, 0);
+      setTimeout(() => { renderTrendChart(); renderScatterChart(); }, 0);
     } else if (state.activeTab === "rm") {
       main.innerHTML = renderExecRMTab();
     } else {
