@@ -290,6 +290,155 @@
   .priority-card.healthy   { border-top-color: #689f38; background: #f9fff0; }
   .priority-card.dormant   { border-top-color: #4a148c; background: #faf5fc; }
 
+  /* Clickable affordance on priority cards */
+  .priority-card {
+    cursor: pointer;
+    transition: transform 0.12s, box-shadow 0.12s;
+    position: relative;
+  }
+  .priority-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+  }
+  .priority-card::after {
+    content: "View →";
+    position: absolute;
+    top: 14px; right: 14px;
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--sf-blue);
+    opacity: 0;
+    transition: opacity 0.12s;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+  }
+  .priority-card:hover::after { opacity: 1; }
+
+  /* Drill-through screen styles */
+  .drill-header {
+    background: linear-gradient(135deg, #032d60 0%, #0176d3 100%);
+    color: white;
+    padding: 24px;
+    border-radius: 8px;
+    margin-bottom: 16px;
+  }
+  .drill-header.atRisk    { background: linear-gradient(135deg, #b71c1c 0%, #c62828 100%); }
+  .drill-header.audit     { background: linear-gradient(135deg, #e65100 0%, #ef6c00 100%); }
+  .drill-header.star      { background: linear-gradient(135deg, #1b5e20 0%, #2e7d32 100%); }
+  .drill-header.healthy   { background: linear-gradient(135deg, #33691e 0%, #689f38 100%); }
+  .drill-header.dormant   { background: linear-gradient(135deg, #4a148c 0%, #7b1fa2 100%); }
+
+  .drill-header-top {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 12px;
+  }
+  .drill-header-title {
+    font-size: 24px; font-weight: 700;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .drill-header-rule {
+    font-size: 13px;
+    opacity: 0.9;
+    background: rgba(255,255,255,0.15);
+    padding: 8px 12px;
+    border-radius: 4px;
+    line-height: 1.5;
+  }
+  .drill-header-rule strong { font-weight: 700; }
+
+  .drill-stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-top: 14px;
+  }
+  @media (max-width: 700px) { .drill-stats { grid-template-columns: repeat(2, 1fr); } }
+  .drill-stat-label {
+    font-size: 10px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.4px;
+    opacity: 0.85;
+  }
+  .drill-stat-value {
+    font-size: 24px; font-weight: 700; margin-top: 2px;
+  }
+  .drill-stat-sub {
+    font-size: 11px; opacity: 0.8; margin-top: 2px;
+  }
+
+  .drill-actions {
+    display: flex; gap: 8px;
+    margin-bottom: 12px; align-items: center;
+  }
+  .btn-export {
+    font-size: 12px;
+    background: white;
+    border: 1px solid var(--sf-blue);
+    color: var(--sf-blue);
+    padding: 6px 14px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .btn-export:hover { background: #f0f7fc; }
+
+  /* Drill table */
+  .drill-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+  .drill-table thead {
+    background: #fafaf9;
+    border-bottom: 2px solid var(--sf-border);
+  }
+  .drill-table th {
+    padding: 10px 12px;
+    text-align: left;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--sf-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    cursor: pointer;
+    user-select: none;
+  }
+  .drill-table th.right { text-align: right; }
+  .drill-table th.center { text-align: center; }
+  .drill-table th:hover { background: #f0f7fc; color: var(--sf-blue); }
+  .drill-table th.sorted::after {
+    content: " ▼";
+    font-size: 9px;
+    color: var(--sf-blue);
+  }
+  .drill-table th.sorted-asc::after {
+    content: " ▲";
+    font-size: 9px;
+    color: var(--sf-blue);
+  }
+  .drill-table tbody tr {
+    border-bottom: 1px solid var(--sf-border);
+  }
+  .drill-table tbody tr:hover { background: #f7fafd; }
+  .drill-table td {
+    padding: 12px;
+    font-size: 13px;
+    color: var(--sf-text);
+  }
+  .drill-table td.right { text-align: right; }
+  .drill-table td.center { text-align: center; }
+
+  .empty-state {
+    padding: 40px 20px;
+    text-align: center;
+    color: var(--sf-muted);
+  }
+  .empty-state-icon {
+    font-size: 36px; margin-bottom: 8px;
+  }
+
   .priority-card-header {
     display: flex; align-items: center; justify-content: space-between;
     border-bottom: 1px solid rgba(0,0,0,0.08);
@@ -1030,6 +1179,11 @@ function goExec() {
   state.drilledFromExec = false;
   render();
 }
+function goDrill(quadrant) {
+  state.view = "drill-" + quadrant;
+  state.drilledFromExec = true;
+  render();
+}
 
 // ═══════════════════════════════════════════════════════════════════════
 // EXECUTIVE VIEW — AM Tab
@@ -1103,7 +1257,7 @@ function renderExecAMTab() {
         <div class="priority-grid">
 
           <!-- AT RISK - leftmost, highest priority -->
-          <div class="priority-card atRisk">
+          <div class="priority-card atRisk" onclick="goDrill('atRisk')">
             <div class="priority-card-header">
               <div class="priority-card-title">🚨 At Risk</div>
               <div class="priority-card-count">${matrix.atRisk}</div>
@@ -1118,7 +1272,7 @@ function renderExecAMTab() {
           </div>
 
           <!-- AUDIT - high GMV but broken funded rate -->
-          <div class="priority-card audit">
+          <div class="priority-card audit" onclick="goDrill('audit')">
             <div class="priority-card-header">
               <div class="priority-card-title">⚠ Audit</div>
               <div class="priority-card-count">${matrix.audit}</div>
@@ -1133,7 +1287,7 @@ function renderExecAMTab() {
           </div>
 
           <!-- STAR - top performers -->
-          <div class="priority-card star">
+          <div class="priority-card star" onclick="goDrill('star')">
             <div class="priority-card-header">
               <div class="priority-card-title">⭐ Star</div>
               <div class="priority-card-count">${matrix.star}</div>
@@ -1148,7 +1302,7 @@ function renderExecAMTab() {
           </div>
 
           <!-- HEALTHY - low volume, good conversion -->
-          <div class="priority-card healthy">
+          <div class="priority-card healthy" onclick="goDrill('healthy')">
             <div class="priority-card-header">
               <div class="priority-card-title">🌱 Healthy</div>
               <div class="priority-card-count">${matrix.healthy}</div>
@@ -1163,7 +1317,7 @@ function renderExecAMTab() {
           </div>
 
           <!-- DORMANT / NA - zero volume -->
-          <div class="priority-card dormant">
+          <div class="priority-card dormant" onclick="goDrill('dormant')">
             <div class="priority-card-header">
               <div class="priority-card-title">☠ Dormant / NA</div>
               <div class="priority-card-count">${matrix.dormant}</div>
@@ -2249,10 +2403,321 @@ function renderTrendChart() {
 // ═══════════════════════════════════════════════════════════════════════
 // MAIN RENDER
 // ═══════════════════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════════════════
+// DRILL-THROUGH VIEWS — Filtered merchant lists per priority quadrant
+// ═══════════════════════════════════════════════════════════════════════
+const DRILL_CONFIG = {
+  atRisk: {
+    title: "At Risk Stores",
+    icon: "🚨",
+    summary: "Stores submitting many applications but failing to convert. Highest churn risk.",
+    rule: "<strong>Rule:</strong> ≥10 apps in 30d <strong>AND</strong> &lt;25% funded rate <strong>AND</strong> GMV under $10K",
+    filter: m => m.atRisk,
+    actionLabel: "WebBank Diagnostic",
+    secondaryAction: "Escalate"
+  },
+  audit: {
+    title: "Audit Stores",
+    icon: "⚠",
+    summary: "High GMV but low funded rate. Large deals masking conversion issues at scale.",
+    rule: "<strong>Rule:</strong> GMV ≥ $2.5K <strong>AND</strong> funded rate &lt; 30%",
+    filter: m => m.quadrant === "audit",
+    actionLabel: "Review Deal Structure",
+    secondaryAction: null
+  },
+  star: {
+    title: "Star Stores",
+    icon: "⭐",
+    summary: "High GMV, high funded rate. These are your reference accounts and proof points.",
+    rule: "<strong>Rule:</strong> GMV ≥ $2.5K <strong>AND</strong> funded rate ≥ 30%",
+    filter: m => m.quadrant === "star",
+    actionLabel: "Use as Case Study",
+    secondaryAction: null
+  },
+  healthy: {
+    title: "Healthy Stores",
+    icon: "🌱",
+    summary: "Lower GMV but converting well. Likely small dealers — coach on ticket size.",
+    rule: "<strong>Rule:</strong> GMV &lt; $2.5K <strong>AND</strong> funded rate ≥ 30%",
+    filter: m => m.quadrant === "healthy",
+    actionLabel: "Coach Ticket Size",
+    secondaryAction: null
+  },
+  dormant: {
+    title: "Dormant & Never-Active Stores",
+    icon: "☠",
+    summary: "Zero GMV in current month. Either dormant (previously active) or never funded.",
+    rule: "<strong>Rule:</strong> $0 GMV in current month",
+    filter: m => m.quadrant === "dormant",
+    actionLabel: "Schedule Retraining",
+    secondaryAction: "Mark Churned"
+  }
+};
+
+function renderDrill(quadrant) {
+  const config = DRILL_CONFIG[quadrant];
+  if (!config) return "<div class='empty-state'>Drill view not found</div>";
+
+  // Get all merchants matching this filter, with AM context
+  const allMerchants = Object.entries(MERCHANTS_BY_AM).flatMap(([amId, list]) =>
+    list.filter(config.filter).map(m => {
+      const am = AMs.find(a => a.id === amId);
+      return { ...m, amName: am ? am.name : "?", amInitials: am ? am.initials : "??", amStatus: am ? am.status : "yellow", amId };
+    })
+  );
+
+  // Stats
+  const totalCount = allMerchants.length;
+  const totalGMV = allMerchants.reduce((s, m) => s + m.gmv, 0);
+  const totalApps = allMerchants.reduce((s, m) => s + m.submittedApps, 0);
+  const totalFunded = allMerchants.reduce((s, m) => s + m.fundedTransactions, 0);
+  const avgFundedRate = totalApps > 0 ? Math.round((totalFunded / totalApps) * 100) : 0;
+
+  // AM concentration — who has the most stores in this quadrant
+  const byAM = {};
+  allMerchants.forEach(m => {
+    byAM[m.amId] = byAM[m.amId] || { am: AMs.find(a => a.id === m.amId), count: 0, gmv: 0 };
+    byAM[m.amId].count++;
+    byAM[m.amId].gmv += m.gmv;
+  });
+  const amBreakdown = Object.values(byAM).sort((a, b) => b.count - a.count);
+
+  return `
+    <div class="drill-header ${quadrant}">
+      <div class="drill-header-top">
+        <div class="drill-header-title">
+          <span style="font-size: 32px;">${config.icon}</span>
+          <span>${esc(config.title)}</span>
+        </div>
+        <button class="btn-back" onclick="goExec()" style="background: rgba(255,255,255,0.15); border-color: white; color: white;">← Back to Dashboard</button>
+      </div>
+      <div style="font-size: 14px; opacity: 0.95; margin-bottom: 12px; line-height: 1.5;">
+        ${esc(config.summary)}
+      </div>
+      <div class="drill-header-rule">${config.rule}</div>
+      <div class="drill-stats">
+        <div>
+          <div class="drill-stat-label">Total Stores</div>
+          <div class="drill-stat-value">${totalCount}</div>
+        </div>
+        <div>
+          <div class="drill-stat-label">Total GMV</div>
+          <div class="drill-stat-value">${fmt$(totalGMV)}</div>
+        </div>
+        <div>
+          <div class="drill-stat-label">Apps → Funded</div>
+          <div class="drill-stat-value">${totalApps} → ${totalFunded}</div>
+          <div class="drill-stat-sub">${avgFundedRate}% avg funded rate</div>
+        </div>
+        <div>
+          <div class="drill-stat-label">Top AM Concentration</div>
+          <div class="drill-stat-value">${amBreakdown.length > 0 ? esc(amBreakdown[0].am.name.split(" ")[0]) : "—"}</div>
+          <div class="drill-stat-sub">${amBreakdown.length > 0 ? amBreakdown[0].count + " stores · " + fmt$(amBreakdown[0].gmv) : ""}</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">
+        <div class="card-title-text">${totalCount} Store${totalCount === 1 ? '' : 's'} Matching Filter</div>
+        <div class="drill-actions">
+          <button class="btn-export" onclick="exportDrillCSV('${quadrant}')">
+            📥 Export CSV
+          </button>
+        </div>
+      </div>
+      <div class="card-body no-pad">
+        ${totalCount === 0 ? `
+          <div class="empty-state">
+            <div class="empty-state-icon">✓</div>
+            <div style="font-size: 14px; font-weight: 600; color: var(--sf-green); margin-bottom: 4px;">
+              No stores matching this filter
+            </div>
+            <div style="font-size: 12px;">This is a healthy state for ${config.title.toLowerCase()}.</div>
+          </div>
+        ` : `
+          <table class="drill-table">
+            <thead>
+              <tr>
+                <th>Grade</th>
+                <th>Store</th>
+                <th>Partner</th>
+                <th class="center">GMV Tier</th>
+                <th class="right">GMV (MTD)</th>
+                <th class="right">Apps</th>
+                <th class="right">Funded</th>
+                <th class="right">Rate</th>
+                <th>Account Manager</th>
+                <th class="center">Last Touch</th>
+                <th class="center">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${allMerchants
+                .sort((a, b) => {
+                  // Sort by severity: at-risk first puts highest churn risk on top
+                  if (quadrant === "atRisk" || quadrant === "audit") {
+                    return (b.gmv) - (a.gmv); // biggest dollar at risk first
+                  }
+                  if (quadrant === "star") {
+                    return b.gmv - a.gmv;
+                  }
+                  return b.submittedApps - a.submittedApps;
+                })
+                .map(m => `
+                  <tr>
+                    <td><span class="grade-pill ${m.healthGrade}" style="width: 28px; height: 28px; font-size: 14px;">${m.healthGrade}</span></td>
+                    <td>
+                      <div style="font-weight: 600; color: var(--sf-navy);">${esc(m.name)}</div>
+                      <div style="font-size: 10px; color: var(--sf-muted);">Health: ${m.healthScore}/100</div>
+                    </td>
+                    <td>${esc(m.partner)}</td>
+                    <td class="center">
+                      <span style="font-size: 10px; font-weight: 700; padding: 2px 6px; border-radius: 3px; color: white; background: ${
+                        m.tier === "HE" ? "var(--sf-green)" :
+                        m.tier === "ME" ? "var(--sf-teal)" :
+                        m.tier === "LE" ? "var(--sf-orange)" :
+                        m.tier === "D"  ? "var(--sf-red)" : "#4a148c"
+                      };">${m.tier}</span>
+                    </td>
+                    <td class="right" style="font-weight: 600;">${fmt$(m.gmv)}</td>
+                    <td class="right">${m.submittedApps}</td>
+                    <td class="right">${m.fundedTransactions}</td>
+                    <td class="right" style="font-weight: 700; color: ${m.fundedRate >= 30 ? 'var(--sf-green)' : 'var(--sf-red)'};">${m.fundedRate}%</td>
+                    <td>
+                      <div style="display: flex; align-items: center; gap: 8px; cursor: pointer;" onclick="goAM('${m.amId}', true)">
+                        ${avatarHtml(m.amInitials, m.amStatus, 26, "am")}
+                        <span style="color: var(--sf-blue); font-weight: 600;">${esc(m.amName)}</span>
+                      </div>
+                    </td>
+                    <td class="center" style="color: ${m.lastTouch > 14 ? 'var(--sf-red)' : 'var(--sf-muted)'};">${m.lastTouch}d</td>
+                    <td class="center">
+                      <button class="btn-primary">${esc(config.actionLabel)}</button>
+                    </td>
+                  </tr>
+                `).join("")}
+            </tbody>
+          </table>
+        `}
+      </div>
+    </div>
+
+    ${totalCount > 0 ? `
+      <div class="card">
+        <div class="card-title"><div class="card-title-text">AM Concentration · Where These Stores Sit</div></div>
+        <div class="card-body no-pad">
+          <table class="drill-table">
+            <thead>
+              <tr>
+                <th>Account Manager</th>
+                <th class="right">Stores in This Group</th>
+                <th class="right">GMV in Group</th>
+                <th class="right">% of AM's Book</th>
+                <th class="center">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${amBreakdown.map(a => {
+                const totalAccts = a.am ? a.am.accounts : 0;
+                const pctOfBook = totalAccts > 0 ? Math.round((a.count / totalAccts) * 100) : 0;
+                return `
+                  <tr>
+                    <td>
+                      <div style="display: flex; align-items: center; gap: 10px;">
+                        ${avatarHtml(a.am.initials, a.am.status, 30, "am")}
+                        <div>
+                          <div style="font-weight: 600; color: var(--sf-navy);">${esc(a.am.name)}</div>
+                          <div style="font-size: 11px; color: var(--sf-muted);">${esc(a.am.title)}</div>
+                        </div>
+                      </div>
+                    </td>
+                    <td class="right" style="font-weight: 700; font-size: 16px;">${a.count}</td>
+                    <td class="right" style="font-weight: 600;">${fmt$(a.gmv)}</td>
+                    <td class="right" style="color: ${pctOfBook > 30 ? 'var(--sf-red)' : pctOfBook > 15 ? 'var(--sf-orange)' : 'var(--sf-muted)'}; font-weight: 600;">${pctOfBook}%</td>
+                    <td class="center">
+                      <button class="btn-link" onclick="goAM('${a.am.id}', true)">View AM →</button>
+                    </td>
+                  </tr>
+                `;
+              }).join("")}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    ` : ""}
+  `;
+}
+
+// ═══════════════════════════════════════════════════════════════════════
+// CSV EXPORT
+// ═══════════════════════════════════════════════════════════════════════
+function exportDrillCSV(quadrant) {
+  const config = DRILL_CONFIG[quadrant];
+  if (!config) return;
+
+  // Build the same filtered merchant list as renderDrill
+  const allMerchants = Object.entries(MERCHANTS_BY_AM).flatMap(([amId, list]) =>
+    list.filter(config.filter).map(m => {
+      const am = AMs.find(a => a.id === amId);
+      return { ...m, amName: am ? am.name : "?", amTitle: am ? am.title : "?" };
+    })
+  );
+
+  // CSV header
+  const headers = [
+    "Health Grade", "Health Score", "Store Name", "Partner",
+    "GMV Tier", "GMV (MTD)", "Submitted Apps (30d)",
+    "Funded Transactions", "Funded Rate %", "Account Manager",
+    "AM Title", "Days Since Last Touch", "At Risk Flag"
+  ];
+
+  // CSV rows — escape any commas or quotes inside fields
+  const escCSV = (val) => {
+    const s = String(val);
+    if (s.includes(",") || s.includes('"') || s.includes("\n")) {
+      return '"' + s.replace(/"/g, '""') + '"';
+    }
+    return s;
+  };
+
+  const rows = allMerchants.map(m => [
+    m.healthGrade,
+    m.healthScore,
+    m.name,
+    m.partner,
+    m.tier,
+    m.gmv,
+    m.submittedApps,
+    m.fundedTransactions,
+    m.fundedRate,
+    m.amName,
+    m.amTitle,
+    m.lastTouch,
+    m.atRisk ? "Yes" : "No"
+  ].map(escCSV).join(","));
+
+  const csv = [headers.join(","), ...rows].join("\n");
+
+  // Trigger download
+  const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  const today = new Date().toISOString().split("T")[0];
+  link.setAttribute("href", url);
+  link.setAttribute("download", `dignifi-${quadrant}-stores-${today}.csv`);
+  link.style.display = "none";
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  URL.revokeObjectURL(url);
+}
+
+
 function render() {
   const isExec = state.identity === "exec";
   const currentAM = state.view.startsWith("am-") ? state.view.slice(3) : null;
   const currentRM = state.view.startsWith("rm-") ? state.view.slice(3) : null;
+  const currentDrill = state.view.startsWith("drill-") ? state.view.slice(6) : null;
 
   const breadcrumb = document.getElementById("breadcrumb");
   const title = document.getElementById("pageheader-title");
@@ -2286,21 +2751,33 @@ function render() {
       ? `<span class="crumb-link" onclick="goExec()">Sales Performance</span> <span class="sep">/</span> RM <span class="sep">/</span> ${esc(rm.name)}`
       : `Sales Performance <span class="sep">/</span> ${esc(rm.name)}`;
     title.textContent = rm.name + " · Performance";
+  } else if (currentDrill) {
+    const drillTitles = {
+      atRisk: "At Risk Stores",
+      audit: "Audit Stores",
+      star: "Star Stores",
+      healthy: "Healthy Stores",
+      dormant: "Dormant & Never-Active Stores"
+    };
+    breadcrumb.innerHTML = `<span class="crumb-link" onclick="goExec()">Sales Performance</span> <span class="sep">/</span> Merchant Health <span class="sep">/</span> ${esc(drillTitles[currentDrill] || currentDrill)}`;
+    title.textContent = drillTitles[currentDrill] || currentDrill;
   } else {
     breadcrumb.innerHTML = "Sales Performance";
     title.textContent = "Sales Performance Dashboard";
   }
 
-  if (isExec && !currentAM && !currentRM) {
+  if (isExec && !currentAM && !currentRM && !currentDrill) {
     sub.innerHTML = "Executive rollup · Full access to all AMs, RMs, and merchants · Period: Feb 1 – Feb 28, 2026";
   } else if (!isExec) {
     const self = AMs.find(a => a.id === state.identity) || RMs.find(r => r.id === state.identity);
     sub.innerHTML = `${self.role} view · ${esc(self.name)}'s view only · Period: Feb 1 – Feb 28, 2026`;
+  } else if (currentDrill) {
+    sub.innerHTML = "Filtered merchant view · Click any row to drill into the AM";
   } else {
     sub.innerHTML = "Executive drill-in · Period: Feb 1 – Feb 28, 2026";
   }
 
-  btnBack.style.display = (isExec && (currentAM || currentRM) && state.drilledFromExec) ? "inline-block" : "none";
+  btnBack.style.display = (isExec && (currentAM || currentRM || currentDrill) && state.drilledFromExec) ? "inline-block" : "none";
   document.getElementById("identity-select").value = state.identity;
 
   const main = document.getElementById("main");
@@ -2314,6 +2791,8 @@ function render() {
     } else {
       main.innerHTML = renderExecEscTab();
     }
+  } else if (currentDrill) {
+    main.innerHTML = renderDrill(currentDrill);
   } else if (currentAM || AMs.find(a => a.id === state.identity)) {
     main.innerHTML = renderAM(currentAM || state.identity, isExec);
   } else {
