@@ -212,6 +212,112 @@
   .tierbar-seg.d  { background: var(--sf-red); }
   .tierbar-seg.na { background: #4a148c; }
 
+  /* At Risk flag - cross-cutting, can attach to any tier */
+  .at-risk-flag {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: #ffebee;
+    color: #c62828;
+    border: 1px solid #c62828;
+    border-radius: 10px;
+    padding: 2px 8px;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+  }
+  .at-risk-flag::before { content: "⚠"; font-size: 11px; }
+
+  /* Health Score letter grade pills */
+  .grade-pill {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px; height: 32px;
+    border-radius: 6px;
+    font-size: 16px; font-weight: 700;
+    color: white;
+    flex-shrink: 0;
+  }
+  .grade-pill.A { background: #1b5e20; }
+  .grade-pill.B { background: #2e7d32; }
+  .grade-pill.C { background: #f9a825; }
+  .grade-pill.D { background: #ef6c00; }
+  .grade-pill.F { background: #b71c1c; }
+  .grade-pill.large {
+    width: 56px; height: 56px;
+    font-size: 28px;
+    border-radius: 10px;
+  }
+
+  .grade-mini {
+    display: inline-block;
+    padding: 1px 6px;
+    border-radius: 3px;
+    font-size: 10px; font-weight: 700;
+    color: white;
+  }
+  .grade-mini.A { background: #1b5e20; }
+  .grade-mini.B { background: #2e7d32; }
+  .grade-mini.C { background: #f9a825; }
+  .grade-mini.D { background: #ef6c00; }
+  .grade-mini.F { background: #b71c1c; }
+
+  /* Health matrix */
+  .health-matrix {
+    display: grid;
+    grid-template-columns: 100px repeat(3, 1fr);
+    gap: 6px;
+    font-size: 11px;
+  }
+  .health-matrix-header {
+    text-align: center;
+    font-weight: 700;
+    color: var(--sf-muted);
+    text-transform: uppercase;
+    font-size: 10px;
+    padding: 6px;
+  }
+  .health-matrix-row-label {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding-right: 8px;
+    font-weight: 700;
+    color: var(--sf-muted);
+    text-transform: uppercase;
+    font-size: 10px;
+  }
+  .health-matrix-cell {
+    background: white;
+    border: 1px solid var(--sf-border);
+    border-radius: 4px;
+    padding: 10px 8px;
+    text-align: center;
+  }
+  .health-matrix-cell-label {
+    font-size: 11px;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+  .health-matrix-cell-count {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--sf-navy);
+  }
+  .health-matrix-cell.star      { background: #e8f5e9; border-color: #2e7d32; }
+  .health-matrix-cell.star      .health-matrix-cell-label { color: #1b5e20; }
+  .health-matrix-cell.healthy   { background: #f1f8e9; border-color: #689f38; }
+  .health-matrix-cell.healthy   .health-matrix-cell-label { color: #33691e; }
+  .health-matrix-cell.audit     { background: #fff3e0; border-color: #ef6c00; }
+  .health-matrix-cell.audit     .health-matrix-cell-label { color: #e65100; }
+  .health-matrix-cell.atRisk{ background: #ffebee; border-color: #c62828; }
+  .health-matrix-cell.atRisk .health-matrix-cell-label { color: #b71c1c; }
+  .health-matrix-cell.dormant   { background: #f3e5f5; border-color: #7b1fa2; }
+  .health-matrix-cell.dormant   .health-matrix-cell-label { color: #4a148c; }
+  .health-matrix-cell.empty     { background: #fafafa; color: var(--sf-light); }
+
   .btn-link { font-size: 11px; background: transparent; border: none;
     color: var(--sf-blue); cursor: pointer; font-weight: 600; }
   .btn-link:hover { text-decoration: underline; }
@@ -520,7 +626,7 @@ function statusOf(val, t) {
   return "red";
 }
 function statusLabel(s) {
-  return s === "green" ? "On Track" : s === "yellow" ? "Watch" : "At Risk";
+  return s === "green" ? "On Track" : s === "yellow" ? "Watch" : "Critical";
 }
 
 // ═══════════════════════════════════════════════════════════════════════
@@ -659,61 +765,169 @@ const TREND = [
   { month: "Feb", gmv: 1008, dormancy: 17 }
 ];
 
+// Note: submittedApps and fundedTransactions added for Health Score.
+// Numbers chosen to demonstrate the At-Risk cohort: stores with high
+// submission activity but low funded conversion - Tearsa's churn-risk theory.
 const MERCHANTS_BY_AM = {
   jerome: [
-    { name: "Lindsay Mazda Alexandria",    partner: "Mazda",    tier: "HE", gmv: 14200, lastTouch: 2 },
-    { name: "Koons CDK Sterling",          partner: "CDK",      tier: "HE", gmv: 22800, lastTouch: 4 },
-    { name: "Priority MyKaarma Chesapeake",partner: "MyKaarma", tier: "HE", gmv: 11600, lastTouch: 1 },
-    { name: "Rosenthal Xtime Tysons",      partner: "Xtime",    tier: "ME", gmv: 4800,  lastTouch: 6 },
-    { name: "Passport EVE Alexandria",     partner: "EVE",      tier: "LE", gmv: 1800,  lastTouch: 14 },
-    { name: "Lindsay Endurance Manassas",  partner: "Endurance",tier: "D",  gmv: 0,     lastTouch: 9 },
-    { name: "Fitzgerald Mazda Frederick",  partner: "Mazda",    tier: "NA", gmv: 0,     lastTouch: 7 }
+    { name: "Lindsay Mazda Alexandria",    partner: "Mazda",    tier: "HE", gmv: 14200, submittedApps: 38, fundedTransactions: 22, lastTouch: 2 },
+    { name: "Koons CDK Sterling",          partner: "CDK",      tier: "HE", gmv: 22800, submittedApps: 54, fundedTransactions: 35, lastTouch: 4 },
+    { name: "Priority MyKaarma Chesapeake",partner: "MyKaarma", tier: "HE", gmv: 11600, submittedApps: 31, fundedTransactions: 19, lastTouch: 1 },
+    { name: "Rosenthal Xtime Tysons",      partner: "Xtime",    tier: "ME", gmv: 4800,  submittedApps: 18, fundedTransactions: 8,  lastTouch: 6 },
+    { name: "Passport EVE Alexandria",     partner: "EVE",      tier: "LE", gmv: 1800,  submittedApps: 6,  fundedTransactions: 3,  lastTouch: 14 },
+    { name: "Lindsay Endurance Manassas",  partner: "Endurance",tier: "D",  gmv: 0,     submittedApps: 2,  fundedTransactions: 0,  lastTouch: 9 },
+    { name: "Fitzgerald Mazda Frederick",  partner: "Mazda",    tier: "NA", gmv: 0,     submittedApps: 0,  fundedTransactions: 0,  lastTouch: 7 }
   ],
   megan: [
-    { name: "Ourisman CDK Bethesda",       partner: "CDK",      tier: "HE", gmv: 31400, lastTouch: 3 },
-    { name: "Sheehy MyKaarma Springfield", partner: "MyKaarma", tier: "HE", gmv: 18200, lastTouch: 5 },
-    { name: "Browns Mazda Fairfax",        partner: "Mazda",    tier: "HE", gmv: 12700, lastTouch: 8 },
-    { name: "Easterns Xtime Laurel",       partner: "Xtime",    tier: "ME", gmv: 6200,  lastTouch: 11 },
-    { name: "Darcars EVE Silver Spring",   partner: "EVE",      tier: "LE", gmv: 920,   lastTouch: 16 },
-    { name: "Jim Coleman Endurance",       partner: "Endurance",tier: "D",  gmv: 0,     lastTouch: 12 }
+    { name: "Ourisman CDK Bethesda",       partner: "CDK",      tier: "HE", gmv: 31400, submittedApps: 72, fundedTransactions: 48, lastTouch: 3 },
+    { name: "Sheehy MyKaarma Springfield", partner: "MyKaarma", tier: "HE", gmv: 18200, submittedApps: 44, fundedTransactions: 28, lastTouch: 5 },
+    { name: "Browns Mazda Fairfax",        partner: "Mazda",    tier: "HE", gmv: 12700, submittedApps: 41, fundedTransactions: 21, lastTouch: 8 },
+    { name: "Easterns Xtime Laurel",       partner: "Xtime",    tier: "ME", gmv: 6200,  submittedApps: 24, fundedTransactions: 10, lastTouch: 11 },
+    // AT RISK: 38 apps but only $920 GMV - looks engaged but failing
+    { name: "Darcars EVE Silver Spring",   partner: "EVE",      tier: "LE", gmv: 920,   submittedApps: 38, fundedTransactions: 2,  lastTouch: 16 },
+    { name: "Jim Coleman Endurance",       partner: "Endurance",tier: "D",  gmv: 0,     submittedApps: 1,  fundedTransactions: 0,  lastTouch: 12 }
   ],
   ashlee: [
-    { name: "Safford CDK Vienna",          partner: "CDK",      tier: "HE", gmv: 17800, lastTouch: 5 },
-    { name: "Hendrick Mazda Charlotte",    partner: "Mazda",    tier: "HE", gmv: 13400, lastTouch: 6 },
-    { name: "Fitz MyKaarma Clearwater",    partner: "MyKaarma", tier: "ME", gmv: 5600,  lastTouch: 9 },
-    { name: "Murgado Xtime Miami",         partner: "Xtime",    tier: "ME", gmv: 4200,  lastTouch: 12 },
-    { name: "Rick Hendrick EVE Raleigh",   partner: "EVE",      tier: "LE", gmv: 1400,  lastTouch: 17 },
-    { name: "Germain Endurance Cincinnati",partner: "Endurance",tier: "D",  gmv: 0,     lastTouch: 14 }
+    { name: "Safford CDK Vienna",          partner: "CDK",      tier: "HE", gmv: 17800, submittedApps: 46, fundedTransactions: 27, lastTouch: 5 },
+    { name: "Hendrick Mazda Charlotte",    partner: "Mazda",    tier: "HE", gmv: 13400, submittedApps: 36, fundedTransactions: 22, lastTouch: 6 },
+    { name: "Fitz MyKaarma Clearwater",    partner: "MyKaarma", tier: "ME", gmv: 5600,  submittedApps: 22, fundedTransactions: 9,  lastTouch: 9 },
+    { name: "Murgado Xtime Miami",         partner: "Xtime",    tier: "ME", gmv: 4200,  submittedApps: 19, fundedTransactions: 7,  lastTouch: 12 },
+    { name: "Rick Hendrick EVE Raleigh",   partner: "EVE",      tier: "LE", gmv: 1400,  submittedApps: 8,  fundedTransactions: 3,  lastTouch: 17 },
+    { name: "Germain Endurance Cincinnati",partner: "Endurance",tier: "D",  gmv: 0,     submittedApps: 0,  fundedTransactions: 0,  lastTouch: 14 }
   ],
   kelsey: [
-    { name: "Thompson CDK Richmond",       partner: "CDK",      tier: "HE", gmv: 19800, lastTouch: 4 },
-    { name: "Haley Mazda Midlothian",      partner: "Mazda",    tier: "ME", gmv: 7400,  lastTouch: 9 },
-    { name: "Pohanka MyKaarma Chantilly",  partner: "MyKaarma", tier: "ME", gmv: 5100,  lastTouch: 13 },
-    { name: "Brown Xtime Glen Allen",      partner: "Xtime",    tier: "LE", gmv: 1400,  lastTouch: 18 },
-    { name: "Hall EVE Chesterfield",       partner: "EVE",      tier: "D",  gmv: 0,     lastTouch: 21 },
-    { name: "West Broad Endurance",        partner: "Endurance",tier: "D",  gmv: 0,     lastTouch: 15 }
+    { name: "Thompson CDK Richmond",       partner: "CDK",      tier: "HE", gmv: 19800, submittedApps: 51, fundedTransactions: 31, lastTouch: 4 },
+    { name: "Haley Mazda Midlothian",      partner: "Mazda",    tier: "ME", gmv: 7400,  submittedApps: 26, fundedTransactions: 12, lastTouch: 9 },
+    // AT RISK: 47 apps, only $5,100 GMV - 6% funded rate, broken
+    { name: "Pohanka MyKaarma Chantilly",  partner: "MyKaarma", tier: "ME", gmv: 5100,  submittedApps: 47, fundedTransactions: 8,  lastTouch: 13 },
+    // AT RISK: 28 apps but only $1,400 GMV
+    { name: "Brown Xtime Glen Allen",      partner: "Xtime",    tier: "LE", gmv: 1400,  submittedApps: 28, fundedTransactions: 3,  lastTouch: 18 },
+    { name: "Hall EVE Chesterfield",       partner: "EVE",      tier: "D",  gmv: 0,     submittedApps: 4,  fundedTransactions: 0,  lastTouch: 21 },
+    { name: "West Broad Endurance",        partner: "Endurance",tier: "D",  gmv: 0,     submittedApps: 2,  fundedTransactions: 0,  lastTouch: 15 }
   ],
   roman: [
-    { name: "Criswell CDK Germantown",       partner: "CDK",      tier: "HE", gmv: 16200, lastTouch: 7 },
-    { name: "Lustine Xtime Woodbridge",      partner: "Xtime",    tier: "ME", gmv: 4900,  lastTouch: 14 },
-    { name: "Stafford Mazda Fredericksburg", partner: "Mazda",    tier: "ME", gmv: 3800,  lastTouch: 16 },
-    { name: "Battlefield MyKaarma",          partner: "MyKaarma", tier: "LE", gmv: 1200,  lastTouch: 22 },
-    { name: "Safford EVE Dulles",            partner: "EVE",      tier: "D",  gmv: 0,     lastTouch: 19 },
-    { name: "Ted Britt Endurance Fairfax",   partner: "Endurance",tier: "D",  gmv: 0,     lastTouch: 24 },
-    { name: "Jack Taylor Xtime Leesburg",    partner: "Xtime",    tier: "NA", gmv: 0,     lastTouch: 28 }
+    { name: "Criswell CDK Germantown",       partner: "CDK",      tier: "HE", gmv: 16200, submittedApps: 42, fundedTransactions: 25, lastTouch: 7 },
+    { name: "Lustine Xtime Woodbridge",      partner: "Xtime",    tier: "ME", gmv: 4900,  submittedApps: 21, fundedTransactions: 8,  lastTouch: 14 },
+    // AT RISK: 33 apps, only $3,800 GMV
+    { name: "Stafford Mazda Fredericksburg", partner: "Mazda",    tier: "ME", gmv: 3800,  submittedApps: 33, fundedTransactions: 6,  lastTouch: 16 },
+    // AT RISK: 24 apps, only $1,200 GMV
+    { name: "Battlefield MyKaarma",          partner: "MyKaarma", tier: "LE", gmv: 1200,  submittedApps: 24, fundedTransactions: 2,  lastTouch: 22 },
+    { name: "Safford EVE Dulles",            partner: "EVE",      tier: "D",  gmv: 0,     submittedApps: 7,  fundedTransactions: 0,  lastTouch: 19 },
+    { name: "Ted Britt Endurance Fairfax",   partner: "Endurance",tier: "D",  gmv: 0,     submittedApps: 3,  fundedTransactions: 0,  lastTouch: 24 },
+    { name: "Jack Taylor Xtime Leesburg",    partner: "Xtime",    tier: "NA", gmv: 0,     submittedApps: 0,  fundedTransactions: 0,  lastTouch: 28 }
   ],
   carlos: [
-    { name: "Sheehy CDK Marlow Heights",    partner: "CDK",      tier: "ME", gmv: 6800, lastTouch: 11 },
-    { name: "Heritage Xtime Owings Mills",  partner: "Xtime",    tier: "ME", gmv: 3100, lastTouch: 18 },
-    { name: "Ourisman Mazda Laurel",        partner: "Mazda",    tier: "LE", gmv: 1600, lastTouch: 23 },
-    { name: "Antwerpen MyKaarma",           partner: "MyKaarma", tier: "LE", gmv: 900,  lastTouch: 26 },
-    { name: "Tate EVE Glen Burnie",         partner: "EVE",      tier: "NA", gmv: 0,    lastTouch: 31 },
-    { name: "Len Stoler Endurance",         partner: "Endurance",tier: "D",  gmv: 0,    lastTouch: 34 },
-    { name: "Koons Xtime Annapolis",        partner: "Xtime",    tier: "D",  gmv: 0,    lastTouch: 29 },
-    { name: "Brown Mazda Amityville",       partner: "Mazda",    tier: "D",  gmv: 0,    lastTouch: 38 }
+    // AT RISK: 51 apps but only $6,800 GMV - 14% funded rate
+    { name: "Sheehy CDK Marlow Heights",    partner: "CDK",      tier: "ME", gmv: 6800, submittedApps: 51, fundedTransactions: 7,  lastTouch: 11 },
+    // AT RISK: 19 apps, only $3,100 GMV
+    { name: "Heritage Xtime Owings Mills",  partner: "Xtime",    tier: "ME", gmv: 3100, submittedApps: 19, fundedTransactions: 4,  lastTouch: 18 },
+    // AT RISK: 17 apps, only $1,600 GMV
+    { name: "Ourisman Mazda Laurel",        partner: "Mazda",    tier: "LE", gmv: 1600, submittedApps: 17, fundedTransactions: 2,  lastTouch: 23 },
+    // AT RISK: 22 apps, only $900 GMV - the textbook at-risk store
+    { name: "Antwerpen MyKaarma",           partner: "MyKaarma", tier: "LE", gmv: 900,  submittedApps: 22, fundedTransactions: 1,  lastTouch: 26 },
+    { name: "Tate EVE Glen Burnie",         partner: "EVE",      tier: "NA", gmv: 0,    submittedApps: 0,  fundedTransactions: 0,  lastTouch: 31 },
+    { name: "Len Stoler Endurance",         partner: "Endurance",tier: "D",  gmv: 0,    submittedApps: 5,  fundedTransactions: 0,  lastTouch: 34 },
+    { name: "Koons Xtime Annapolis",        partner: "Xtime",    tier: "D",  gmv: 0,    submittedApps: 1,  fundedTransactions: 0,  lastTouch: 29 },
+    { name: "Brown Mazda Amityville",       partner: "Mazda",    tier: "D",  gmv: 0,    submittedApps: 0,  fundedTransactions: 0,  lastTouch: 38 }
   ]
 };
 
+// Populate health on every merchant (run once on load)
+Object.keys(MERCHANTS_BY_AM).forEach(amId => {
+  MERCHANTS_BY_AM[amId].forEach(m => {
+    const h = computeHealth(m);
+    m.healthScore = h.score;
+    m.healthGrade = h.grade;
+    m.fundedRate = h.fundedRate;
+    m.atRisk = h.atRisk;
+    m.quadrant = classifyQuadrant(m);
+  });
+});
+
+// Roll up at-risk count + avg health score per AM
+AMs.forEach(am => {
+  const merchants = MERCHANTS_BY_AM[am.id] || [];
+  am.atRiskCount = merchants.filter(m => m.atRisk).length;
+  am.avgHealthScore = merchants.length > 0
+    ? Math.round(merchants.reduce((s, m) => s + m.healthScore, 0) / merchants.length)
+    : 0;
+  am.totalSubmittedApps = merchants.reduce((s, m) => s + m.submittedApps, 0);
+  am.totalFundedTransactions = merchants.reduce((s, m) => s + m.fundedTransactions, 0);
+  am.amFundedRate = am.totalSubmittedApps > 0
+    ? Math.round((am.totalFundedTransactions / am.totalSubmittedApps) * 100)
+    : 0;
+});
+
+// ═══════════════════════════════════════════════════════════════════════
+// HEALTH SCORE — Composite of GMV signal + Funded Rate signal
+// ═══════════════════════════════════════════════════════════════════════
+// Formula: 60% GMV signal + 40% funded-rate signal
+// Min sample requirement: 5+ submitted apps in trailing 30 days for funded-rate to count
+// Otherwise: GMV-only score (so brand-new merchants aren't penalized)
+//
+// AT RISK flag fires when:
+//   - submittedApps >= 10 (real engagement signal) AND
+//   - fundedRate < 25% (broken conversion) AND
+//   - GMV tier is LE or below (low revenue despite trying)
+// ═══════════════════════════════════════════════════════════════════════
+function computeHealth(merchant) {
+  const { gmv, submittedApps, fundedTransactions, tier } = merchant;
+  const fundedRate = submittedApps > 0 ? Math.round((fundedTransactions / submittedApps) * 100) : 0;
+
+  // GMV component (0-100)
+  let gmvScore;
+  if (gmv >= 10000) gmvScore = 100;       // HE
+  else if (gmv >= 5000) gmvScore = 80;    // upper ME
+  else if (gmv >= 2500) gmvScore = 65;    // ME
+  else if (gmv >= 1000) gmvScore = 45;    // upper LE
+  else if (gmv > 0) gmvScore = 30;        // LE
+  else gmvScore = 0;                       // D or NA
+
+  // Funded rate component (0-100)
+  let fundedScore;
+  if (submittedApps < 5) {
+    // Insufficient sample - use GMV only
+    fundedScore = gmvScore;
+  } else {
+    if (fundedRate >= 60) fundedScore = 100;
+    else if (fundedRate >= 45) fundedScore = 85;
+    else if (fundedRate >= 30) fundedScore = 65;
+    else if (fundedRate >= 15) fundedScore = 40;
+    else fundedScore = 15;
+  }
+
+  // Composite: 60/40 GMV/funded
+  const score = Math.round((gmvScore * 0.6) + (fundedScore * 0.4));
+
+  // Letter grade
+  let grade;
+  if (score >= 90) grade = "A";
+  else if (score >= 75) grade = "B";
+  else if (score >= 60) grade = "C";
+  else if (score >= 40) grade = "D";
+  else grade = "F";
+
+  // At-Risk flag — cross-cutting, can apply to any GMV tier
+  const atRisk = submittedApps >= 10 && fundedRate < 25 &&
+                     (tier === "LE" || tier === "D" || tier === "ME");
+
+  return { score, grade, fundedRate, atRisk };
+}
+
+// Quadrant classification for health matrix
+function classifyQuadrant(merchant) {
+  const h = computeHealth(merchant);
+  const isHighGmv = merchant.gmv >= 2500;
+  const isHighFunded = h.fundedRate >= 30 && merchant.submittedApps >= 5;
+  const isZero = merchant.gmv === 0;
+
+  if (isZero) return "dormant";
+  if (h.atRisk) return "atRisk";
+  if (isHighGmv && isHighFunded) return "star";
+  if (isHighGmv && !isHighFunded) return "audit";
+  if (!isHighGmv && isHighFunded) return "healthy";
+  return "atRisk"; // catchall: low GMV, low funded
+}
 // ═══════════════════════════════════════════════════════════════════════
 // FORMATTERS
 // ═══════════════════════════════════════════════════════════════════════
@@ -778,6 +992,25 @@ function renderExecAMTab() {
   const heRate   = Math.round((he / accounts) * 100);
   const atRisk   = AMs.reduce((s, a) => s + a.gmvAtRisk, 0);
 
+  // NEW: at-risk cohort rollup
+  const allMerchants = Object.values(MERCHANTS_BY_AM).flat();
+  const totalMerchants = allMerchants.length;
+  const atRiskMerchantList = allMerchants.filter(m => m.atRisk);
+  const atRiskMerchantCount = atRiskMerchantList.length;
+  const atRiskMerchantGMV = atRiskMerchantList.reduce((s, m) => s + m.gmv, 0);
+  const teamSubmittedApps = allMerchants.reduce((s, m) => s + m.submittedApps, 0);
+  const teamFundedTrans = allMerchants.reduce((s, m) => s + m.fundedTransactions, 0);
+  const teamFundedRate = teamSubmittedApps > 0 ? Math.round((teamFundedTrans / teamSubmittedApps) * 100) : 0;
+  const avgHealthScore = totalMerchants > 0
+    ? Math.round(allMerchants.reduce((s, m) => s + m.healthScore, 0) / totalMerchants)
+    : 0;
+
+  // Health matrix counts
+  const matrix = {
+    star: 0, healthy: 0, audit: 0, atRisk: 0, dormant: 0
+  };
+  allMerchants.forEach(m => { matrix[m.quadrant]++; });
+
   const ranked = AMs.map(am => Object.assign({}, am, scoreAM(am)))
                     .sort((a, b) => b.score - a.score);
 
@@ -791,11 +1024,91 @@ function renderExecAMTab() {
       ${kpiTile("Active Dealer Book", accounts, he + " Highly Engaged ($10K+)", "green")}
       ${kpiTile("Team Dormancy Rate", dormancy + "%", dormant + " stores at $0",
                 statusOf(dormancy, THRESHOLDS.dormancy), "&lt; 20%")}
-      ${kpiTile("Touch Coverage (avg)", avgTouch + "%", "Accounts contacted MTD",
-                statusOf(avgTouch, THRESHOLDS.touchCoverage), "100%")}
-      ${kpiTile("Highly Engaged Rate", heRate + "%", "% of book at $10K+",
-                statusOf(heRate, THRESHOLDS.highlyEngaged), "≥ 40%")}
-      ${kpiTile("Team GMV at Risk", fmt$(atRisk), "Dormant + never-active", "red", "&lt; $25K/AM")}
+      ${kpiTile("At-Risk Stores", atRiskMerchantCount, "High apps · low funding · churn risk",
+                atRiskMerchantCount >= 8 ? "red" : atRiskMerchantCount >= 4 ? "yellow" : "green")}
+      ${kpiTile("Team Funded Rate", teamFundedRate + "%", teamSubmittedApps + " apps → " + teamFundedTrans + " funded",
+                teamFundedRate >= 50 ? "green" : teamFundedRate >= 35 ? "yellow" : "red")}
+      ${kpiTile("Avg Health Score", avgHealthScore, "Composite GMV + funded rate",
+                avgHealthScore >= 75 ? "green" : avgHealthScore >= 60 ? "yellow" : "red")}
+    </div>
+
+    <!-- NEW: Health Matrix -->
+    <div class="row-2">
+      <div class="card">
+        <div class="card-title">
+          <div class="card-title-text">Merchant Health Matrix · GMV vs Funded Rate</div>
+          <div class="card-title-action">Tearsa's framework for identifying churn risk</div>
+        </div>
+        <div class="card-body">
+          <div style="font-size: 12px; color: var(--sf-muted); margin-bottom: 14px; line-height: 1.5;">
+            Pure GMV tiering misses the most dangerous cohort: stores submitting many apps but funding few. The matrix below cross-references volume (GMV) with conversion (funded rate). The <strong style="color: #b71c1c;">At Risk</strong> quadrant — high activity, low conversion — is highest churn risk.
+          </div>
+          <div class="health-matrix">
+            <div></div>
+            <div class="health-matrix-header">High Funded Rate (≥30%)</div>
+            <div class="health-matrix-header">Low Funded Rate (&lt;30%)</div>
+            <div class="health-matrix-header">Zero GMV</div>
+
+            <div class="health-matrix-row-label">High GMV</div>
+            <div class="health-matrix-cell star">
+              <div class="health-matrix-cell-label">⭐ Star</div>
+              <div class="health-matrix-cell-count">${matrix.star}</div>
+              <div style="font-size: 10px; color: var(--sf-muted); margin-top: 4px;">Protect & grow</div>
+            </div>
+            <div class="health-matrix-cell audit">
+              <div class="health-matrix-cell-label">⚠ Audit</div>
+              <div class="health-matrix-cell-count">${matrix.audit}</div>
+              <div style="font-size: 10px; color: var(--sf-muted); margin-top: 4px;">Review deal structure</div>
+            </div>
+            <div class="health-matrix-cell empty"><div style="font-size: 11px;">N/A</div></div>
+
+            <div class="health-matrix-row-label">Low GMV</div>
+            <div class="health-matrix-cell healthy">
+              <div class="health-matrix-cell-label">🌱 Healthy</div>
+              <div class="health-matrix-cell-count">${matrix.healthy}</div>
+              <div style="font-size: 10px; color: var(--sf-muted); margin-top: 4px;">Small but converting</div>
+            </div>
+            <div class="health-matrix-cell atRisk">
+              <div class="health-matrix-cell-label">🚨 At Risk</div>
+              <div class="health-matrix-cell-count">${matrix.atRisk}</div>
+              <div style="font-size: 10px; color: #b71c1c; margin-top: 4px; font-weight: 600;">HIGHEST CHURN RISK</div>
+            </div>
+            <div class="health-matrix-cell dormant">
+              <div class="health-matrix-cell-label">☠ Dormant / NA</div>
+              <div class="health-matrix-cell-count">${matrix.dormant}</div>
+              <div style="font-size: 10px; color: var(--sf-muted); margin-top: 4px;">Reactivate or churn</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">
+          <div class="card-title-text">Top At-Risk Stores · Immediate Action</div>
+          <div class="card-title-action" style="color: var(--sf-red);">${atRiskMerchantCount} stores · ${fmt$(atRiskMerchantGMV)} at risk</div>
+        </div>
+        <div class="card-body">
+          ${atRiskMerchantList.length === 0 ? `
+            <div class="queue-empty">No at-risk stores ✓</div>
+          ` : atRiskMerchantList
+              .sort((a, b) => b.submittedApps - a.submittedApps)
+              .slice(0, 6)
+              .map(m => {
+                const am = AMs.find(a => MERCHANTS_BY_AM[a.id].includes(m));
+                return `
+                  <div style="padding: 10px; border-left: 3px solid #c62828; background: #ffebee; border-radius: 4px; margin-bottom: 8px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                      <div style="font-weight: 600; font-size: 12px; color: var(--sf-navy);">${esc(m.name)}</div>
+                      <span class="grade-mini ${m.healthGrade}">${m.healthGrade}</span>
+                    </div>
+                    <div style="font-size: 11px; color: var(--sf-muted);">
+                      <strong style="color: #c62828;">${m.submittedApps} apps → ${m.fundedTransactions} funded (${m.fundedRate}%)</strong> · ${fmt$(m.gmv)} GMV · ${esc(m.partner)} · AM: ${am ? esc(am.name.split(" ")[0]) : "?"}
+                    </div>
+                  </div>
+                `;
+              }).join("")}
+        </div>
+      </div>
     </div>
 
     <div class="card">
@@ -815,11 +1128,10 @@ function renderExecAMTab() {
               <th class="left">Account Manager</th>
               <th>Score</th>
               <th class="left">Portfolio (5-Tier)</th>
-              <th>Touch</th>
-              <th>Dormancy</th>
-              <th>Capture</th>
+              <th>Funded Rate</th>
+              <th>At Risk</th>
+              <th>Avg Health</th>
               <th>GMV MTD</th>
-              <th>Comp Plan</th>
               <th>Status</th>
               <th></th>
             </tr>
@@ -857,15 +1169,15 @@ function renderExecAMTab() {
         <div class="insights">
           <div class="insight green">
             <div class="insight-title">Proof Point</div>
-            <div class="insight-text">Jerome (97% touch → 6% dormancy) and Megan (92% → 10%) demonstrate the cadence model works. Promote their playbook across the team.</div>
+            <div class="insight-text">Jerome (97% touch → 6% dormancy, 0 at-risk stores) and Megan (92% → 10%) demonstrate the cadence model works. Promote their playbook across the team.</div>
           </div>
           <div class="insight yellow">
-            <div class="insight-title">Watch</div>
-            <div class="insight-text">Kelsey is borderline across 4 KPIs. A 14-day retraining sprint + AM Playbook cadence reset should pull her to green by EOM.</div>
+            <div class="insight-title">New Risk Signal</div>
+            <div class="insight-text">${matrix.atRisk} at-risk stores team-wide are submitting apps but failing to fund. This is the cohort Tearsa flagged as highest churn risk. Audit deal structure with WebBank, retrain on app eligibility.</div>
           </div>
           <div class="insight red">
             <div class="insight-title">At Risk</div>
-            <div class="insight-text">Carlos is red on 4 KPIs. $104K GMV at risk. 10 dormant + 3 never-active stores. Trigger an immediate PIP + portfolio reallocation.</div>
+            <div class="insight-text">Carlos has 4 at-risk stores in his book of 8 — half his portfolio is at high churn risk despite app submission activity. PIP + immediate WebBank approval-rate diagnostic.</div>
           </div>
         </div>
       </div>
@@ -883,13 +1195,18 @@ function kpiTile(label, value, sub, status, target) {
 }
 
 function renderLeaderRowAM(am, i, total) {
-  const touchS   = statusOf(am.touchCoverage, THRESHOLDS.touchCoverage);
-  const dormS    = statusOf(am.dormancy, THRESHOLDS.dormancy);
-  const captureS = statusOf(am.captureRate, THRESHOLDS.captureRate);
+  const fundedRateStatus = am.amFundedRate >= 50 ? "green" : am.amFundedRate >= 35 ? "yellow" : "red";
+  const atRiskMerchantStatus = am.atRiskCount === 0 ? "green" : am.atRiskCount <= 2 ? "yellow" : "red";
+  const healthStatus = am.avgHealthScore >= 75 ? "green" : am.avgHealthScore >= 60 ? "yellow" : "red";
   const rankClass = i === 0 ? "gold" : i === total - 1 ? "bottom" : "";
-  const compTotal = am.onboarding + am.retrains + am.accountReviews;
-  const compMax = 50;
-  const compPct = Math.round((compTotal / compMax) * 100);
+
+  // Letter grade for AM avg
+  let amGrade;
+  if (am.avgHealthScore >= 90) amGrade = "A";
+  else if (am.avgHealthScore >= 75) amGrade = "B";
+  else if (am.avgHealthScore >= 60) amGrade = "C";
+  else if (am.avgHealthScore >= 40) amGrade = "D";
+  else amGrade = "F";
 
   return `
     <tr onclick="goAM('${am.id}', true)">
@@ -913,18 +1230,25 @@ function renderLeaderRowAM(am, i, total) {
           HE ${am.tierHE} · ME ${am.tierME} · LE ${am.tierLE} · D ${am.tierD} · NA ${am.tierNA}
         </div>
       </td>
-      <td><div style="font-weight: 700; color: ${colorFor(touchS)};">${am.touchCoverage}%</div></td>
-      <td><div style="font-weight: 700; color: ${colorFor(dormS)};">${am.dormancy}%</div></td>
-      <td><div style="font-weight: 700; color: ${colorFor(captureS)};">${am.captureRate}%</div></td>
+      <td>
+        <div style="font-weight: 700; color: ${colorFor(fundedRateStatus)}; font-size: 16px;">${am.amFundedRate}%</div>
+        <div style="font-size: 10px; color: var(--sf-muted);">${am.totalFundedTransactions}/${am.totalSubmittedApps} apps</div>
+      </td>
+      <td>
+        <div style="font-weight: 700; color: ${colorFor(atRiskMerchantStatus)}; font-size: 16px;">${am.atRiskCount}</div>
+        ${am.atRiskCount > 0 ? `<div style="font-size: 10px; color: var(--sf-red);">churn risk</div>` : `<div style="font-size: 10px; color: var(--sf-green);">clean</div>`}
+      </td>
+      <td>
+        <div style="display: flex; align-items: center; gap: 6px; justify-content: center;">
+          <span class="grade-mini ${amGrade}">${amGrade}</span>
+          <span style="font-weight: 700; color: ${colorFor(healthStatus)};">${am.avgHealthScore}</span>
+        </div>
+      </td>
       <td>
         <div style="font-weight: 700; color: var(--sf-navy);">${fmt$(am.gmvMTD)}</div>
         <div style="font-size: 10px; color: ${am.gmvGrowth >= 0 ? 'var(--sf-green)' : 'var(--sf-red)'};">
           ${am.gmvGrowth >= 0 ? '▲' : '▼'} ${Math.abs(am.gmvGrowth)}% MoM
         </div>
-      </td>
-      <td>
-        <div style="font-weight: 700; font-size: 12px;">${am.onboarding}/${am.retrains}/${am.accountReviews}</div>
-        <div style="font-size: 10px; color: var(--sf-muted);">${compPct}% · O/R/AR</div>
       </td>
       <td><span class="pill ${am.status}"><span class="dot small ${am.status}"></span>${statusLabel(am.status)}</span></td>
       <td><button class="btn-link" onclick="event.stopPropagation(); goAM('${am.id}', true)">Drill →</button></td>
@@ -1187,18 +1511,31 @@ function renderAM(amId, isExec) {
             <div class="am-detail-name">${esc(am.name)}</div>
             <span class="pill am">AM</span>
             <span class="pill ${score.status}"><span class="dot small ${score.status}"></span>${statusLabel(score.status)}</span>
+            ${am.atRiskCount > 0 ? `<span class="at-risk-flag">${am.atRiskCount} At Risk</span>` : ""}
           </div>
           <div class="am-detail-title">
             ${esc(am.title)} · ${am.accounts} dealer accounts · Reporting to Jerome Carthen (AM Team Lead)
           </div>
         </div>
-        <div class="am-score-block">
-          <div class="am-score-label">Performance Score</div>
-          <div class="am-score-value" style="color: ${colorFor(score.status)};">${score.score}</div>
-          <div class="am-score-breakdown">
-            <span style="color: var(--sf-green);">${score.g} Green</span> ·
-            <span style="color: var(--sf-orange);">${score.y} Yellow</span> ·
-            <span style="color: var(--sf-red);">${score.r} Red</span>
+        <div class="am-score-block" style="display: flex; gap: 16px; align-items: flex-start;">
+          <div>
+            <div class="am-score-label">Performance</div>
+            <div class="am-score-value" style="color: ${colorFor(score.status)};">${score.score}</div>
+            <div class="am-score-breakdown">
+              <span style="color: var(--sf-green);">${score.g}G</span> ·
+              <span style="color: var(--sf-orange);">${score.y}Y</span> ·
+              <span style="color: var(--sf-red);">${score.r}R</span>
+            </div>
+          </div>
+          <div>
+            <div class="am-score-label">Avg Health</div>
+            <div style="display: flex; align-items: center; gap: 8px; margin-top: 4px;">
+              <span class="grade-pill large ${(am.avgHealthScore >= 90 ? 'A' : am.avgHealthScore >= 75 ? 'B' : am.avgHealthScore >= 60 ? 'C' : am.avgHealthScore >= 40 ? 'D' : 'F')}">${(am.avgHealthScore >= 90 ? 'A' : am.avgHealthScore >= 75 ? 'B' : am.avgHealthScore >= 60 ? 'C' : am.avgHealthScore >= 40 ? 'D' : 'F')}</span>
+              <div>
+                <div style="font-size: 28px; font-weight: 700; line-height: 1; color: var(--sf-navy);">${am.avgHealthScore}</div>
+                <div style="font-size: 10px; color: var(--sf-muted);">/ 100</div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -1211,14 +1548,16 @@ function renderAM(amId, isExec) {
           </div>
         </div>
         <div>
-          <div class="header-stat-label">Highly Engaged</div>
-          <div class="header-stat-value">${am.tierHE} / ${am.accounts}</div>
-          <div class="header-stat-sub">${Math.round(am.tierHE / am.accounts * 100)}% of book</div>
+          <div class="header-stat-label">Funded Rate</div>
+          <div class="header-stat-value" style="color: ${colorFor(am.amFundedRate >= 50 ? 'green' : am.amFundedRate >= 35 ? 'yellow' : 'red')};">${am.amFundedRate}%</div>
+          <div class="header-stat-sub">${am.totalFundedTransactions} of ${am.totalSubmittedApps} apps funded</div>
         </div>
         <div>
-          <div class="header-stat-label">At Risk (D + NA)</div>
-          <div class="header-stat-value">${am.tierD + am.tierNA}</div>
-          <div class="header-stat-sub" style="color: var(--sf-red);">${am.tierD} dormant · ${am.tierNA} never-active</div>
+          <div class="header-stat-label">Stores Needing Action</div>
+          <div class="header-stat-value">${am.tierD + am.tierNA + am.atRiskCount}</div>
+          <div class="header-stat-sub" style="color: var(--sf-red);">
+            ${am.tierD}D · ${am.tierNA}NA${am.atRiskCount > 0 ? ` · ${am.atRiskCount} At Risk` : ""}
+          </div>
         </div>
         <div>
           <div class="header-stat-label">GMV at Risk</div>
@@ -1227,6 +1566,35 @@ function renderAM(amId, isExec) {
         </div>
       </div>
     </div>
+
+    ${am.atRiskCount > 0 ? `
+      <!-- At-risk stores callout — top of AM page when applicable -->
+      <div class="card" style="border-left: 4px solid #c62828;">
+        <div class="card-title">
+          <div class="card-title-text" style="color: #b71c1c;">🚨 At-Risk Stores · Highest Churn Risk (${am.atRiskCount})</div>
+          <div class="card-title-action" style="color: #b71c1c;">High submission activity · Low funded conversion</div>
+        </div>
+        <div class="card-body">
+          <div style="font-size: 12px; color: var(--sf-muted); margin-bottom: 12px; line-height: 1.5;">
+            These stores are <em>actively engaged</em> (submitting many applications) but <em>failing to fund</em>. Per Tearsa's framework, this is the most dangerous cohort — they're trying and getting frustrated, which typically precedes cancellation. Diagnose the cause: deal structure, app eligibility training, or partner integration issue.
+          </div>
+          ${merchants.filter(m => m.atRisk).map(m => `
+            <div style="padding: 10px 12px; border-left: 3px solid #c62828; background: #ffebee; border-radius: 4px; margin-bottom: 8px; display: flex; align-items: center; gap: 12px;">
+              <span class="grade-pill ${m.healthGrade}">${m.healthGrade}</span>
+              <div style="flex: 1;">
+                <div style="font-weight: 600; color: var(--sf-navy); font-size: 13px;">${esc(m.name)}</div>
+                <div style="font-size: 11px; color: var(--sf-muted); margin-top: 2px;">
+                  <strong style="color: #c62828;">${m.submittedApps} apps → ${m.fundedTransactions} funded (${m.fundedRate}%)</strong> ·
+                  ${fmt$(m.gmv)} GMV · Tier ${m.tier} · ${esc(m.partner)}
+                </div>
+              </div>
+              <button class="btn-primary">WebBank Diagnostic</button>
+              <button class="btn-escalate">Escalate</button>
+            </div>
+          `).join("")}
+        </div>
+      </div>
+    ` : ""}
 
     <!-- Comp Plan Tracker -->
     <div class="card">
@@ -1361,14 +1729,14 @@ function renderAM(amId, isExec) {
           ${untouched.length === 0
             ? `<div class="queue-empty">All accounts touched this month ✓</div>`
             : untouched.map(m => `
-                <div class="queue-item ${m.lastTouch > 20 ? 'red' : 'orange'}">
+                <div class="queue-item ${m.lastTouch > 20 ? 'red' : 'orange'}" style="gap: 8px;">
+                  <span class="grade-mini ${m.healthGrade}">${m.healthGrade}</span>
                   <div class="queue-item-info">
-                    <div class="queue-item-name">${esc(m.name)}</div>
-                    <div class="queue-item-sub">${esc(m.partner)} · Tier ${m.tier} · ${m.gmv === 0 ? (m.tier === "NA" ? "Never Active" : "Dormant") : fmt$(m.gmv)}</div>
+                    <div class="queue-item-name">${esc(m.name)} ${m.atRisk ? '<span class="at-risk-flag" style="margin-left: 4px;">AT RISK</span>' : ''}</div>
+                    <div class="queue-item-sub">${esc(m.partner)} · Tier ${m.tier} · ${m.submittedApps > 0 ? m.submittedApps + ' apps · ' + m.fundedRate + '% funded · ' : ''}${m.gmv === 0 ? (m.tier === "NA" ? "Never Active" : "Dormant") : fmt$(m.gmv)}</div>
                   </div>
                   <div class="queue-item-days ${m.lastTouch > 20 ? 'red' : 'orange'}">${m.lastTouch}d</div>
                   <button class="btn-primary">Log Touch</button>
-                  ${m.lastTouch > 15 ? `<button class="btn-escalate">Escalate</button>` : ''}
                 </div>
               `).join("")}
         </div>
@@ -1376,17 +1744,18 @@ function renderAM(amId, isExec) {
 
       <div class="card">
         <div class="card-title">
-          <div class="card-title-text">At-Risk Accounts — Dormant + Never Active (${atRiskMerchants.length})</div>
+          <div class="card-title-text">Dormant Accounts — Dormant + Never Active (${atRiskMerchants.length})</div>
           <div class="card-title-action" style="color: var(--sf-red);">AM-owned per Playbook</div>
         </div>
         <div class="card-body">
           ${atRiskMerchants.length === 0
             ? `<div class="queue-empty">No at-risk accounts ✓</div>`
             : atRiskMerchants.map(m => `
-                <div class="queue-item ${m.tier === 'NA' ? 'purple' : 'red'}">
+                <div class="queue-item ${m.tier === 'NA' ? 'purple' : 'red'}" style="gap: 8px;">
+                  <span class="grade-mini ${m.healthGrade}">${m.healthGrade}</span>
                   <div class="queue-item-info">
                     <div class="queue-item-name">${esc(m.name)}</div>
-                    <div class="queue-item-sub">${esc(m.partner)} · ${m.tier === 'NA' ? 'Never Active — Day 7 goal' : 'Dormant — retrain required'} · $10K/mo at risk</div>
+                    <div class="queue-item-sub">${esc(m.partner)} · ${m.tier === 'NA' ? 'Never Active — Day 7 goal' : 'Dormant — retrain required'} · ${m.submittedApps > 0 ? m.submittedApps + ' apps · 0% funded' : 'No app activity'}</div>
                   </div>
                   <button class="btn-primary">${m.tier === 'NA' ? 'Schedule Relaunch' : 'Schedule Retraining'}</button>
                 </div>
