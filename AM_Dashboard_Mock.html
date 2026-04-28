@@ -2549,7 +2549,6 @@ function renderDrill(quadrant) {
                 <th class="right">Rate</th>
                 <th>Account Manager</th>
                 <th class="center">Last Touch</th>
-                <th class="center">Action</th>
               </tr>
             </thead>
             <tbody>
@@ -2591,9 +2590,6 @@ function renderDrill(quadrant) {
                       </div>
                     </td>
                     <td class="center" style="color: ${m.lastTouch > 14 ? 'var(--sf-red)' : 'var(--sf-muted)'};">${m.lastTouch}d</td>
-                    <td class="center">
-                      <button class="btn-primary">${esc(config.actionLabel)}</button>
-                    </td>
                   </tr>
                 `).join("")}
             </tbody>
@@ -2613,7 +2609,6 @@ function renderDrill(quadrant) {
                 <th class="right">Stores in This Group</th>
                 <th class="right">GMV in Group</th>
                 <th class="right">% of AM's Book</th>
-                <th class="center">Action</th>
               </tr>
             </thead>
             <tbody>
@@ -2621,7 +2616,7 @@ function renderDrill(quadrant) {
                 const totalAccts = a.am ? a.am.accounts : 0;
                 const pctOfBook = totalAccts > 0 ? Math.round((a.count / totalAccts) * 100) : 0;
                 return `
-                  <tr>
+                  <tr onclick="goAM('${a.am.id}', true)" style="cursor: pointer;">
                     <td>
                       <div style="display: flex; align-items: center; gap: 10px;">
                         ${avatarHtml(a.am.initials, a.am.status, 30, "am")}
@@ -2634,9 +2629,6 @@ function renderDrill(quadrant) {
                     <td class="right" style="font-weight: 700; font-size: 16px;">${a.count}</td>
                     <td class="right" style="font-weight: 600;">${fmt$(a.gmv)}</td>
                     <td class="right" style="color: ${pctOfBook > 30 ? 'var(--sf-red)' : pctOfBook > 15 ? 'var(--sf-orange)' : 'var(--sf-muted)'}; font-weight: 600;">${pctOfBook}%</td>
-                    <td class="center">
-                      <button class="btn-link" onclick="goAM('${a.am.id}', true)">View AM →</button>
-                    </td>
                   </tr>
                 `;
               }).join("")}
