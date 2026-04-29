@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Agero + DigniFi — Revenue Share Model</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --navy: #0B1C3A;
+    --navy-mid: #132850;
+    --navy-light: #1E3A66;
+    --blue: #2563A8;
+    --blue-bright: #3B82D4;
+    --accent: #E8A020;
+    --accent-light: #F5C86A;
+    --white: #FFFFFF;
+    --off-white: #F5F3EE;
+    --text-muted: #8A9DB8;
+    --border: rgba(255,255,255,0.08);
+    --card-bg: rgba(255,255,255,0.04);
+    --card-border: rgba(255,255,255,0.1);
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--navy);
+    color: var(--white);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 400;
+    line-height: 1.6;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Background texture */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 80% 60% at 20% 0%, rgba(37,99,168,0.18) 0%, transparent 60%),
+      radial-gradient(ellipse 60% 40% at 80% 100%, rgba(232,160,32,0.08) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .container {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 0 2rem;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* ── HEADER ── */
+  header {
+    padding: 3.5rem 0 2rem;
+    border-bottom: 0.5px solid var(--border);
+    margin-bottom: 3rem;
+  }
+
+  .header-eyebrow {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 1.25rem;
+  }
+
+  .pill {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 4px 12px;
+    border-radius: 100px;
+    background: rgba(232,160,32,0.15);
+    color: var(--accent-light);
+    border: 0.5px solid rgba(232,160,32,0.3);
+  }
+
+  .pill-blue {
+    background: rgba(59,130,212,0.15);
+    color: #93C5FD;
+    border-color: rgba(59,130,212,0.3);
+  }
+
+  h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(2rem, 5vw, 3rem);
+    font-weight: 400;
+    line-height: 1.15;
+    letter-spacing: -0.01em;
+    color: var(--white);
+    margin-bottom: 1rem;
+  }
+
+  h1 em {
+    font-style: italic;
+    color: var(--accent-light);
+  }
+
+  .header-sub {
+    font-size: 15px;
+    color: var(--text-muted);
+    max-width: 520px;
+    line-height: 1.7;
+  }
+
+  /* ── STAT STRIP ── */
+  .stat-strip {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: var(--border);
+    border: 0.5px solid var(--card-border);
+    border-radius: 12px;
+    overflow: hidden;
+    margin-bottom: 3rem;
+  }
+
+  .stat-cell {
+    background: var(--card-bg);
+    padding: 1.25rem 1.5rem;
+    text-align: center;
+    transition: background 0.2s;
+  }
+
+  .stat-cell:hover { background: rgba(255,255,255,0.06); }
+
+  .stat-number {
+    font-family: 'DM Serif Display', serif;
+    font-size: 2rem;
+    color: var(--white);
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+
+  .stat-number.accent { color: var(--accent-light); }
+
+  .stat-label {
+    font-size: 11px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  /* ── SECTION HEADERS ── */
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 1.5rem;
+  }
+
+  .section-num {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: rgba(59,130,212,0.2);
+    border: 0.5px solid rgba(59,130,212,0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 500;
+    color: #93C5FD;
+    flex-shrink: 0;
+  }
+
+  .section-title {
+    font-size: 12px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-muted);
+  }
+
+  /* ── SLIDERS ── */
+  .sliders-block {
+    background: var(--card-bg);
+    border: 0.5px solid var(--card-border);
+    border-radius: 12px;
+    padding: 1.75rem 2rem;
+    margin-bottom: 3rem;
+  }
+
+  .slider-row {
+    margin-bottom: 1.5rem;
+  }
+
+  .slider-row:last-child { margin-bottom: 0; }
+
+  .slider-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 8px;
+  }
+
+  .slider-name {
+    font-size: 13px;
+    color: #B8C8DD;
+  }
+
+  .slider-val {
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--white);
+    min-width: 80px;
+    text-align: right;
+  }
+
+  .slider-track {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .track-label {
+    font-size: 10px;
+    color: var(--text-muted);
+    min-width: 32px;
+  }
+
+  .track-label.right { text-align: right; }
+
+  input[type="range"] {
+    -webkit-appearance: none;
+    appearance: none;
+    flex: 1;
+    height: 3px;
+    background: rgba(255,255,255,0.12);
+    border-radius: 2px;
+    outline: none;
+    cursor: pointer;
+  }
+
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: var(--white);
+    border: 3px solid var(--blue-bright);
+    cursor: pointer;
+    box-shadow: 0 0 0 4px rgba(59,130,212,0.2);
+    transition: box-shadow 0.15s;
+  }
+
+  input[type="range"]::-webkit-slider-thumb:hover {
+    box-shadow: 0 0 0 6px rgba(59,130,212,0.25);
+  }
+
+  input[type="range"]::-moz-range-thumb {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: var(--white);
+    border: 3px solid var(--blue-bright);
+    cursor: pointer;
+  }
+
+  /* ── RESULTS ── */
+  .results-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.25rem;
+    margin-bottom: 3rem;
+  }
+
+  .result-card {
+    background: var(--card-bg);
+    border: 0.5px solid var(--card-border);
+    border-radius: 12px;
+    padding: 1.5rem;
+    transition: border-color 0.2s;
+  }
+
+  .result-card.featured {
+    background: rgba(37,99,168,0.12);
+    border-color: rgba(59,130,212,0.4);
+    grid-column: span 2;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    align-items: center;
+  }
+
+  .result-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: var(--text-muted);
+    margin-bottom: 6px;
+  }
+
+  .result-value {
+    font-family: 'DM Serif Display', serif;
+    font-size: 2.4rem;
+    color: var(--white);
+    line-height: 1;
+  }
+
+  .result-value.blue { color: var(--accent-light); }
+
+  .result-sub {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-top: 4px;
+  }
+
+  /* ── FUNNEL ── */
+  .funnel-block {
+    background: var(--card-bg);
+    border: 0.5px solid var(--card-border);
+    border-radius: 12px;
+    overflow: hidden;
+    margin-bottom: 3rem;
+  }
+
+  .funnel-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.85rem 1.75rem;
+    border-bottom: 0.5px solid var(--border);
+    transition: background 0.15s;
+  }
+
+  .funnel-row:last-child {
+    border-bottom: none;
+    background: rgba(59,130,212,0.08);
+  }
+
+  .funnel-row:hover { background: rgba(255,255,255,0.03); }
+  .funnel-row:last-child:hover { background: rgba(59,130,212,0.12); }
+
+  .funnel-label {
+    font-size: 13px;
+    color: #B8C8DD;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .funnel-arrow {
+    font-size: 10px;
+    color: var(--text-muted);
+  }
+
+  .funnel-value {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--white);
+  }
+
+  .funnel-value.highlight { color: var(--accent-light); }
+
+  /* ── SCENARIOS ── */
+  .scenarios {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    margin-bottom: 3rem;
+  }
+
+  .scen {
+    background: var(--card-bg);
+    border: 0.5px solid var(--card-border);
+    border-radius: 12px;
+    padding: 1.25rem;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.2s, background 0.2s;
+  }
+
+  .scen.base {
+    background: rgba(37,99,168,0.1);
+    border-color: rgba(59,130,212,0.5);
+  }
+
+  .scen::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: transparent;
+    transition: background 0.2s;
+  }
+
+  .scen.base::before { background: var(--blue-bright); }
+
+  .scen-tag {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-muted);
+    margin-bottom: 10px;
+  }
+
+  .scen.base .scen-tag { color: #93C5FD; }
+
+  .scen-revenue {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.8rem;
+    color: var(--white);
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+
+  .scen.base .scen-revenue { color: var(--accent-light); }
+
+  .scen-gmv {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-bottom: 2px;
+  }
+
+  .scen-rate {
+    font-size: 11px;
+    color: rgba(138,157,184,0.6);
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    border-top: 0.5px solid var(--border);
+    padding: 2rem 0 3rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 2rem;
+  }
+
+  .footer-note {
+    font-size: 12px;
+    color: var(--text-muted);
+    max-width: 420px;
+    line-height: 1.6;
+  }
+
+  .footer-note strong {
+    color: #B8C8DD;
+    font-weight: 500;
+  }
+
+  .footer-brand {
+    text-align: right;
+    flex-shrink: 0;
+  }
+
+  .brand-name {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.1rem;
+    color: var(--white);
+    margin-bottom: 2px;
+  }
+
+  .brand-sub {
+    font-size: 11px;
+    color: var(--text-muted);
+  }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  header, .stat-strip, .sliders-block, .results-grid, .funnel-block, .scenarios, footer {
+    animation: fadeUp 0.5s ease both;
+  }
+
+  .stat-strip { animation-delay: 0.05s; }
+  .sliders-block { animation-delay: 0.1s; }
+  .results-grid { animation-delay: 0.15s; }
+  .funnel-block { animation-delay: 0.2s; }
+  .scenarios { animation-delay: 0.25s; }
+  footer { animation-delay: 0.3s; }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 620px) {
+    .stat-strip { grid-template-columns: 1fr; }
+    .results-grid { grid-template-columns: 1fr; }
+    .result-card.featured { grid-column: span 1; grid-template-columns: 1fr; }
+    .scenarios { grid-template-columns: 1fr; }
+    footer { flex-direction: column; }
+    .footer-brand { text-align: left; }
+    .sliders-block { padding: 1.25rem; }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- HEADER -->
+  <header>
+    <div class="header-eyebrow">
+      <span class="pill">Partnership Model</span>
+      <span class="pill pill-blue">1% Revenue Share</span>
+    </div>
+    <h1>What does an Agero +<br>DigniFi partnership <em>earn?</em></h1>
+    <p class="header-sub">Adjust the assumptions below to model Agero's annual revenue from embedding DigniFi point-of-need financing into the service dispatch workflow. Zero lending liability. Pure rev share on funded volume.</p>
+  </header>
+
+  <!-- STAT STRIP -->
+  <div class="stat-strip">
+    <div class="stat-cell">
+      <div class="stat-number">13M</div>
+      <div class="stat-label">Annual service events</div>
+    </div>
+    <div class="stat-cell">
+      <div class="stat-number">$1,100</div>
+      <div class="stat-label">Avg financed repair ticket</div>
+    </div>
+    <div class="stat-cell">
+      <div class="stat-number accent">1%</div>
+      <div class="stat-label">Agero revenue share rate</div>
+    </div>
+  </div>
+
+  <!-- SLIDERS -->
+  <div class="section-header">
+    <span class="section-num">1</span>
+    <span class="section-title">Adjust assumptions</span>
+  </div>
+
+  <div class="sliders-block">
+    <div class="slider-row">
+      <div class="slider-meta">
+        <span class="slider-name">Annual Agero service events</span>
+        <span class="slider-val" id="v-events">13,000,000</span>
+      </div>
+      <div class="slider-track">
+        <span class="track-label">5M</span>
+        <input type="range" min="5000000" max="20000000" step="500000" value="13000000" id="s-events">
+        <span class="track-label right">20M</span>
+      </div>
+    </div>
+
+    <div class="slider-row">
+      <div class="slider-meta">
+        <span class="slider-name">% of events routed to a repair shop</span>
+        <span class="slider-val" id="v-routed">65%</span>
+      </div>
+      <div class="slider-track">
+        <span class="track-label">20%</span>
+        <input type="range" min="20" max="90" step="1" value="65" id="s-routed">
+        <span class="track-label right">90%</span>
+      </div>
+    </div>
+
+    <div class="slider-row">
+      <div class="slider-meta">
+        <span class="slider-name">% of repair customers who qualify &amp; accept financing</span>
+        <span class="slider-val" id="v-conv">12%</span>
+      </div>
+      <div class="slider-track">
+        <span class="track-label">2%</span>
+        <input type="range" min="2" max="30" step="1" value="12" id="s-conv">
+        <span class="track-label right">30%</span>
+      </div>
+    </div>
+
+    <div class="slider-row">
+      <div class="slider-meta">
+        <span class="slider-name">Average financed repair ticket</span>
+        <span class="slider-val" id="v-ticket">$1,100</span>
+      </div>
+      <div class="slider-track">
+        <span class="track-label">$500</span>
+        <input type="range" min="500" max="3000" step="50" value="1100" id="s-ticket">
+        <span class="track-label right">$3,000</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- RESULTS -->
+  <div class="section-header">
+    <span class="section-num">2</span>
+    <span class="section-title">Your numbers</span>
+  </div>
+
+  <div class="results-grid">
+    <div class="result-card featured">
+      <div>
+        <div class="result-label">Agero annual revenue share</div>
+        <div class="result-value blue" id="r-rev">$5.5M</div>
+        <div class="result-sub">At 1% of funded GMV &mdash; no lending risk</div>
+      </div>
+      <div>
+        <div class="result-label">Annual financed GMV</div>
+        <div class="result-value" id="r-gmv">$554M</div>
+        <div class="result-sub" id="r-txn">503,503 funded transactions / yr</div>
+      </div>
+    </div>
+    <div class="result-card">
+      <div class="result-label">Funded transactions / year</div>
+      <div class="result-value" id="r-txn2">503,503</div>
+      <div class="result-sub">At current assumptions</div>
+    </div>
+    <div class="result-card">
+      <div class="result-label">Monthly revenue run rate</div>
+      <div class="result-value" id="r-monthly">$458K</div>
+      <div class="result-sub">Recurring, no operational overhead</div>
+    </div>
+  </div>
+
+  <!-- FUNNEL -->
+  <div class="section-header">
+    <span class="section-num">3</span>
+    <span class="section-title">How we get there</span>
+  </div>
+
+  <div class="funnel-block">
+    <div class="funnel-row">
+      <span class="funnel-label">Total annual Agero events</span>
+      <span class="funnel-value" id="f-events">13,000,000</span>
+    </div>
+    <div class="funnel-row">
+      <span class="funnel-label"><span class="funnel-arrow">↓</span> Routed to a repair shop</span>
+      <span class="funnel-value" id="f-routed">8,450,000</span>
+    </div>
+    <div class="funnel-row">
+      <span class="funnel-label"><span class="funnel-arrow">↓</span> Qualify &amp; accept financing</span>
+      <span class="funnel-value" id="f-conv">1,014,000</span>
+    </div>
+    <div class="funnel-row">
+      <span class="funnel-label"><span class="funnel-arrow">×</span> Average repair ticket</span>
+      <span class="funnel-value" id="f-ticket">$1,100</span>
+    </div>
+    <div class="funnel-row">
+      <span class="funnel-label">= Total financed GMV</span>
+      <span class="funnel-value highlight" id="f-gmv">$554M</span>
+    </div>
+  </div>
+
+  <!-- SCENARIOS -->
+  <div class="section-header">
+    <span class="section-num">4</span>
+    <span class="section-title">Benchmark scenarios</span>
+  </div>
+
+  <div class="scenarios">
+    <div class="scen">
+      <div class="scen-tag">Conservative</div>
+      <div class="scen-revenue">$2.8M</div>
+      <div class="scen-gmv">$277M GMV</div>
+      <div class="scen-rate">~3% financing take rate</div>
+    </div>
+    <div class="scen base">
+      <div class="scen-tag">Base case</div>
+      <div class="scen-revenue">$5.5M</div>
+      <div class="scen-gmv">$554M GMV</div>
+      <div class="scen-rate">~6.5% financing take rate</div>
+    </div>
+    <div class="scen">
+      <div class="scen-tag">Optimistic</div>
+      <div class="scen-revenue">$7.8M</div>
+      <div class="scen-gmv">$776M GMV</div>
+      <div class="scen-rate">~9% financing take rate</div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    <p class="footer-note">
+      <strong>Assumptions:</strong> 13M annual events sourced from public Agero estimates. Average repair ticket of $1,100 based on 2024 industry data. Financing take rate varies by market penetration and advisor adoption. DigniFi handles all underwriting, funding, and servicing. Agero assumes zero lending liability.
+    </p>
+    <div class="footer-brand">
+      <div class="brand-name">DigniFi</div>
+      <div class="brand-sub">Embedded finance for automotive</div>
+    </div>
+  </footer>
+
+</div>
+
+<script>
+  function fmt(n) {
+    if (n >= 1e6) return '$' + (n / 1e6).toFixed(1) + 'M';
+    if (n >= 1e3) return '$' + Math.round(n / 1000) + 'K';
+    return '$' + Math.round(n).toLocaleString();
+  }
+  function fmtN(n) { return Math.round(n).toLocaleString(); }
+
+  function update() {
+    var events = +document.getElementById('s-events').value;
+    var routed = +document.getElementById('s-routed').value / 100;
+    var conv   = +document.getElementById('s-conv').value / 100;
+    var ticket = +document.getElementById('s-ticket').value;
+
+    document.getElementById('v-events').textContent = fmtN(events);
+    document.getElementById('v-routed').textContent = Math.round(+document.getElementById('s-routed').value) + '%';
+    document.getElementById('v-conv').textContent   = Math.round(+document.getElementById('s-conv').value) + '%';
+    document.getElementById('v-ticket').textContent = '$' + Math.round(ticket).toLocaleString();
+
+    var shopEvents = events * routed;
+    var txns = shopEvents * conv;
+    var gmv  = txns * ticket;
+    var rev  = gmv * 0.01;
+    var monthly = rev / 12;
+
+    document.getElementById('r-rev').textContent     = fmt(rev);
+    document.getElementById('r-gmv').textContent     = fmt(gmv);
+    document.getElementById('r-txn').textContent     = fmtN(txns) + ' funded transactions / yr';
+    document.getElementById('r-txn2').textContent    = fmtN(txns);
+    document.getElementById('r-monthly').textContent = fmt(monthly);
+
+    document.getElementById('f-events').textContent = fmtN(events);
+    document.getElementById('f-routed').textContent = fmtN(shopEvents);
+    document.getElementById('f-conv').textContent   = fmtN(txns);
+    document.getElementById('f-ticket').textContent = '$' + Math.round(ticket).toLocaleString();
+    document.getElementById('f-gmv').textContent    = fmt(gmv);
+  }
+
+  ['s-events','s-routed','s-conv','s-ticket'].forEach(function(id) {
+    document.getElementById(id).addEventListener('input', update);
+  });
+
+  update();
+</script>
+</body>
+</html>
