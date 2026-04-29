@@ -10,25 +10,24 @@
 
   :root {
     --navy: #0B1C3A;
-    --navy-mid: #132850;
-    --navy-light: #1E3A66;
     --blue: #2563A8;
     --blue-bright: #3B82D4;
-    --accent: #E8A020;
-    --accent-light: #F5C86A;
+    --accent: #C47D0A;
+    --accent-light: #B06D00;
     --white: #FFFFFF;
-    --off-white: #F5F3EE;
-    --text-muted: #8A9DB8;
-    --border: rgba(255,255,255,0.08);
-    --card-bg: rgba(255,255,255,0.04);
-    --card-border: rgba(255,255,255,0.1);
+    --off-white: #F7F6F3;
+    --text-primary: #111827;
+    --text-muted: #6B7A8F;
+    --border: #E5E7EB;
+    --card-bg: #F9F8F6;
+    --card-border: #E5E7EB;
   }
 
   html { scroll-behavior: smooth; }
 
   body {
-    background: var(--navy);
-    color: var(--white);
+    background: #FFFFFF;
+    color: var(--text-primary);
     font-family: 'DM Sans', sans-serif;
     font-weight: 400;
     line-height: 1.6;
@@ -36,17 +35,7 @@
     overflow-x: hidden;
   }
 
-  /* Background texture */
-  body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background:
-      radial-gradient(ellipse 80% 60% at 20% 0%, rgba(37,99,168,0.18) 0%, transparent 60%),
-      radial-gradient(ellipse 60% 40% at 80% 100%, rgba(232,160,32,0.08) 0%, transparent 50%);
-    pointer-events: none;
-    z-index: 0;
-  }
+  body::before { display: none; }
 
   .container {
     max-width: 860px;
@@ -77,15 +66,15 @@
     text-transform: uppercase;
     padding: 4px 12px;
     border-radius: 100px;
-    background: rgba(232,160,32,0.15);
-    color: var(--accent-light);
-    border: 0.5px solid rgba(232,160,32,0.3);
+    background: rgba(180,110,0,0.1);
+    color: var(--accent);
+    border: 0.5px solid rgba(180,110,0,0.25);
   }
 
   .pill-blue {
-    background: rgba(59,130,212,0.15);
-    color: #93C5FD;
-    border-color: rgba(59,130,212,0.3);
+    background: rgba(37,99,168,0.1);
+    color: var(--blue);
+    border-color: rgba(37,99,168,0.25);
   }
 
   h1 {
@@ -94,13 +83,13 @@
     font-weight: 400;
     line-height: 1.15;
     letter-spacing: -0.01em;
-    color: var(--white);
+    color: var(--text-primary);
     margin-bottom: 1rem;
   }
 
   h1 em {
     font-style: italic;
-    color: var(--accent-light);
+    color: var(--blue);
   }
 
   .header-sub {
@@ -129,17 +118,17 @@
     transition: background 0.2s;
   }
 
-  .stat-cell:hover { background: rgba(255,255,255,0.06); }
+  .stat-cell:hover { background: #F0EEE9; }
 
   .stat-number {
     font-family: 'DM Serif Display', serif;
     font-size: 2rem;
-    color: var(--white);
+    color: var(--text-primary);
     line-height: 1;
     margin-bottom: 4px;
   }
 
-  .stat-number.accent { color: var(--accent-light); }
+  .stat-number.accent { color: var(--blue); }
 
   .stat-label {
     font-size: 11px;
@@ -160,14 +149,14 @@
     width: 24px;
     height: 24px;
     border-radius: 50%;
-    background: rgba(59,130,212,0.2);
-    border: 0.5px solid rgba(59,130,212,0.4);
+    background: rgba(37,99,168,0.1);
+    border: 0.5px solid rgba(37,99,168,0.3);
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 11px;
     font-weight: 500;
-    color: #93C5FD;
+    color: var(--blue);
     flex-shrink: 0;
   }
 
@@ -203,7 +192,7 @@
 
   .slider-name {
     font-size: 13px;
-    color: #B8C8DD;
+    color: var(--text-primary);
   }
 
   .slider-val {
