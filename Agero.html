@@ -637,21 +637,21 @@
   <div class="scenarios">
     <div class="scen">
       <div class="scen-tag">Conservative</div>
-      <div class="scen-revenue">$2.8M</div>
-      <div class="scen-gmv">$277M GMV</div>
-      <div class="scen-rate">~3% financing take rate</div>
+      <div class="scen-revenue" id="scen-rev-cons">$2.8M</div>
+      <div class="scen-gmv" id="scen-gmv-cons">$277M GMV</div>
+      <div class="scen-rate">3% financing take rate</div>
     </div>
     <div class="scen base">
       <div class="scen-tag">Base case</div>
-      <div class="scen-revenue">$5.5M</div>
-      <div class="scen-gmv">$554M GMV</div>
-      <div class="scen-rate">~6.5% financing take rate</div>
+      <div class="scen-revenue" id="scen-rev-base">$5.5M</div>
+      <div class="scen-gmv" id="scen-gmv-base">$554M GMV</div>
+      <div class="scen-rate">6.5% financing take rate</div>
     </div>
     <div class="scen">
       <div class="scen-tag">Optimistic</div>
-      <div class="scen-revenue">$7.8M</div>
-      <div class="scen-gmv">$776M GMV</div>
-      <div class="scen-rate">~9% financing take rate</div>
+      <div class="scen-revenue" id="scen-rev-opt">$7.8M</div>
+      <div class="scen-gmv" id="scen-gmv-opt">$776M GMV</div>
+      <div class="scen-rate">9% financing take rate</div>
     </div>
   </div>
 
@@ -705,6 +705,16 @@
     document.getElementById('f-conv').textContent   = fmtN(txns);
     document.getElementById('f-ticket').textContent = '$' + Math.round(ticket).toLocaleString();
     document.getElementById('f-gmv').textContent    = fmt(gmv);
+
+    var takeRates = [0.03, 0.065, 0.09];
+    var scenIds = ['cons', 'base', 'opt'];
+    takeRates.forEach(function(rate, i) {
+      var sTxns = shopEvents * rate;
+      var sGmv  = sTxns * ticket;
+      var sRev  = sGmv * 0.01;
+      document.getElementById('scen-rev-' + scenIds[i]).textContent  = fmt(sRev);
+      document.getElementById('scen-gmv-' + scenIds[i]).textContent  = fmt(sGmv) + ' GMV';
+    });
   }
 
   ['s-events','s-routed','s-conv','s-ticket'].forEach(function(id) {
