@@ -198,7 +198,7 @@
   .slider-val {
     font-size: 15px;
     font-weight: 500;
-    color: var(--white);
+    color: var(--text-primary);
     min-width: 80px;
     text-align: right;
   }
@@ -222,7 +222,7 @@
     appearance: none;
     flex: 1;
     height: 3px;
-    background: rgba(255,255,255,0.12);
+    background: #D1D5DB;
     border-radius: 2px;
     outline: none;
     cursor: pointer;
@@ -234,14 +234,14 @@
     height: 18px;
     border-radius: 50%;
     background: var(--white);
-    border: 3px solid var(--blue-bright);
+    border: 3px solid var(--blue);
     cursor: pointer;
-    box-shadow: 0 0 0 4px rgba(59,130,212,0.2);
+    box-shadow: 0 0 0 4px rgba(37,99,168,0.15);
     transition: box-shadow 0.15s;
   }
 
   input[type="range"]::-webkit-slider-thumb:hover {
-    box-shadow: 0 0 0 6px rgba(59,130,212,0.25);
+    box-shadow: 0 0 0 6px rgba(37,99,168,0.2);
   }
 
   input[type="range"]::-moz-range-thumb {
@@ -249,7 +249,7 @@
     height: 18px;
     border-radius: 50%;
     background: var(--white);
-    border: 3px solid var(--blue-bright);
+    border: 3px solid var(--blue);
     cursor: pointer;
   }
 
@@ -270,8 +270,8 @@
   }
 
   .result-card.featured {
-    background: rgba(37,99,168,0.12);
-    border-color: rgba(59,130,212,0.4);
+    background: rgba(37,99,168,0.06);
+    border-color: rgba(37,99,168,0.25);
     grid-column: span 2;
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -290,11 +290,11 @@
   .result-value {
     font-family: 'DM Serif Display', serif;
     font-size: 2.4rem;
-    color: var(--white);
+    color: var(--text-primary);
     line-height: 1;
   }
 
-  .result-value.blue { color: var(--accent-light); }
+  .result-value.blue { color: var(--blue); }
 
   .result-sub {
     font-size: 12px;
@@ -322,15 +322,15 @@
 
   .funnel-row:last-child {
     border-bottom: none;
-    background: rgba(59,130,212,0.08);
+    background: rgba(37,99,168,0.05);
   }
 
-  .funnel-row:hover { background: rgba(255,255,255,0.03); }
-  .funnel-row:last-child:hover { background: rgba(59,130,212,0.12); }
+  .funnel-row:hover { background: #F0EEE9; }
+  .funnel-row:last-child:hover { background: rgba(37,99,168,0.1); }
 
   .funnel-label {
     font-size: 13px;
-    color: #B8C8DD;
+    color: var(--text-primary);
     display: flex;
     align-items: center;
     gap: 8px;
@@ -344,10 +344,10 @@
   .funnel-value {
     font-size: 14px;
     font-weight: 500;
-    color: var(--white);
+    color: var(--text-primary);
   }
 
-  .funnel-value.highlight { color: var(--accent-light); }
+  .funnel-value.highlight { color: var(--blue); }
 
   /* ── SCENARIOS ── */
   .scenarios {
@@ -368,8 +368,8 @@
   }
 
   .scen.base {
-    background: rgba(37,99,168,0.1);
-    border-color: rgba(59,130,212,0.5);
+    background: rgba(37,99,168,0.06);
+    border-color: rgba(37,99,168,0.3);
   }
 
   .scen::before {
@@ -381,7 +381,7 @@
     transition: background 0.2s;
   }
 
-  .scen.base::before { background: var(--blue-bright); }
+  .scen.base::before { background: var(--blue); }
 
   .scen-tag {
     font-size: 10px;
@@ -391,17 +391,17 @@
     margin-bottom: 10px;
   }
 
-  .scen.base .scen-tag { color: #93C5FD; }
+  .scen.base .scen-tag { color: var(--blue); }
 
   .scen-revenue {
     font-family: 'DM Serif Display', serif;
     font-size: 1.8rem;
-    color: var(--white);
+    color: var(--text-primary);
     line-height: 1;
     margin-bottom: 4px;
   }
 
-  .scen.base .scen-revenue { color: var(--accent-light); }
+  .scen.base .scen-revenue { color: var(--blue); }
 
   .scen-gmv {
     font-size: 12px;
@@ -411,7 +411,7 @@
 
   .scen-rate {
     font-size: 11px;
-    color: rgba(138,157,184,0.6);
+    color: #9CA3AF;
   }
 
   /* ── FOOTER ── */
@@ -432,7 +432,7 @@
   }
 
   .footer-note strong {
-    color: #B8C8DD;
+    color: var(--text-primary);
     font-weight: 500;
   }
 
@@ -444,7 +444,7 @@
   .brand-name {
     font-family: 'DM Serif Display', serif;
     font-size: 1.1rem;
-    color: var(--white);
+    color: var(--text-primary);
     margin-bottom: 2px;
   }
 
@@ -670,6 +670,7 @@
 
 <script>
   function fmt(n) {
+    if (n >= 1e9) return '$' + (n / 1e9).toFixed(2) + 'B';
     if (n >= 1e6) return '$' + (n / 1e6).toFixed(1) + 'M';
     if (n >= 1e3) return '$' + Math.round(n / 1000) + 'K';
     return '$' + Math.round(n).toLocaleString();
