@@ -133,9 +133,9 @@
   .pending-banner strong { color: #3a2e00; }
 
   /* ── KPI Tiles ── */
-  .kpi-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px; }
-  @media (max-width: 1200px) { .kpi-grid { grid-template-columns: repeat(3, 1fr); } }
-  @media (max-width: 700px)  { .kpi-grid { grid-template-columns: repeat(2, 1fr); } }
+  .kpi-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 12px; }
+  @media (max-width: 1400px) { .kpi-grid { grid-template-columns: repeat(4, 1fr); } }
+  @media (max-width: 900px)  { .kpi-grid { grid-template-columns: repeat(2, 1fr); } }
 
   .kpi-tile { background: white; border: 1px solid var(--sf-border);
     border-left: 3px solid var(--sf-green); border-radius: 4px; padding: 12px 14px; }
@@ -714,6 +714,99 @@
   .coaching-note.yellow { background: rgba(255, 243, 224, 0.6); border-left-color: var(--sf-orange); }
   .coaching-note.red    { background: rgba(255, 221, 225, 0.4); border-left-color: var(--sf-red); }
 
+  /* Launch Check-Ins card */
+  .checkin-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 12px;
+  }
+  @media (max-width: 1100px) { .checkin-grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 600px)  { .checkin-grid { grid-template-columns: 1fr; } }
+
+  .checkin-bucket {
+    background: white;
+    border: 1px solid var(--sf-border);
+    border-top: 3px solid var(--sf-border);
+    border-radius: 6px;
+    padding: 12px;
+    min-height: 140px;
+    display: flex;
+    flex-direction: column;
+  }
+  .checkin-bucket.overdue { border-top-color: var(--sf-red); background: #fff5f5; }
+  .checkin-bucket.today   { border-top-color: var(--sf-orange); background: #fff8ec; }
+  .checkin-bucket.next7   { border-top-color: var(--sf-blue); }
+  .checkin-bucket.next14  { border-top-color: #689f38; }
+  .checkin-bucket.next30  { border-top-color: #4a148c; }
+
+  .checkin-bucket-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid rgba(0,0,0,0.08);
+    padding-bottom: 6px;
+    margin-bottom: 8px;
+  }
+  .checkin-bucket-title {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+  }
+  .checkin-bucket.overdue .checkin-bucket-title { color: var(--sf-red); }
+  .checkin-bucket.today   .checkin-bucket-title { color: var(--sf-orange); }
+  .checkin-bucket.next7   .checkin-bucket-title { color: var(--sf-blue); }
+  .checkin-bucket.next14  .checkin-bucket-title { color: #33691e; }
+  .checkin-bucket.next30  .checkin-bucket-title { color: #4a148c; }
+
+  .checkin-bucket-count {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--sf-navy);
+    line-height: 1;
+  }
+
+  .checkin-item {
+    padding: 6px 8px;
+    margin-bottom: 4px;
+    border-radius: 3px;
+    background: rgba(255,255,255,0.7);
+    border-left: 2px solid var(--sf-border);
+    font-size: 11px;
+  }
+  .checkin-item:last-child { margin-bottom: 0; }
+  .checkin-item-name {
+    font-weight: 600;
+    color: var(--sf-navy);
+    line-height: 1.3;
+    margin-bottom: 2px;
+  }
+  .checkin-item-meta {
+    font-size: 10px;
+    color: var(--sf-muted);
+  }
+  .checkin-milestone-badge {
+    display: inline-block;
+    padding: 1px 5px;
+    border-radius: 3px;
+    font-size: 9px;
+    font-weight: 700;
+    color: white;
+    margin-right: 4px;
+  }
+  .checkin-milestone-7  { background: #689f38; }
+  .checkin-milestone-14 { background: #f9a825; }
+  .checkin-milestone-30 { background: #ef6c00; }
+  .checkin-milestone-60 { background: #4a148c; }
+
+  .checkin-empty {
+    padding: 12px;
+    text-align: center;
+    font-size: 11px;
+    color: var(--sf-light);
+    font-style: italic;
+  }
+
   /* ── Escalation Tracker ── */
   .escalation-table { width: 100%; border-collapse: collapse; font-size: 12px; }
   .escalation-table th { padding: 10px 8px; text-align: left;
@@ -919,6 +1012,56 @@ const ESCALATIONS = [
   { id: "e11",account: "Battlefield MyKaarma",       fromAM:"roman",   toRM: "michele",  stage: "day15", daysOpen: 22, reason: "Low engaged, declining trend" },
   { id: "e12",account: "Darcars EVE Silver Spring",  fromAM:"megan",   toRM: "anthony",  stage: "day15", daysOpen: 16, reason: "Low Engaged, preventive escalation" }
 ];
+
+// ═══════════════════════════════════════════════════════════════════════
+// LAUNCH CHECK-INS — 7/14/30/60 day check-ins for newly launched stores
+// Implementation note: In Salesforce these are native Task records auto-created
+// when an Account's Onboard_Date__c is populated. The dashboard surfaces them
+// as a List View component filtered to assigned AM and check-in type.
+// ═══════════════════════════════════════════════════════════════════════
+// daysFromOnboard is negative if upcoming, positive if overdue
+const LAUNCH_CHECKINS = [
+  // Megan — newly launched book
+  { account: "Sheehy MyKaarma Springfield", amId: "megan", milestone: 7,  dueIn: 0,   onboardDate: "Feb 21" },
+  { account: "Browns Mazda Fairfax",        amId: "megan", milestone: 14, dueIn: 3,   onboardDate: "Feb 14" },
+  { account: "Easterns Xtime Laurel",       amId: "megan", milestone: 30, dueIn: 9,   onboardDate: "Jan 30" },
+  // Jerome — newly launched
+  { account: "Koons CDK Sterling",          amId: "jerome", milestone: 7,  dueIn: 1,   onboardDate: "Feb 22" },
+  { account: "Lindsay Mazda Alexandria",    amId: "jerome", milestone: 14, dueIn: 5,   onboardDate: "Feb 16" },
+  { account: "Priority MyKaarma Chesapeake",amId: "jerome", milestone: 30, dueIn: 11,  onboardDate: "Feb 1" },
+  { account: "Rosenthal Xtime Tysons",      amId: "jerome", milestone: 60, dueIn: 22,  onboardDate: "Jan 1" },
+  // Ashlee
+  { account: "Hendrick Mazda Charlotte",    amId: "ashlee", milestone: 7,  dueIn: 2,   onboardDate: "Feb 23" },
+  { account: "Fitz MyKaarma Clearwater",    amId: "ashlee", milestone: 14, dueIn: 6,   onboardDate: "Feb 17" },
+  { account: "Murgado Xtime Miami",         amId: "ashlee", milestone: 30, dueIn: 12,  onboardDate: "Feb 2" },
+  // Kelsey — has overdue check-ins (signal of underperformance)
+  { account: "Haley Mazda Midlothian",      amId: "kelsey", milestone: 7,  dueIn: -3,  onboardDate: "Feb 12" }, // OVERDUE
+  { account: "Pohanka MyKaarma Chantilly",  amId: "kelsey", milestone: 14, dueIn: 0,   onboardDate: "Feb 14" },
+  { account: "Brown Xtime Glen Allen",      amId: "kelsey", milestone: 30, dueIn: 7,   onboardDate: "Feb 1" },
+  // Roman — overdue
+  { account: "Lustine Xtime Woodbridge",    amId: "roman", milestone: 7,   dueIn: -2,  onboardDate: "Feb 19" }, // OVERDUE
+  { account: "Stafford Mazda Fredericksburg",amId:"roman",  milestone: 14, dueIn: -5,  onboardDate: "Feb 9" },  // OVERDUE
+  { account: "Battlefield MyKaarma",        amId: "roman", milestone: 30, dueIn: 4,    onboardDate: "Jan 31" },
+  // Carlos — multiple overdue
+  { account: "Sheehy CDK Marlow Heights",   amId: "carlos", milestone: 7,  dueIn: -7,  onboardDate: "Feb 14" }, // OVERDUE
+  { account: "Heritage Xtime Owings Mills", amId: "carlos", milestone: 14, dueIn: -4,  onboardDate: "Feb 10" }, // OVERDUE
+  { account: "Ourisman Mazda Laurel",       amId: "carlos", milestone: 30, dueIn: -2,  onboardDate: "Jan 27" }, // OVERDUE
+  { account: "Antwerpen MyKaarma",          amId: "carlos", milestone: 60, dueIn: 5,   onboardDate: "Jan 1" }
+];
+
+// Helpers to slice check-ins for a specific AM
+function getCheckInsForAM(amId) {
+  return LAUNCH_CHECKINS.filter(c => c.amId === amId);
+}
+function categorizeCheckIns(checkIns) {
+  return {
+    overdue:  checkIns.filter(c => c.dueIn < 0).sort((a,b) => a.dueIn - b.dueIn),
+    today:    checkIns.filter(c => c.dueIn === 0),
+    next7:    checkIns.filter(c => c.dueIn >= 1 && c.dueIn <= 7).sort((a,b) => a.dueIn - b.dueIn),
+    next14:   checkIns.filter(c => c.dueIn >= 8 && c.dueIn <= 14).sort((a,b) => a.dueIn - b.dueIn),
+    next30:   checkIns.filter(c => c.dueIn >= 15 && c.dueIn <= 30).sort((a,b) => a.dueIn - b.dueIn)
+  };
+}
 
 function scoreAM(am) {
   const kpiMap = {
@@ -1223,6 +1366,11 @@ function renderExecAMTab() {
     matrixGMV[m.quadrant] += m.gmv;
   });
 
+  // Launch check-in rollup
+  const overdueCheckIns = LAUNCH_CHECKINS.filter(c => c.dueIn < 0).length;
+  const dueTodayCheckIns = LAUNCH_CHECKINS.filter(c => c.dueIn === 0).length;
+  const totalCheckIns = LAUNCH_CHECKINS.length;
+
   const ranked = AMs.map(am => Object.assign({}, am, scoreAM(am)))
                     .sort((a, b) => b.score - a.score);
 
@@ -1242,6 +1390,8 @@ function renderExecAMTab() {
                 teamFundedRate >= 50 ? "green" : teamFundedRate >= 35 ? "yellow" : "red")}
       ${kpiTile("Avg Health Score", avgHealthScore, "Composite GMV + funded rate",
                 avgHealthScore >= 75 ? "green" : avgHealthScore >= 60 ? "yellow" : "red")}
+      ${kpiTile("Overdue Check-Ins", overdueCheckIns, dueTodayCheckIns + " due today · " + totalCheckIns + " scheduled",
+                overdueCheckIns >= 5 ? "red" : overdueCheckIns >= 2 ? "yellow" : "green", "0")}
     </div>
 
     <!-- NEW: Health Priority Cards (replaces matrix) -->
@@ -1431,26 +1581,6 @@ function renderExecAMTab() {
         <div class="card-title"><div class="card-title-text">Partner Rollup · Dormancy vs 20% Target</div></div>
         <div class="card-body">
           ${[...PARTNERS].sort((a,b) => b.dormRate - a.dormRate).map(renderPartnerItem).join("")}
-        </div>
-      </div>
-    </div>
-
-    <div class="card">
-      <div class="card-title"><div class="card-title-text">Executive Coaching Signals</div></div>
-      <div class="card-body">
-        <div class="insights">
-          <div class="insight green">
-            <div class="insight-title">Proof Point</div>
-            <div class="insight-text">Jerome (97% touch → 6% dormancy, 0 at-risk stores) and Megan (92% → 10%) demonstrate the cadence model works. Promote their playbook across the team.</div>
-          </div>
-          <div class="insight yellow">
-            <div class="insight-title">New Risk Signal</div>
-            <div class="insight-text">${matrix.atRisk} at-risk stores team-wide are submitting apps but failing to fund. This is the cohort Tearsa flagged as highest churn risk. Audit deal structure and retrain on app eligibility.</div>
-          </div>
-          <div class="insight red">
-            <div class="insight-title">At Risk</div>
-            <div class="insight-text">Carlos has 4 at-risk stores in his book of 8 — half his portfolio is at high churn risk despite app submission activity. PIP + immediate approval-rate diagnostic.</div>
-          </div>
         </div>
       </div>
     </div>
@@ -1886,6 +2016,30 @@ function renderAM(amId, isExec) {
       </div>
     </div>
 
+    <!-- Launch Check-Ins (7/14/30/60) -->
+    ${(() => {
+      const myCheckIns = getCheckInsForAM(am.id);
+      const buckets = categorizeCheckIns(myCheckIns);
+      if (myCheckIns.length === 0) return "";
+      return `
+        <div class="card">
+          <div class="card-title">
+            <div class="card-title-text">Launch Check-Ins · 7 / 14 / 30 / 60 Day Cadence</div>
+            <div class="card-title-action">${buckets.overdue.length > 0 ? `<span style="color: var(--sf-red); font-weight: 600;">${buckets.overdue.length} overdue</span> · ` : ""}${myCheckIns.length} total scheduled</div>
+          </div>
+          <div class="card-body">
+            <div class="checkin-grid">
+              ${renderCheckInBucket("Overdue", buckets.overdue, "overdue")}
+              ${renderCheckInBucket("Due Today", buckets.today, "today")}
+              ${renderCheckInBucket("Next 7 Days", buckets.next7, "next7")}
+              ${renderCheckInBucket("Next 14 Days", buckets.next14, "next14")}
+              ${renderCheckInBucket("Next 30 Days", buckets.next30, "next30")}
+            </div>
+          </div>
+        </div>
+      `;
+    })()}
+
     <!-- KPI Scorecard -->
     <div class="card">
       <div class="card-title"><div class="card-title-text">KPI Scorecard · AM Playbook Thresholds</div></div>
@@ -2035,15 +2189,30 @@ function renderAM(amId, isExec) {
         </div>
       </div>
     </div>
+  `;
+}
 
-    ${isExec ? `
-      <div class="card">
-        <div class="card-title"><div class="card-title-text">Manager Coaching Note · Exec Only</div></div>
-        <div class="card-body">
-          <div class="coaching-note ${score.status}">${coachingNote(am, score)}</div>
-        </div>
+function renderCheckInBucket(title, items, cls) {
+  return `
+    <div class="checkin-bucket ${cls}">
+      <div class="checkin-bucket-header">
+        <span class="checkin-bucket-title">${title}</span>
+        <span class="checkin-bucket-count">${items.length}</span>
       </div>
-    ` : ""}
+      ${items.length === 0
+        ? `<div class="checkin-empty">${cls === "overdue" ? "No overdue ✓" : "Nothing scheduled"}</div>`
+        : items.map(c => `
+            <div class="checkin-item">
+              <div class="checkin-item-name">${esc(c.account)}</div>
+              <div class="checkin-item-meta">
+                <span class="checkin-milestone-badge checkin-milestone-${c.milestone}">Day ${c.milestone}</span>
+                ${c.dueIn < 0 ? `<span style="color: var(--sf-red); font-weight: 600;">${Math.abs(c.dueIn)}d overdue</span>` :
+                  c.dueIn === 0 ? `<span style="color: var(--sf-orange); font-weight: 600;">Due today</span>` :
+                  `Due in ${c.dueIn}d`} · Onboarded ${esc(c.onboardDate)}
+              </div>
+            </div>
+          `).join("")}
+    </div>
   `;
 }
 
@@ -2081,21 +2250,6 @@ function tierTile(label, count, sub, cls, total, owner) {
       <div class="tier-tile-owner">Owner: ${owner}</div>
     </div>
   `;
-}
-
-function coachingNote(am, score) {
-  const first = am.name.split(" ")[0];
-  if (score.status === "green") {
-    return `${first} is performing above target on ${score.g} of 10 KPIs. Recommendation: amplify their cadence as the team standard. Consider assigning 2-3 new Xtime merchants from Roman or Carlos's book to test scale capacity.`;
-  }
-  if (score.status === "yellow") {
-    const weak = [];
-    if (am.dormancy > 20) weak.push("dormancy");
-    if (am.captureRate < 60) weak.push("capture rate");
-    if (am.retraining > 14) weak.push("retraining SLA");
-    return `${first} is mixed — ${score.g} green, ${score.y} yellow, ${score.r} red. Weakest areas: ${weak.join(", ")}. Recommendation: 30-day focus plan on untouched accounts + retraining backlog. Revisit in weekly 1:1.`;
-  }
-  return `${first} is red on ${score.r} KPIs with $${(am.gmvAtRisk/1000).toFixed(0)}K GMV at risk. Recommendation: formal PIP, reassignment of ${am.tierD + am.tierNA} at-risk stores to a top-performing AM, and a cadence audit this week. Escalate to Tearsa if no green-zone KPI recovery within 30 days.`;
 }
 
 // ═══════════════════════════════════════════════════════════════════════
