@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Plyra — Interactive Demo</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Outfit:wght@300;400;500;600&display=swap');
+
+  :root{
+    --ink:#101a26; --ink-2:#3d4f60; --ink-3:#7c8b99;
+    --bg:#f4f1ea; --bg-2:#fbfaf6; --card:#ffffff; --line:#e4ddd0;
+    --navy:#16263d; --navy-2:#21344f;
+    --teal:#117a64; --teal-soft:#dcefe6;
+    --blue:#1f5fa6; --blue-soft:#e4eff9;
+    --amber:#b7791f; --amber-soft:#fbf0d8;
+    --coral:#c0512f; --coral-soft:#fae6dd;
+    --green:#3d6b12;
+    --shadow:0 1px 2px rgba(16,26,38,.04), 0 8px 28px rgba(16,26,38,.08);
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;}
+  body{
+    font-family:'Outfit',system-ui,sans-serif; color:var(--ink);
+    background:
+      radial-gradient(900px 500px at 12% -8%, #ffffff 0%, rgba(255,255,255,0) 55%),
+      radial-gradient(800px 600px at 100% 0%, #eef5f2 0%, rgba(238,245,242,0) 50%),
+      var(--bg);
+    min-height:100vh; line-height:1.5; -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:1120px; margin:0 auto; padding:34px 24px 80px;}
+
+  /* header */
+  .top{display:flex; align-items:center; gap:13px; margin-bottom:6px;}
+  .mark{width:42px; height:42px; border-radius:12px; background:var(--navy);
+    display:flex; align-items:center; justify-content:center; box-shadow:var(--shadow); flex:none;}
+  .mark svg{width:24px; height:24px;}
+  .brand{font-family:'Fraunces',serif; font-weight:600; font-size:27px; letter-spacing:-.01em; color:var(--navy); line-height:1;}
+  .tag{font-size:13.5px; color:var(--ink-2); margin-top:3px;}
+  .pill{margin-left:auto; font-size:11.5px; font-weight:600; letter-spacing:.02em; text-transform:uppercase;
+    background:var(--amber-soft); color:var(--amber); padding:6px 12px; border-radius:30px; align-self:flex-start;}
+
+  .lede{font-family:'Fraunces',serif; font-weight:400; font-size:30px; line-height:1.25; letter-spacing:-.01em;
+    color:var(--navy); max-width:620px; margin:26px 0 6px;}
+  .lede em{font-style:italic; color:var(--teal);}
+  .sub{font-size:15px; color:var(--ink-2); max-width:580px; margin:0 0 26px;}
+
+  .stage{display:grid; grid-template-columns:1fr 372px; gap:26px; align-items:start;}
+  @media (max-width:900px){ .stage{grid-template-columns:1fr;} }
+
+  .panel{background:var(--card); border:1px solid var(--line); border-radius:18px; box-shadow:var(--shadow);}
+  .panel-h{display:flex; align-items:center; gap:9px; padding:15px 20px; border-bottom:1px solid var(--line);}
+  .panel-h .dot{width:8px;height:8px;border-radius:50%;background:var(--teal);}
+  .panel-h h2{font-size:13px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--ink-3); margin:0;}
+  .panel-b{padding:20px;}
+
+  .store-row{display:flex; align-items:center; gap:11px; padding:11px 13px; background:var(--bg-2);
+    border:1px solid var(--line); border-radius:12px; margin-bottom:18px;}
+  .store-ic{width:34px;height:34px;border-radius:9px;background:var(--navy);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:14px;flex:none;}
+  .store-row .nm{font-weight:600; font-size:14.5px;}
+  .store-row .meta{font-size:12px; color:var(--ink-3);}
+
+  label.fld{display:block; font-size:11.5px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--ink-3); margin:0 0 7px;}
+  .seg{display:flex; gap:8px; margin-bottom:17px;}
+  .seg button{flex:1; height:42px; border:1px solid var(--line); background:#fff; border-radius:11px;
+    font-family:inherit; font-size:14px; font-weight:500; color:var(--ink-2); cursor:pointer; transition:.15s; display:flex; align-items:center; justify-content:center; gap:7px;}
+  .seg button svg{width:16px;height:16px;}
+  .seg button.on{background:var(--navy); border-color:var(--navy); color:#fff;}
+  input[type=text]{width:100%; height:46px; padding:0 14px; font-size:15.5px; font-family:inherit;
+    border:1px solid var(--line); border-radius:11px; background:#fff; color:var(--ink); outline:none; transition:.15s;}
+  input[type=text]:focus{border-color:var(--teal); box-shadow:0 0 0 3px var(--teal-soft);}
+  .field{margin-bottom:17px;}
+
+  .provs{display:flex; flex-direction:column; gap:9px; margin-bottom:6px;}
+  .prov{display:flex; align-items:center; gap:12px; padding:13px 14px; border:1px solid var(--line);
+    border-radius:13px; cursor:pointer; transition:.15s; background:#fff;}
+  .prov:hover{border-color:var(--ink-3);}
+  .prov input{width:18px;height:18px;accent-color:var(--teal);flex:none;}
+  .prov .pic{width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;flex:none;letter-spacing:-.02em;}
+  .prov .nm{font-weight:600;font-size:14.5px;}
+  .prov .tg{font-size:12px;color:var(--ink-3);}
+  .prov .en{margin-left:auto;font-size:10.5px;font-weight:600;text-transform:uppercase;letter-spacing:.03em;color:var(--teal);background:var(--teal-soft);padding:4px 9px;border-radius:20px;}
+
+  .consent{display:flex; gap:11px; align-items:flex-start; margin:17px 0 0;
+    background:var(--bg-2); border:1px solid var(--line); border-radius:12px; padding:13px 14px;}
+  .consent input{width:18px;height:18px;margin-top:1px;accent-color:var(--teal);flex:none;}
+  .consent span{font-size:12.5px; color:var(--ink-2); line-height:1.45;}
+
+  .send{width:100%; height:50px; margin-top:18px; border:none; border-radius:13px;
+    background:var(--teal); color:#fff; font-family:inherit; font-size:15.5px; font-weight:600; cursor:pointer;
+    transition:.15s; display:flex; align-items:center; justify-content:center; gap:9px; box-shadow:0 6px 16px rgba(17,122,100,.26);}
+  .send:hover{background:#0e6553;}
+  .send:disabled{opacity:.5; cursor:default; box-shadow:none;}
+  .send svg{width:18px;height:18px;}
+  .err{color:var(--coral); font-size:12.5px; min-height:15px; margin:6px 0 0;}
+
+  /* activity log */
+  .log{margin-top:18px; display:flex; flex-direction:column; gap:9px;}
+  .logc{display:flex; align-items:center; gap:11px; padding:12px 13px; border:1px solid var(--line);
+    border-radius:12px; background:var(--bg-2); opacity:0; transform:translateY(6px); animation:rise .4s forwards;}
+  @keyframes rise{to{opacity:1; transform:none;}}
+  .logc .ic{width:22px;height:22px;flex:none;display:flex;align-items:center;justify-content:center;}
+  .logc .ic svg{width:20px;height:20px;}
+  .logc .t{font-size:13px; flex:1;}
+  .logc .t b{font-weight:600;}
+  .logc .ts{font-size:11px; color:var(--ink-3);}
+  .spin{width:16px;height:16px;border:2.5px solid var(--line);border-top-color:var(--teal);border-radius:50%;animation:sp .7s linear infinite;}
+  @keyframes sp{to{transform:rotate(360deg);}}
+
+  /* PHONE */
+  .phone-wrap{position:sticky; top:34px;}
+  .phone{width:340px; margin:0 auto; background:#0c1622; border-radius:42px; padding:13px;
+    box-shadow:0 10px 40px rgba(16,26,38,.28), inset 0 0 0 2px #243446;}
+  .phone-screen{background:#eef1f4; border-radius:31px; overflow:hidden; height:660px; position:relative; display:flex; flex-direction:column;}
+  .notch{position:absolute; top:0; left:50%; transform:translateX(-50%); width:130px; height:26px; background:#0c1622; border-radius:0 0 16px 16px; z-index:5;}
+  .status{height:44px; display:flex; align-items:flex-end; justify-content:space-between; padding:0 22px 6px; font-size:12px; font-weight:600; color:var(--ink);}
+  .msgs{flex:1; overflow-y:auto; padding:8px 14px 16px;}
+  .msg-from{font-size:11px; color:var(--ink-3); text-align:center; margin:6px 0 12px; font-weight:500;}
+  .bubble{max-width:80%; padding:11px 14px; border-radius:18px; font-size:13.5px; line-height:1.45;
+    background:#fff; color:var(--ink); margin-bottom:9px; box-shadow:0 1px 1px rgba(0,0,0,.05);
+    opacity:0; transform:translateY(8px) scale(.97); animation:pop .45s forwards;}
+  @keyframes pop{to{opacity:1; transform:none;}}
+  .bubble .lender{font-weight:600; font-size:12px; display:flex; align-items:center; gap:7px; margin-bottom:5px;}
+  .bubble .chip{width:20px;height:20px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#fff;}
+  .bubble a{display:inline-block; margin-top:8px; font-size:12.5px; font-weight:600; color:var(--blue); text-decoration:none;}
+  .bubble .pre{font-size:11px; color:var(--ink-3); margin-top:4px;}
+
+  .empty{flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:30px; text-align:center; color:var(--ink-3);}
+  .empty svg{width:42px;height:42px;margin-bottom:14px;opacity:.5;}
+  .empty p{font-size:13px; margin:0; max-width:200px;}
+
+  /* compare view (consumer chooses) */
+  .compare{padding:14px; background:#eef1f4; flex:1; overflow-y:auto;}
+  .compare h3{font-family:'Fraunces',serif; font-weight:600; font-size:17px; color:var(--navy); margin:4px 4px 3px;}
+  .compare .csub{font-size:12px; color:var(--ink-3); margin:0 4px 14px;}
+  .offer{background:#fff; border:1px solid var(--line); border-radius:15px; padding:14px; margin-bottom:11px; cursor:pointer; transition:.15s;
+    opacity:0; transform:translateY(8px); animation:rise .45s forwards;}
+  .offer:hover{border-color:var(--teal); transform:translateY(-2px);}
+  .offer-top{display:flex; align-items:center; gap:10px; margin-bottom:10px;}
+  .offer .pic{width:32px;height:32px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;color:#fff;flex:none;}
+  .offer .nm{font-weight:600; font-size:14px;}
+  .offer .status-l{font-size:11px; font-weight:600;}
+  .offer .approved{color:var(--green);}
+  .offer .terms{display:flex; gap:6px; margin-top:2px;}
+  .offer .term{flex:1; background:var(--bg-2); border-radius:9px; padding:8px 9px; text-align:center;}
+  .offer .term .big{font-size:16px; font-weight:600; color:var(--navy);}
+  .offer .term .lbl{font-size:9.5px; color:var(--ink-3); text-transform:uppercase; letter-spacing:.03em; margin-top:1px;}
+  .offer .pick{width:100%; margin-top:11px; height:36px; border:none; border-radius:10px; background:var(--navy); color:#fff; font-family:inherit; font-size:12.5px; font-weight:600; cursor:pointer;}
+  .winner{padding:30px 20px; text-align:center; flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center;}
+  .winner .big-ic{width:60px;height:60px;border-radius:50%;background:var(--teal-soft);display:flex;align-items:center;justify-content:center;margin-bottom:16px;}
+  .winner .big-ic svg{width:30px;height:30px;}
+  .winner h3{font-family:'Fraunces',serif;font-size:19px;color:var(--navy);margin:0 0 6px;}
+  .winner p{font-size:13px;color:var(--ink-2);margin:0;max-width:230px;}
+
+  /* footer strip */
+  .strip{display:flex; gap:26px; flex-wrap:wrap; margin-top:30px; padding-top:24px; border-top:1px solid var(--line);}
+  .stat{flex:1; min-width:150px;}
+  .stat .n{font-family:'Fraunces',serif; font-size:25px; font-weight:600; color:var(--navy); line-height:1;}
+  .stat .l{font-size:12.5px; color:var(--ink-2); margin-top:5px;}
+  .reset{margin-top:22px; background:none; border:1px solid var(--line); color:var(--ink-2); font-family:inherit;
+    font-size:13px; padding:9px 16px; border-radius:10px; cursor:pointer;}
+  .reset:hover{border-color:var(--ink-3);}
+  .disclaimer{font-size:11.5px; color:var(--ink-3); margin-top:20px; line-height:1.5; max-width:760px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <div class="mark">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="12" r="2.4"/><circle cx="18" cy="6" r="2.4"/><circle cx="18" cy="18" r="2.4"/><path d="M8.1 11l7.8-4M8.1 13l7.8 4"/></svg>
+    </div>
+    <div>
+      <div class="brand">Plyra</div>
+      <div class="tag">The neutral Pay-Over-Time routing layer</div>
+    </div>
+    <span class="pill">Interactive demo</span>
+  </div>
+
+  <div class="lede">One request at checkout. <em>Every</em> financing option, sent at once.</div>
+  <p class="sub">A service advisor sends a single invite. Plyra routes a prequalification link to every provider the store is enrolled with — and the customer picks the offer that fits. No provider is favored. Watch it work below.</p>
+
+  <div class="stage">
+    <!-- ADVISOR SIDE -->
+    <div class="panel">
+      <div class="panel-h"><span class="dot"></span><h2>Service desk — advisor view</h2></div>
+      <div class="panel-b">
+        <div class="store-row">
+          <div class="store-ic">SM</div>
+          <div><div class="nm">Sunridge Mazda</div><div class="meta">Service lane · 3 providers enrolled</div></div>
+        </div>
+
+        <label class="fld">Send via</label>
+        <div class="seg">
+          <button id="segSms" class="on" onclick="setCh('sms')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.4 8.4 0 0 1-9 8.3 8.4 8.4 0 0 1-3.8-.9L3 20l1.3-3.9A8.3 8.3 0 0 1 12 3.2a8.4 8.4 0 0 1 9 8.3z"/></svg>Text
+          </button>
+          <button id="segEmail" onclick="setCh('email')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>Email
+          </button>
+        </div>
+
+        <div class="field">
+          <label class="fld" id="ctLabel">Customer mobile number</label>
+          <input id="contact" type="text" placeholder="(615) 555-0142" autocomplete="off" />
+          <p class="err" id="err"></p>
+        </div>
+
+        <div class="field">
+          <label class="fld">Customer first name <span style="text-transform:none;font-weight:400;color:var(--ink-3)">(optional)</span></label>
+          <input id="cname" type="text" placeholder="First name" autocomplete="off" />
+        </div>
+
+        <label class="fld">Send prequal invite to</label>
+        <div class="provs" id="provs"></div>
+
+        <label class="consent">
+          <input id="consent" type="checkbox" />
+          <span>Customer was offered Pay Over Time at checkout and requested these links. Logged with a timestamp for compliance.</span>
+        </label>
+
+        <button class="send" id="send" onclick="dispatch()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2 11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>
+          Send invites
+        </button>
+
+        <div class="log" id="log"></div>
+      </div>
+    </div>
+
+    <!-- CONSUMER PHONE -->
+    <div class="phone-wrap">
+      <div class="phone">
+        <div class="phone-screen">
+          <div class="notch"></div>
+          <div class="status"><span id="clock">9:41</span><span>Plyra</span></div>
+          <div class="msgs" id="phone">
+            <div class="empty" id="phoneEmpty">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="3"/><path d="M11 18h2"/></svg>
+              <p>The customer's phone. Send invites to see what they receive.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div style="text-align:center;margin-top:14px;">
+        <button class="reset" onclick="reset()">↺ Reset demo</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="strip">
+    <div class="stat"><div class="n">1 tap</div><div class="l">sends every enrolled provider at once — no more single-provider default</div></div>
+    <div class="stat"><div class="n">Neutral</div><div class="l">providers shown in the same order for every store; none is promoted</div></div>
+    <div class="stat"><div class="n">+ approvals</div><div class="l">customers declined by one provider get matched by another</div></div>
+  </div>
+
+  <p class="disclaimer">Demonstration only. Provider responses, approvals, and links shown here are simulated for illustration; no messages are sent and no credit decisions are made. Plyra is a working name pending trademark clearance. Plyra originates no loans and favors no provider.</p>
+</div>
+
+<script>
+const PROVIDERS = [
+  {id:'affirm',  name:'Affirm',  tag:'Installments up to 36 months', color:'#4a4af4', soft:'#e7e7fd', initials:'Af'},
+  {id:'dignifi', name:'DigniFi', tag:'Full-spectrum credit — deeper approvals', color:'#1f5fa6', soft:'#e4eff9', initials:'Dg'},
+  {id:'sunbit',  name:'Sunbit',  tag:'High approval, capped exposure', color:'#e08f1e', soft:'#fbf0d8', initials:'Sb'}
+];
+// simulated consumer outcomes — the "manual waterfall" story:
+// one declines, two approve with different terms, so choice matters.
+const OUTCOMES = {
+  affirm:  {approved:true,  amount:1400, months:12, mo:121},
+  dignifi: {approved:true,  amount:1400, months:18, mo:86},
+  sunbit:  {approved:false}
+};
+
+let ch='sms';
+function el(id){return document.getElementById(id);}
+
+function renderProvs(){
+  el('provs').innerHTML = PROVIDERS.map(p=>`
+    <label class="prov">
+      <input type="checkbox" data-id="${p.id}" checked />
+      <div class="pic" style="background:${p.soft};color:${p.color}">${p.initials}</div>
+      <div><div class="nm">${p.name}</div><div class="tg">${p.tag}</div></div>
+      <span class="en">enrolled</span>
+    </label>`).join('');
+}
+renderProvs();
+
+function setCh(c){
+  ch=c;
+  el('segSms').classList.toggle('on', c==='sms');
+  el('segEmail').classList.toggle('on', c==='email');
+  el('ctLabel').textContent = c==='sms' ? 'Customer mobile number' : 'Customer email address';
+  el('contact').placeholder = c==='sms' ? '(615) 555-0142' : 'name@email.com';
+  el('contact').value=''; el('err').textContent='';
+}
+function validate(v){
+  if(!v.trim()) return 'Enter a '+(ch==='sms'?'phone number':'email address')+'.';
+  if(ch==='sms' && v.replace(/\D/g,'').length<10) return 'Enter a valid 10-digit number.';
+  if(ch==='email' && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(v.trim())) return 'Enter a valid email address.';
+  return '';
+}
+
+function logCard(html, delay){
+  const c=document.createElement('div');
+  c.className='logc'; c.style.animationDelay=delay+'ms'; c.innerHTML=html;
+  el('log').appendChild(c); return c;
+}
+
+function dispatch(){
+  const contact = el('contact').value;
+  const e = validate(contact); el('err').textContent=e; if(e) return;
+  if(!el('consent').checked){ el('err').textContent='Confirm the customer requested this before sending.'; return; }
+  const chosen = [...document.querySelectorAll('#provs input:checked')].map(i=>i.dataset.id);
+  if(!chosen.length){ el('err').textContent='Select at least one provider.'; return; }
+
+  el('send').disabled=true;
+  el('log').innerHTML='';
+  el('phone').innerHTML='';
+  const name = el('cname').value.trim();
+  const now = new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
+
+  // advisor-side: spinner per provider, then sent
+  chosen.forEach((id,i)=>{
+    const p = PROVIDERS.find(x=>x.id===id);
+    const card = logCard(`<div class="ic"><div class="spin"></div></div><div class="t">Sending <b>${p.name}</b> invite…</div>`, i*180);
+    setTimeout(()=>{
+      card.innerHTML = `<div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="${p.color}" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></div>
+        <div class="t"><b>${p.name}</b> invite sent via ${ch}</div><div class="ts">${now}</div>`;
+    }, 700 + i*180 + Math.random()*300);
+  });
+
+  // phone-side: messages arrive, then a compare view
+  el('phoneEmpty')?.remove();
+  setTimeout(()=>{
+    el('phone').innerHTML = `<div class="msg-from">Plyra · on behalf of Sunridge Mazda</div>`;
+    chosen.forEach((id,i)=>{
+      const p = PROVIDERS.find(x=>x.id===id);
+      const b=document.createElement('div'); b.className='bubble'; b.style.animationDelay=(i*350)+'ms';
+      b.innerHTML = `<div class="lender"><span class="chip" style="background:${p.color}">${p.initials}</span>${p.name}</div>
+        ${name?('Hi '+name+', here'):'Here'}'s your prequalification link — checking won't affect your credit score.
+        <a href="javascript:void(0)">See if you qualify →</a>`;
+      el('phone').appendChild(b);
+    });
+    // after messages, surface the compare CTA
+    setTimeout(()=>{
+      const cta=document.createElement('div'); cta.className='bubble'; cta.style.background='var(--navy)'; cta.style.color='#fff'; cta.style.maxWidth='86%';
+      cta.innerHTML = `You have <b>${chosen.length}</b> options to compare. <a href="javascript:void(0)" style="color:#9fd9c8" onclick="showCompare(${JSON.stringify(chosen).replace(/"/g,'&quot;')})">Compare offers →</a>`;
+      el('phone').appendChild(cta);
+      el('phone').scrollTop = el('phone').scrollHeight;
+    }, chosen.length*350 + 400);
+    el('send').disabled=false;
+  }, 900);
+}
+
+function showCompare(chosen){
+  const wrap = el('phone');
+  // build compare screen
+  const approved = chosen.filter(id=>OUTCOMES[id].approved);
+  const declined = chosen.filter(id=>!OUTCOMES[id].approved);
+  let html = `<div class="compare"><h3>Your options</h3><p class="csub">${approved.length} approved · choose what works for you</p>`;
+  approved.forEach((id,i)=>{
+    const p=PROVIDERS.find(x=>x.id===id), o=OUTCOMES[id];
+    html += `<div class="offer" style="animation-delay:${i*120}ms" onclick="choose('${id}')">
+      <div class="offer-top">
+        <div class="pic" style="background:${p.color}">${p.initials}</div>
+        <div style="flex:1"><div class="nm">${p.name}</div><div class="status-l approved">✓ Approved · $${o.amount.toLocaleString()}</div></div>
+      </div>
+      <div class="terms">
+        <div class="term"><div class="big">$${o.mo}</div><div class="lbl">per month</div></div>
+        <div class="term"><div class="big">${o.months}</div><div class="lbl">months</div></div>
+      </div>
+      <button class="pick">Choose ${p.name}</button>
+    </div>`;
+  });
+  if(declined.length){
+    declined.forEach(id=>{
+      const p=PROVIDERS.find(x=>x.id===id);
+      html += `<div class="offer" style="opacity:.6;cursor:default">
+        <div class="offer-top"><div class="pic" style="background:${p.color}">${p.initials}</div>
+        <div style="flex:1"><div class="nm">${p.name}</div><div class="status-l" style="color:var(--ink-3)">Not a match this time</div></div></div>
+        <div style="font-size:11.5px;color:var(--ink-3)">Because the customer was sent every option, a decline here doesn't end the sale.</div>
+      </div>`;
+    });
+  }
+  html += `</div>`;
+  wrap.innerHTML = html;
+}
+
+function choose(id){
+  const p=PROVIDERS.find(x=>x.id===id), o=OUTCOMES[id];
+  el('phone').innerHTML = `<div class="winner">
+    <div class="big-ic"><svg viewBox="0 0 24 24" fill="none" stroke="var(--teal)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></div>
+    <h3>${p.name} selected</h3>
+    <p>$${o.mo}/mo for ${o.months} months. The customer chose the best fit — and the repair gets done. The advisor never had to guess which provider to try.</p>
+  </div>`;
+}
+
+function reset(){
+  el('log').innerHTML=''; el('contact').value=''; el('cname').value=''; el('consent').checked=false;
+  el('err').textContent=''; el('send').disabled=false;
+  el('phone').innerHTML = `<div class="empty" id="phoneEmpty"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="3"/><path d="M11 18h2"/></svg><p>The customer's phone. Send invites to see what they receive.</p></div>`;
+}
+</script>
+</body>
+</html>
