@@ -176,38 +176,87 @@
     letter-spacing:0.14em;
     text-transform:uppercase;
     color:var(--sage);
-    margin-bottom:12px;
+    margin-bottom:4px;
+  }
+  .rsvp-hint{
+    text-align:center;
+    font-family:'Cormorant Garamond', serif;
+    font-style:italic;
+    font-size:13px;
+    color:var(--sage);
+    margin:0 0 16px;
   }
 
   .rsvp{
     display:flex;
-    gap:8px;
-    flex-wrap:wrap;
-    justify-content:center;
-    margin-bottom:6px;
+    flex-direction:column;
+    gap:14px;
+    align-items:center;
+    margin-bottom:8px;
   }
+
+  .circle-wrap{
+    position:relative;
+    display:inline-block;
+  }
+  .circle-wrap svg{
+    position:absolute;
+    inset:-12px -16px;
+    width:calc(100% + 32px);
+    height:calc(100% + 24px);
+    pointer-events:none;
+    overflow:visible;
+  }
+  .circle-wrap svg path{
+    fill:none;
+    stroke:#C23B2E;
+    stroke-width:3;
+    stroke-linecap:round;
+    stroke-dasharray:640;
+    stroke-dashoffset:640;
+    transition:stroke-dashoffset 0.7s ease;
+  }
+  .circle-wrap.selected svg path{
+    stroke-dashoffset:0;
+  }
+  .circle-wrap:nth-child(1) svg{ transform:rotate(-1.5deg); }
+  .circle-wrap:nth-child(2) svg{ transform:rotate(1deg); }
+  .circle-wrap:nth-child(3) svg{ transform:rotate(-1deg); }
+
   .rsvp button{
     font-family:'Inter', sans-serif;
     font-weight:600;
-    font-size:12px;
-    padding:9px 14px;
+    font-size:13px;
+    padding:10px 20px;
     border-radius:20px;
-    border:1px solid transparent;
-    cursor:default;
-  }
-  .rsvp .yes{
-    background:var(--coral);
-    color:#fff;
-  }
-  .rsvp .yes-but{
+    border:1px solid var(--ink);
+    cursor:pointer;
     background:transparent;
-    border-color:var(--ink);
     color:var(--ink);
+    transition:opacity 0.3s ease, transform 0.15s ease;
   }
-  .rsvp .maybe{
-    background:transparent;
-    border-color:var(--line);
+  .rsvp button:hover{
+    transform:scale(1.03);
+  }
+  .rsvp[data-locked="true"] button{
+    cursor:default;
+    pointer-events:none;
+  }
+  .rsvp[data-locked="true"] .circle-wrap:not(.selected) button{
+    opacity:0.32;
+  }
+
+  .rsvp-status{
+    text-align:center;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:10.5px;
     color:var(--sage);
+    min-height:14px;
+    margin-top:14px;
+    letter-spacing:0.02em;
+  }
+  .rsvp-status.answered{
+    color:var(--coral);
   }
 
   .footnote{
@@ -277,11 +326,22 @@
       <hr class="rule">
 
       <div class="rsvp-label">Going?</div>
-      <div class="rsvp">
-        <button class="yes">Yes</button>
-        <button class="yes-but">Yes, but I'm bringing snacks</button>
-        <button class="maybe">Let me check my calendar</button>
+      <p class="rsvp-hint">(circle one — no pressure)</p>
+      <div class="rsvp" id="rsvp" data-locked="false">
+        <div class="circle-wrap" data-choice="yes">
+          <button class="yes">Yes</button>
+          <svg viewBox="0 0 200 90" preserveAspectRatio="none"><path d="M 8,45 C 4,18 40,4 100,5 C 162,6 196,20 192,46 C 196,74 158,88 100,86 C 42,88 6,72 8,45 Z"/></svg>
+        </div>
+        <div class="circle-wrap" data-choice="yes-but">
+          <button class="yes-but">Yes, but I'm bringing snacks</button>
+          <svg viewBox="0 0 200 90" preserveAspectRatio="none"><path d="M 8,45 C 4,18 40,4 100,5 C 162,6 196,20 192,46 C 196,74 158,88 100,86 C 42,88 6,72 8,45 Z"/></svg>
+        </div>
+        <div class="circle-wrap" data-choice="maybe">
+          <button class="maybe">Let me check my calendar</button>
+          <svg viewBox="0 0 200 90" preserveAspectRatio="none"><path d="M 8,45 C 4,18 40,4 100,5 C 162,6 196,20 192,46 C 196,74 158,88 100,86 C 42,88 6,72 8,45 Z"/></svg>
+        </div>
       </div>
+      <p class="rsvp-status" id="rsvpStatus"></p>
 
       <p class="footnote">Heard your love language was calendar invites.<br>Figured I'd send one before I even had a date.</p>
 
@@ -297,6 +357,55 @@
     bar.style.height = h + 'px';
     bc.appendChild(bar);
   }
+
+  const RSVP_KEY = 'crush-yard-invite-response';
+  const rsvpEl = document.getElementById('rsvp');
+  const statusEl = document.getElementById('rsvpStatus');
+  const labels = { yes: 'Yes', 'yes-but': "Yes, but I'm bringing snacks", maybe: 'Let me check my calendar' };
+
+  function formatWhen(ts){
+    try {
+      return new Date(ts).toLocaleString(undefined, { month:'short', day:'numeric', hour:'numeric', minute:'2-digit' });
+    } catch(e){ return ''; }
+  }
+
+  function lockIn(choice, ts){
+    rsvpEl.setAttribute('data-locked', 'true');
+    document.querySelectorAll('.circle-wrap').forEach(w => {
+      w.classList.toggle('selected', w.dataset.choice === choice);
+    });
+    statusEl.textContent = 'Circled "' + (labels[choice] || choice) + '" · ' + formatWhen(ts);
+    statusEl.classList.add('answered');
+  }
+
+  async function loadExisting(){
+    try {
+      const result = await window.storage.get(RSVP_KEY, true);
+      if (result && result.value){
+        const data = JSON.parse(result.value);
+        lockIn(data.choice, data.ts);
+      }
+    } catch (e) {
+      // no response yet, leave it open
+    }
+  }
+
+  async function submitChoice(choice){
+    if (rsvpEl.getAttribute('data-locked') === 'true') return;
+    const ts = Date.now();
+    lockIn(choice, ts);
+    try {
+      await window.storage.set(RSVP_KEY, JSON.stringify({ choice, ts }), true);
+    } catch (e) {
+      statusEl.textContent = "Couldn't save that, but I saw you pick it 👀";
+    }
+  }
+
+  document.querySelectorAll('.circle-wrap').forEach(wrap => {
+    wrap.querySelector('button').addEventListener('click', () => submitChoice(wrap.dataset.choice));
+  });
+
+  loadExisting();
 </script>
 </body>
 </html>
