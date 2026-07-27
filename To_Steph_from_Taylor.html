@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>New Event</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500;1,600&family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@500;600&display=swap');
+
+  :root{
+    --court:   #16241F;
+    --paper:   #F6EFE0;
+    --ink:     #22302A;
+    --sage:    #6C7C72;
+    --gold:    #C79A3B;
+    --coral:   #D85C42;
+    --line:    rgba(34,48,42,0.16);
+  }
+
+  *{ box-sizing:border-box; }
+
+  html,body{
+    margin:0; padding:0;
+    background:var(--court);
+    background-image:
+      radial-gradient(circle at 15% 10%, rgba(199,154,59,0.10), transparent 45%),
+      radial-gradient(circle at 85% 90%, rgba(216,92,66,0.08), transparent 45%);
+    min-height:100vh;
+    display:flex; align-items:center; justify-content:center;
+    font-family:'Inter', sans-serif;
+    padding:32px 16px;
+  }
+
+  .window{
+    width:100%;
+    max-width:460px;
+    background:#1D2C26;
+    border-radius:14px;
+    box-shadow:0 30px 70px rgba(0,0,0,0.5), 0 2px 0 rgba(255,255,255,0.03) inset;
+    overflow:hidden;
+    border:1px solid rgba(255,255,255,0.06);
+  }
+
+  /* fake calendar-app titlebar */
+  .titlebar{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:12px 16px;
+    background:#182420;
+    border-bottom:1px solid rgba(255,255,255,0.06);
+  }
+  .dots{ display:flex; gap:6px; }
+  .dots span{
+    width:9px; height:9px; border-radius:50%;
+    display:inline-block;
+    background:rgba(255,255,255,0.18);
+  }
+  .titlebar .label{
+    font-size:11px;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    color:rgba(246,239,224,0.45);
+    font-weight:500;
+  }
+
+  /* the "paper" invitation sitting inside the app */
+  .paper{
+    background:var(--paper);
+    margin:16px;
+    border-radius:6px;
+    padding:38px 30px 30px;
+    position:relative;
+    color:var(--ink);
+    box-shadow:0 1px 0 rgba(255,255,255,0.4) inset;
+  }
+
+  .seal{
+    width:52px; height:52px;
+    margin:0 auto 18px;
+    border-radius:50%;
+    background:radial-gradient(circle at 32% 28%, #E3B75A, var(--gold) 60%, #9c7524 100%);
+    display:flex; align-items:center; justify-content:center;
+    box-shadow:0 4px 10px rgba(0,0,0,0.25);
+    position:relative;
+  }
+  .seal::after{
+    content:"";
+    width:22px; height:22px;
+    border-radius:50%;
+    border:2px solid rgba(34,48,42,0.55);
+    position:relative;
+  }
+  .seal::before{
+    content:"";
+    position:absolute;
+    width:4px; height:16px;
+    background:rgba(34,48,42,0.55);
+    transform:rotate(45deg);
+  }
+
+  .eyebrow{
+    text-align:center;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:10.5px;
+    letter-spacing:0.18em;
+    text-transform:uppercase;
+    color:var(--coral);
+    margin-bottom:10px;
+  }
+
+  h1{
+    font-family:'Cormorant Garamond', serif;
+    font-style:italic;
+    font-weight:600;
+    text-align:center;
+    font-size:33px;
+    line-height:1.15;
+    margin:0 0 6px;
+    color:var(--ink);
+  }
+
+  .sub{
+    text-align:center;
+    font-family:'Cormorant Garamond', serif;
+    font-size:18px;
+    color:var(--sage);
+    margin:0 0 26px;
+    letter-spacing:0.01em;
+  }
+
+  .rule{
+    border:none;
+    border-top:1px solid var(--line);
+    margin:0 0 20px;
+  }
+
+  .fields{
+    display:flex;
+    flex-direction:column;
+    gap:14px;
+    margin-bottom:24px;
+  }
+  .field{
+    display:grid;
+    grid-template-columns:78px 1fr;
+    gap:14px;
+    align-items:start;
+  }
+  .field .k{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:10px;
+    letter-spacing:0.12em;
+    text-transform:uppercase;
+    color:var(--sage);
+    padding-top:2px;
+  }
+  .field .v{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:12.5px;
+    line-height:1.5;
+    color:var(--ink);
+  }
+  .field .v .muted{
+    color:var(--sage);
+    font-style:italic;
+  }
+  .field .v a{
+    color:var(--ink);
+    text-decoration-color:var(--coral);
+  }
+
+  .rsvp-label{
+    text-align:center;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:10px;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    color:var(--sage);
+    margin-bottom:12px;
+  }
+
+  .rsvp{
+    display:flex;
+    gap:8px;
+    flex-wrap:wrap;
+    justify-content:center;
+    margin-bottom:6px;
+  }
+  .rsvp button{
+    font-family:'Inter', sans-serif;
+    font-weight:600;
+    font-size:12px;
+    padding:9px 14px;
+    border-radius:20px;
+    border:1px solid transparent;
+    cursor:default;
+  }
+  .rsvp .yes{
+    background:var(--coral);
+    color:#fff;
+  }
+  .rsvp .yes-but{
+    background:transparent;
+    border-color:var(--ink);
+    color:var(--ink);
+  }
+  .rsvp .maybe{
+    background:transparent;
+    border-color:var(--line);
+    color:var(--sage);
+  }
+
+  .footnote{
+    text-align:center;
+    font-family:'Cormorant Garamond', serif;
+    font-style:italic;
+    font-size:13px;
+    color:var(--sage);
+    margin-top:22px;
+    line-height:1.5;
+  }
+
+  .barcode{
+    display:flex;
+    justify-content:center;
+    gap:2px;
+    margin-top:18px;
+    opacity:0.35;
+  }
+  .barcode span{
+    width:2px;
+    background:var(--ink);
+  }
+</style>
+</head>
+<body>
+
+  <div class="window">
+    <div class="titlebar">
+      <div class="dots"><span></span><span></span><span></span></div>
+      <div class="label">New Event</div>
+      <div style="width:33px"></div>
+    </div>
+
+    <div class="paper">
+      <div class="seal"></div>
+
+      <div class="eyebrow">Two Calendars, One Availability Window</div>
+      <h1>You're Cordially Invited</h1>
+      <p class="sub">to an evening of competitive flirting</p>
+
+      <hr class="rule">
+
+      <div class="fields">
+        <div class="field">
+          <div class="k">When</div>
+          <div class="v"><span class="muted">TBD — pending the rare overlap where both custody calendars say "free"</span></div>
+        </div>
+        <div class="field">
+          <div class="k">Where</div>
+          <div class="v">Crush Yard — Pickleball, Bar &amp; Lounge<br>330 Franklin Rd, Brentwood, TN</div>
+        </div>
+        <div class="field">
+          <div class="k">Activity</div>
+          <div class="v">Pickleball, then pretending the score didn't matter</div>
+        </div>
+        <div class="field">
+          <div class="k">Attire</div>
+          <div class="v">Whatever makes you dangerous with a paddle</div>
+        </div>
+        <div class="field">
+          <div class="k">Guests</div>
+          <div class="v">Two. Kids not invited, this time</div>
+        </div>
+      </div>
+
+      <hr class="rule">
+
+      <div class="rsvp-label">Going?</div>
+      <div class="rsvp">
+        <button class="yes">Yes</button>
+        <button class="yes-but">Yes, but I'm bringing snacks</button>
+        <button class="maybe">Let me check my calendar</button>
+      </div>
+
+      <p class="footnote">Heard your love language was calendar invites.<br>Figured I'd send one before I even had a date.</p>
+
+      <div class="barcode" id="barcode"></div>
+    </div>
+  </div>
+
+<script>
+  const bc = document.getElementById('barcode');
+  for (let i = 0; i < 46; i++){
+    const bar = document.createElement('span');
+    const h = 10 + Math.random()*14;
+    bar.style.height = h + 'px';
+    bc.appendChild(bar);
+  }
+</script>
+</body>
+</html>
