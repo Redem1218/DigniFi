@@ -730,7 +730,22 @@ const TOUCHPOINTS = [
       : "The repair is complete and the invoice is locked, but this consumer still hasn't prequalified anywhere upstream — so checkout has to do both jobs at once.",
     consoleTitle: (pq) => pq ? "checkout-api · GET → POST /finalize" : "checkout-api · GET → POST /initiate → /finalize",
     session: (pq) => pq ? "chk_9f21ab · Prequalified for up to $7,211 (from Scheduling)" : "No active session found for this consumer",
-    device: () => `
+    device: (pq) => pq ? `
+      <div class="device-phone">
+        <div class="screen">
+          <div class="phonehead"><span>‹ Back</span><span>Checkout</span><span>🛒 Review</span></div>
+          <div class="screenpad">
+            <div style="font-weight:800;font-size:14px;margin-bottom:10px;">Payment Options</div>
+            <div class="rowline"><span>Pay with Card</span><span class="muted">$475.00</span></div>
+            <div class="card df" style="border-color:#1F8A55;background:#EAF6EF;margin-top:10px;">
+              <div class="df-badge" style="color:#1F8A55;">✓ $7,211 Available with DigniFi</div>
+              <div class="cta-amount" style="color:#1F8A55;">Apply $475.00 toward this invoice</div>
+              <div class="fineprint">Pay as low as $79/month · $6,736.53 remains available after this purchase.</div>
+            </div>
+            <div class="btn-navy" style="margin-top:14px;">Continue</div>
+          </div>
+        </div>
+      </div>` : `
       <div class="device-phone">
         <div class="screen">
           <div class="phonehead"><span>‹ Back</span><span>Checkout</span><span>🛒 Review</span></div>
@@ -740,7 +755,7 @@ const TOUCHPOINTS = [
             <div class="card df" style="margin-top:10px;">
               <div class="df-badge"><span class="df-mark">D</span> DigniFi</div>
               <div class="cta-amount">Pay as low as $79/month with DigniFi</div>
-              <div class="fineprint">**Account openings and payment activity are reported to a major credit bureau.</div>
+              <div class="fineprint">Tap to check your approval amount — takes under a minute.</div>
             </div>
             <div class="btn-navy" style="margin-top:14px;">Continue</div>
           </div>
