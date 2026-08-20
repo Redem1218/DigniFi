@@ -111,6 +111,15 @@
   }
   .stagebadge .sw{width:7px;height:7px;border-radius:50%;}
   .tab .stagedot{width:6px;height:6px;border-radius:50%; flex:none;}
+  .sessionpill{
+    display:inline-flex; align-items:center; gap:8px; font-family:var(--mono); font-size:11.5px;
+    padding:8px 14px; border-radius:8px; margin-bottom:26px; line-height:1.3;
+  }
+  .sessionpill .sw{width:7px;height:7px;border-radius:50%; flex:none;}
+  .sessionpill.has{background:#EAF6EF; color:#166B41;}
+  .sessionpill.has .sw{background:#1F8A55;}
+  .sessionpill.none{background:#FBEFEF; color:#8A2226;}
+  .sessionpill.none .sw{background:var(--crimson);}
 
   /* ---------- Device mockups ---------- */
   .device-phone{
@@ -227,6 +236,7 @@
     font-weight:700; font-size:11px; padding:2px 7px; border-radius:4px; background:#2C5F82; color:#fff;
   }
   .method.post{background:#2C5F82;}
+  .method.get{background:#5A5654;}
   .badge-webhook{
     font-weight:700; font-size:10px; padding:2px 8px; border-radius:20px; background:rgba(201,138,27,0.18); color:#E3A94C;
     letter-spacing:0.05em; text-transform:uppercase;
@@ -234,6 +244,7 @@
   .endpoint{color:#EDEBE9; font-size:12.5px;}
   .status{font-size:11px; font-weight:700; margin-left:auto;}
   .status.ok{color:#5CC98E;}
+  .status.notfound{color:#E27878;}
   .status.pending-text{color:var(--pending);}
   .evt-desc{color:var(--silver); font-size:11.8px; line-height:1.5; margin:4px 0 8px; font-family:var(--sans);}
 
@@ -272,7 +283,7 @@
     </div>
   </div>
   <h1 class="pagetitle">How each touchpoint works, end to end</h1>
-  <p class="pagesub">Every screen a consumer sees is backed by a specific DigniFi API call or webhook. Pick a touchpoint, then run the flow to see exactly what fires and when.</p>
+  <p class="pagesub">A consumer can prequalify as early as scheduling — that approval then follows them through every touchpoint that follows, not just once at checkout. Pick a touchpoint, then run the flow to see exactly what fires and when.</p>
 </div>
 
 <div class="tabbar-wrap">
@@ -306,7 +317,7 @@
 </main>
 
 <div class="refnote">
-  <p>Mapped to DigniFi's Early / Mid / Final Stage integration model. Endpoints and webhook events shown (<code>POST /api/v1/estimate</code>, <code>POST /api/v1/checkouts/initiate</code>, <code>POST /api/v1/checkouts/{id}/finalize</code>, <code>checkout.completed</code>) reflect DigniFi's actual Estimate and Checkout APIs. Field names and sample values in the request/response bodies are illustrative for this walkthrough — refer to the official DigniFi API documentation for exact schemas.</p>
+  <p>Mapped to DigniFi's Early / Mid / Final Stage integration model, with one prequalification session (<code>checkout_id</code>) carried across touchpoints via lookup rather than re-created at each step. Endpoints and webhook events shown (<code>POST /api/v1/estimate</code>, <code>POST /api/v1/checkouts/initiate</code>, <code>GET /api/v1/checkouts/{id}</code>, <code>POST /api/v1/checkouts/{id}/finalize</code>, <code>checkout.completed</code>) reflect DigniFi's actual Estimate and Checkout APIs. Field names and sample values in the request/response bodies are illustrative for this walkthrough — refer to the official DigniFi API documentation for exact schemas.</p>
   <p class="disclaimer">All DigniFi credit products are issued by WebBank.</p>
 </div>
 
@@ -326,8 +337,9 @@ const TOUCHPOINTS = [
     label: "Service Scheduling",
     title: "Service Scheduling",
     stage: "early",
-    desc: "The consumer may still be on the fence about the repair. An /estimate call powers an “as low as” message from a rough transaction amount — this is not a loan approval.",
-    consoleTitle: "estimate-api · POST /estimate",
+    desc: "The consumer can prequalify right here, before they ever set foot in the shop. Once they do, this approval follows them through every touchpoint that comes after.",
+    consoleTitle: "estimate-api → checkout-api",
+    session: null,
     device: () => `
       <div class="device-browser">
         <div class="browserbar">
@@ -341,11 +353,10 @@ const TOUCHPOINTS = [
             <div class="muted" style="font-size:11.5px;margin-top:4px;">Brake pad replacement + multi-point inspection</div>
             <div class="muted" style="font-size:11.5px;margin-top:4px;">Estimated cost: $410 – $560</div>
           </div>
-          <div class="card df">
-            <div style="font-weight:700;font-size:12.5px;margin-bottom:6px;">Want to spread out the cost?</div>
-            <div class="df-badge"><span class="df-mark">D</span> DigniFi</div>
-            <div class="cta-amount">Finance your purchase for as low as $79/month</div>
-            <div class="fineprint">This is an estimate, not a loan approval or credit check.</div>
+          <div class="card df" style="border-color:#1F8A55;background:#EAF6EF;">
+            <div class="df-badge" style="color:#1F8A55;">✓ You're Prequalified</div>
+            <div class="cta-amount" style="color:#1F8A55;">Up to $7,211 with DigniFi</div>
+            <div class="fineprint">This amount will follow you through your visit — no need to check again.</div>
           </div>
           <div class="btn-dark">Confirm Appointment</div>
         </div>
@@ -355,7 +366,7 @@ const TOUCHPOINTS = [
         type: "api",
         method: "POST",
         endpoint: "/api/v1/estimate",
-        desc: "Your system has a rough repair amount, not a finalized one. This call powers the “as low as $79/month” message — no consumer data is required and no credit check runs.",
+        desc: "Before the consumer commits to anything, this powers a passive “as low as $79/month” message from a rough amount — no session, no identity, no credit check.",
         request: {
           reference_id: "RO-88213-DRAFT",
           estimated_amount_cents: 48500,
@@ -364,14 +375,45 @@ const TOUCHPOINTS = [
           status: 200,
           estimate_id: "est_2b71f0",
           estimated_monthly_payment_cents: 7900,
-          term_months: 24,
           disclaimer: "NOT_A_LOAN_APPROVAL",
         },
       },
       {
+        type: "api",
+        method: "POST",
+        endpoint: "/api/v1/checkouts/initiate",
+        desc: "The consumer taps “Prequalify Now” right there on the scheduling page. This creates a real checkout session and sends them into DigniFi's hosted prequal flow.",
+        request: {
+          reference_id: "RO-88213",
+          rough_amount_cents: 48500,
+          customer: { first_name: "Jordan", last_name: "M.", mobile: "+1••••••4471" },
+          channel: "web",
+          redirect_url: "https://partner.example.com/schedule/complete",
+        },
+        response: {
+          status: 201,
+          checkout_id: "chk_9f21ab",
+          status_value: "CREATED",
+          checkout_url: "https://pay.dignifi.com/c/9f21ab",
+        },
+      },
+      {
+        type: "webhook",
+        event: "checkout.completed",
+        delay: "~90 seconds later",
+        desc: "The consumer finishes DigniFi's hosted prequal flow before they even leave the scheduling page. This webhook is what confirms it — and what the approval ceiling actually is.",
+        request: null,
+        response: {
+          event: "checkout.completed",
+          checkout_id: "chk_9f21ab",
+          status_value: "PREQUALIFIED",
+          approval_ceiling_cents: 721153,
+        },
+      },
+      {
         type: "note",
-        label: "Why Early Stage",
-        desc: "There's no checkout session and no consumer identity yet — just a number. That's what keeps this step lightweight enough to show on a public scheduling page.",
+        label: "This is the key moment",
+        desc: "checkout_id chk_9f21ab and its $7,211 approval ceiling now exist. Every touchpoint from here forward — Confirmation, MPI, Checkout — looks this session up rather than creating a new one.",
       },
     ],
   },
@@ -379,9 +421,10 @@ const TOUCHPOINTS = [
     id: "confirmation",
     label: "Service Confirmation",
     title: "Service Confirmation",
-    stage: "mid",
-    desc: "Roughly 50/50 odds the transaction amount is still not finalized here, so Initiate Checkout returns a link where the consumer can see if they prequalify and their approval ceiling — not a monthly payment yet.",
-    consoleTitle: "checkout-api · POST /checkouts/initiate",
+    stage: "early",
+    desc: "Rather than re-prompting the consumer to check their options, the confirmation message looks up their existing prequalification and shows the same approval amount.",
+    consoleTitle: "checkout-api · GET /checkouts/{id}",
+    session: "chk_9f21ab · Prequalified for up to $7,211 (from Scheduling)",
     device: () => `
       <div class="device-phone">
         <div class="screen">
@@ -389,41 +432,33 @@ const TOUCHPOINTS = [
           <div class="screenpad" style="flex:1;">
             <div class="bubble in">You're confirmed for Tue 9/8 at 9:00 AM.</div>
             <div class="bubble in">Estimated cost: $410–$560.</div>
-            <div class="bubble in link">Want to pay over time? See if you're prequalified for up to $7,211 with DigniFi, no credit impact to check →</div>
+            <div class="bubble in link">✓ Good news — you're prequalified for up to $7,211 with DigniFi. This carries through your visit, nothing more to do.</div>
           </div>
         </div>
       </div>`,
     steps: [
       {
         type: "api",
-        method: "POST",
-        endpoint: "/api/v1/checkouts/initiate",
-        desc: "The consumer taps the link in the confirmation text. Your system creates a checkout session and gets back a checkout URL — the amount isn't locked yet, so the consumer sees an approval ceiling, not loan terms.",
-        request: {
-          currency: "USD",
-          reference_id: "RO-88213",
-          rough_amount_cents: 47500,
-          customer: { first_name: "Jordan", last_name: "M.", mobile: "+1••••••4471" },
-          channel: "sms",
-          redirect_url: "https://partner.example.com/checkout/complete",
-        },
+        method: "GET",
+        endpoint: "/api/v1/checkouts/{id}",
+        desc: "Before drafting the confirmation message, your system checks whether this consumer already has an active checkout session.",
+        request: { checkout_id: "chk_9f21ab" },
         response: {
-          status: 201,
+          status: 200,
           checkout_id: "chk_9f21ab",
-          status_value: "CREATED",
-          checkout_url: "https://pay.dignifi.com/c/9f21ab",
+          status_value: "PREQUALIFIED",
           approval_ceiling_cents: 721153,
         },
       },
       {
         type: "note",
-        label: "What the consumer sees",
-        desc: "On checkout_url, they see whether they're approved and “up to $7,211” — DigniFi's language for an unfinalized approval. They cannot complete financing or see a monthly payment yet.",
+        label: "Reuse, don't recreate",
+        desc: "Because a PREQUALIFIED session already exists, Initiate Checkout is never called here — the confirmation template just renders approval_ceiling_cents from the lookup.",
       },
       {
         type: "note",
-        label: "What still has to happen",
-        desc: "Finalize Checkout Transaction Amount (see the Payment & Checkout tab) must be called on this same checkout_id before the consumer can see loan terms and complete financing.",
+        label: "If there's no session",
+        desc: "A 404 here means this consumer never prequalified during scheduling. That's the fallback path shown on the Manual Text Invite tab.",
       },
     ],
   },
@@ -432,15 +467,18 @@ const TOUCHPOINTS = [
     label: "MPI & Estimate",
     title: "MPI & Estimated Repairs",
     stage: "early",
-    desc: "The consumer hasn't approved this additional work yet, so this is still an Early Stage estimate, recalculated with the technician's updated repair total.",
-    consoleTitle: "estimate-api · POST /estimate",
+    desc: "The technician's inspection adds to the repair total. The consumer's existing approval is checked against it and shown right alongside the new number.",
+    consoleTitle: "checkout-api · GET /checkouts/{id}",
+    session: "chk_9f21ab · Prequalified for up to $7,211 (from Scheduling)",
     device: () => `
       <div class="device-phone">
         <div class="screen">
           <div class="phonehead"><span>☰ &nbsp;Multi Point Inspection</span><span>$685.00</span></div>
           <div class="screenpad" style="padding-top:12px;">
-            <div class="df-badge" style="margin-bottom:2px;"><span class="df-mark">D</span> As low as $79/month with DigniFi</div>
-            <div style="font-size:10.5px;color:#2C5F82;text-decoration:underline;margin:2px 0 12px;">See financing options</div>
+            <div class="card df" style="border-color:#1F8A55;background:#EAF6EF;margin-bottom:10px;">
+              <div class="df-badge" style="color:#1F8A55;">✓ Prequalified for up to $7,211</div>
+              <div class="fineprint">Your $685.00 estimate is fully covered.</div>
+            </div>
             <div style="font-weight:700;font-size:12px;margin-bottom:8px;">City Auto Group</div>
             <div style="background:#2C5F82;color:#fff;font-size:11px;padding:7px 10px;margin-bottom:0;">🚗 Your 2024 Explorer: (3 items)</div>
             <div class="concern-label">Your Concern</div>
@@ -451,7 +489,7 @@ const TOUCHPOINTS = [
             <div class="concern-body"><span>Battery replacement</span><b>$210</b></div>
             <div class="card df" style="margin-top:12px;">
               <div style="font-weight:700;font-size:12px;">Estimated Total: $685.00</div>
-              <div class="cta-amount" style="color:var(--crimson);">Finance for as low as $79/month</div>
+              <div class="cta-amount" style="color:var(--crimson);">Within your $7,211 approval</div>
             </div>
           </div>
         </div>
@@ -459,25 +497,26 @@ const TOUCHPOINTS = [
     steps: [
       {
         type: "api",
-        method: "POST",
-        endpoint: "/api/v1/estimate",
-        desc: "The inspection surfaces additional recommended work. The customer hasn't approved it yet, so this reuses the same Early Stage call as scheduling — just with an updated amount.",
-        request: {
-          reference_id: "RO-88213",
-          estimated_amount_cents: 68500,
-        },
+        method: "GET",
+        endpoint: "/api/v1/checkouts/{id}",
+        desc: "Same session, same lookup pattern as Confirmation. The advisor's screen and the consumer's screen both read from this one call.",
+        request: { checkout_id: "chk_9f21ab" },
         response: {
           status: 200,
-          estimate_id: "est_5f19ad",
-          estimated_monthly_payment_cents: 7900,
-          term_months: 24,
-          disclaimer: "NOT_A_LOAN_APPROVAL",
+          checkout_id: "chk_9f21ab",
+          status_value: "PREQUALIFIED",
+          approval_ceiling_cents: 721153,
         },
       },
       {
         type: "note",
-        label: "Why not Initiate Checkout here",
-        desc: "Initiate Checkout implies a real invite for the consumer to go verify their approval. Until they've said yes to this work, it's still just a number on the estimate — same logic as the scheduling step.",
+        label: "Comparing against the ceiling",
+        desc: "$685.00 in recommended work is well inside the $7,211 approval, so the advisor can present financing with confidence — no new prequal, no new risk of declining the consumer twice.",
+      },
+      {
+        type: "note",
+        label: "If the repair total is higher",
+        desc: "If recommended work exceeded the approval ceiling, DigniFi's checkout flow guides the consumer to combine it with another payment method for the difference — still no separate API call required here.",
       },
     ],
   },
@@ -486,14 +525,15 @@ const TOUCHPOINTS = [
     label: "Manual Text Invite",
     title: "Manual Text Invite",
     stage: "mid",
-    desc: "Same Mid Stage mechanics as the automated confirmation — the advisor is just the one triggering it, from the service drive instead of a scheduling system.",
-    consoleTitle: "checkout-api · advisor-initiated",
+    desc: "Not every consumer prequalifies during scheduling. When they didn't, the advisor triggers it manually — and from that point on, it behaves exactly like a session created at scheduling.",
+    consoleTitle: "checkout-api · GET → POST /checkouts/initiate",
+    session: "No active session found for this consumer",
     device: () => `
       <div class="device-phone">
         <div class="screen">
           <div class="phonehead">Service Advisor</div>
           <div class="screenpad" style="flex:1;">
-            <div class="bubble out">Hey! Following up on the brakes, total came to $685.</div>
+            <div class="bubble out">Hey! Following up on the brakes, total came to $685. Looks like you didn't get a chance to check your financing options yet.</div>
             <div class="bubble in">Oh that's more than I expected right now</div>
             <div class="bubble out link">No problem, here's a link to see if you prequalify, takes under a minute →</div>
             <div class="bubble in">Just approved, thank you!</div>
@@ -503,9 +543,20 @@ const TOUCHPOINTS = [
     steps: [
       {
         type: "api",
+        method: "GET",
+        endpoint: "/api/v1/checkouts/{id}",
+        desc: "The advisor's system checks first, same as every other touchpoint. This consumer never prequalified during scheduling, so there's nothing to find.",
+        request: { reference_id: "RO-88213" },
+        response: {
+          status: 404,
+          error: "checkout_not_found",
+        },
+      },
+      {
+        type: "api",
         method: "POST",
         endpoint: "/api/v1/checkouts/initiate",
-        desc: "The advisor triggers this manually. Identical endpoint to the automated confirmation flow — the only difference is who initiates it and the channel it goes out on.",
+        desc: "Only because nothing existed does the advisor's system fall back to creating a brand new session — triggered manually, from the service drive.",
         request: {
           reference_id: "RO-88213",
           rough_amount_cents: 68500,
@@ -518,14 +569,13 @@ const TOUCHPOINTS = [
           checkout_id: "chk_7cd310",
           status_value: "CREATED",
           checkout_url: "https://pay.dignifi.com/c/7cd310",
-          approval_ceiling_cents: 721153,
         },
       },
       {
         type: "webhook",
         event: "checkout.completed",
         delay: "~4 minutes later",
-        desc: "The consumer finishes the prequalification on their own phone, away from the shop. Your system needs to be listening for this webhook to know it happened.",
+        desc: "The consumer finishes prequalifying on their own phone, away from the shop. Your system needs to be listening for this webhook to know it happened.",
         request: null,
         response: {
           event: "checkout.completed",
@@ -536,8 +586,8 @@ const TOUCHPOINTS = [
       },
       {
         type: "note",
-        label: "Why this matters",
-        desc: "Because the advisor isn't watching a screen when this completes, the webhook — not a redirect — is the only reliable signal that the RO can be updated with the customer's prequalified status.",
+        label: "Same rules from here on",
+        desc: "chk_7cd310 now behaves exactly like chk_9f21ab did — any later touchpoint for this consumer will GET this session instead of creating another one.",
       },
     ],
   },
@@ -546,8 +596,9 @@ const TOUCHPOINTS = [
     label: "Payment & Checkout",
     title: "Payment & Checkout",
     stage: "final",
-    desc: "The repair is scheduled or complete and the transaction amount is locked. Finalize unlocks real loan terms on the same checkout session, and the consumer completes financing in a co-branded flow.",
-    consoleTitle: "checkout-api · POST /checkouts/{id}/finalize",
+    desc: "The repair is complete and the invoice is locked. The consumer's existing approval is confirmed one last time, then finalized into real loan terms.",
+    consoleTitle: "checkout-api · GET → POST /finalize",
+    session: "chk_9f21ab · Prequalified for up to $7,211 (from Scheduling)",
     device: () => `
       <div class="device-phone">
         <div class="screen">
@@ -567,9 +618,22 @@ const TOUCHPOINTS = [
     steps: [
       {
         type: "api",
+        method: "GET",
+        endpoint: "/api/v1/checkouts/{id}",
+        desc: "One last lookup before locking the invoice, confirming the consumer's prequalification is still active and reading their approval ceiling.",
+        request: { checkout_id: "chk_9f21ab" },
+        response: {
+          status: 200,
+          checkout_id: "chk_9f21ab",
+          status_value: "PREQUALIFIED",
+          approval_ceiling_cents: 721153,
+        },
+      },
+      {
+        type: "api",
         method: "POST",
         endpoint: "/api/v1/checkouts/{id}/finalize",
-        desc: "The invoice is locked. This call sets the binding transaction amount on the same checkout_id created back in Service Confirmation, and unlocks full loan terms on that same checkout_url.",
+        desc: "The invoice is locked at $475.00 — comfortably inside the $7,211 ceiling. This is the only step that sets a binding transaction amount.",
         request: {
           checkout_id: "chk_9f21ab",
           final_amount_cents: 47500,
@@ -584,7 +648,7 @@ const TOUCHPOINTS = [
       {
         type: "note",
         label: "What the consumer sees now",
-        desc: "The same checkout_url now shows an approved amount, real loan terms (the $79/month figure), and a co-branded flow where they can complete financing on the spot.",
+        desc: "The same checkout_url that started at scheduling now shows real loan terms — the $79/month figure — and lets them complete financing on the spot.",
       },
       {
         type: "webhook",
@@ -648,11 +712,17 @@ function selectTab(i) {
   const t = TOUCHPOINTS[i];
   const stage = STAGES[t.stage];
   deviceHost.innerHTML = t.device();
+  const hasSession = t.session && !t.session.startsWith("No active");
+  const sessionPill = t.session ? `
+    <div class="sessionpill ${hasSession ? "has" : "none"}">
+      <span class="sw"></span>${t.session}
+    </div>` : "";
   touchtext.innerHTML = `
     <div style="margin-top:34px;">
       <div class="stagebadge" style="background:${stage.color}22; color:${stage.color};"><span class="sw" style="background:${stage.color}"></span>${stage.label}</div>
     </div>
-    <h2 class="touchtitle">${t.title}</h2><p class="touchdesc">${t.desc}</p>`;
+    <h2 class="touchtitle">${t.title}</h2><p class="touchdesc">${t.desc}</p>
+    ${sessionPill}`;
   consoleTitle.textContent = t.consoleTitle;
   consoleBody.innerHTML = `<div class="console-empty">Press <b>Run this flow</b> to see the exact request, response, and webhook sequence behind this touchpoint.</div>`;
   runLabel.textContent = "Run this flow";
@@ -686,12 +756,16 @@ function eventMarkup(step) {
       </div>`;
   }
   // api
+  const isNotFound = step.response.status === 404;
+  const methodClass = step.method === "GET" ? "get" : "post";
+  const statusClass = isNotFound ? "notfound" : "ok";
+  const statusLabel = isNotFound ? `${step.response.status} NOT FOUND` : `${step.response.status} OK`;
   return `
     <div class="evt api">
       <div class="evt-top">
-        <span class="method post">${step.method}</span>
+        <span class="method ${methodClass}">${step.method}</span>
         <span class="endpoint">${step.endpoint}</span>
-        <span class="status ok">${step.response.status} OK</span>
+        <span class="status ${statusClass}">${statusLabel}</span>
       </div>
       <div class="evt-desc">${step.desc}</div>
       <div class="jsonrow">
