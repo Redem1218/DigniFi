@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>DigniFi Integration Reference — How Each Touchpoint Works</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --crimson:#AB2328;
+    --blaze:#EE2737;
+    --ink:#1B1918;
+    --panel:#211F1F;
+    --panel-2:#2A2726;
+    --silver:#A7A8A9;
+    --gray:#787878;
+    --line:#E7E5E3;
+    --paper:#FFFFFF;
+    --wash:#F5F4F3;
+    --success:#1F8A55;
+    --pending:#C98A1B;
+    --info:#2C5F82;
+    --mono: 'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+    --sans: 'Montserrat', -apple-system, sans-serif;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    font-family:var(--sans);
+    background:var(--paper);
+    color:var(--ink);
+    -webkit-font-smoothing:antialiased;
+  }
+  @media (prefers-reduced-motion: reduce){
+    *{animation-duration:0.001ms !important; transition-duration:0.001ms !important;}
+  }
+
+  /* ---------- Header ---------- */
+  .topbar{
+    background:var(--ink);
+    color:#fff;
+    padding:28px 5vw 26px;
+  }
+  .brandrow{
+    display:flex; align-items:baseline; justify-content:space-between; flex-wrap:wrap; gap:14px;
+    max-width:1280px; margin:0 auto;
+  }
+  .brand{
+    font-weight:800; font-size:22px; letter-spacing:-0.02em;
+  }
+  .brand span{color:var(--blaze);}
+  .kicker{
+    font-family:var(--mono); font-size:11px; letter-spacing:0.14em; text-transform:uppercase;
+    color:var(--silver); margin-top:2px;
+  }
+  h1.pagetitle{
+    max-width:1280px; margin:18px auto 6px; font-size:clamp(28px,3.4vw,42px); font-weight:800;
+    letter-spacing:-0.02em; line-height:1.08;
+  }
+  p.pagesub{
+    max-width:1280px; margin:0 auto; color:var(--silver); font-size:15px; max-width:640px; line-height:1.5;
+  }
+
+  /* ---------- Tabs ---------- */
+  .tabbar-wrap{
+    background:var(--ink); border-top:1px solid #3a3736; position:sticky; top:0; z-index:20;
+  }
+  .tabbar{
+    max-width:1280px; margin:0 auto; display:flex; gap:4px; padding:0 5vw; overflow-x:auto;
+    scrollbar-width:none;
+  }
+  .tabbar::-webkit-scrollbar{display:none;}
+  .tab{
+    font-family:var(--mono); font-size:12.5px; color:var(--silver); background:transparent; border:none;
+    padding:16px 16px 14px; cursor:pointer; white-space:nowrap; position:relative; letter-spacing:0.02em;
+    display:flex; align-items:center; gap:8px;
+  }
+  .tab .n{
+    width:18px; height:18px; border-radius:50%; border:1px solid #55504e; display:inline-flex;
+    align-items:center; justify-content:center; font-size:10px; flex:none;
+  }
+  .tab.active{color:#fff;}
+  .tab.active .n{background:var(--crimson); border-color:var(--crimson); color:#fff;}
+  .tab.active::after{
+    content:""; position:absolute; left:16px; right:16px; bottom:0; height:2px; background:var(--crimson);
+  }
+  .tab:hover:not(.active){color:#fff;}
+
+  /* ---------- Main layout ---------- */
+  main{max-width:1280px; margin:0 auto; padding:36px 5vw 80px;}
+  .panelgrid{
+    display:grid; grid-template-columns: minmax(300px,380px) 1fr; gap:34px; align-items:start;
+  }
+  @media (max-width: 880px){ .panelgrid{grid-template-columns:1fr;} }
+
+  .colhead{
+    display:flex; align-items:center; gap:10px; margin-bottom:14px;
+  }
+  .colhead .dot{width:8px;height:8px;border-radius:50%;}
+  .colhead .dot.blue{background:var(--info);}
+  .colhead .dot.red{background:var(--crimson);}
+  .colhead h2{font-size:12px; text-transform:uppercase; letter-spacing:0.12em; font-weight:700; margin:0; color:var(--gray);}
+
+  .touchtitle{font-size:26px; font-weight:800; letter-spacing:-0.01em; margin:0 0 6px; display:inline-block;}
+  .touchdesc{color:var(--gray); font-size:14.5px; line-height:1.55; max-width:640px; margin:0 0 30px;}
+  .stagebadge{
+    display:inline-flex; align-items:center; gap:6px; font-family:var(--mono); font-size:11px; font-weight:600;
+    letter-spacing:0.06em; text-transform:uppercase; padding:4px 10px; border-radius:20px; margin-bottom:12px;
+  }
+  .stagebadge .sw{width:7px;height:7px;border-radius:50%;}
+  .tab .stagedot{width:6px;height:6px;border-radius:50%; flex:none;}
+
+  /* ---------- Device mockups ---------- */
+  .device-phone{
+    width:100%; max-width:340px; margin:0 auto;
+    background:var(--ink); border-radius:34px; padding:10px; box-shadow:0 18px 40px -12px rgba(0,0,0,0.35);
+  }
+  .device-phone .screen{
+    background:#fff; border-radius:24px; overflow:hidden; min-height:520px; position:relative;
+    display:flex; flex-direction:column;
+  }
+  .device-browser{
+    width:100%; background:#fff; border-radius:10px; overflow:hidden; border:1px solid var(--line);
+    box-shadow:0 18px 40px -18px rgba(0,0,0,0.28);
+  }
+  .browserbar{
+    background:#F0F0F0; padding:8px 12px; display:flex; align-items:center; gap:6px;
+  }
+  .browserbar .dot{width:9px;height:9px;border-radius:50%;}
+  .browserbar .url{
+    flex:1; background:#fff; border:1px solid #DCDCDC; border-radius:5px; font-size:10.5px; color:var(--gray);
+    padding:3px 10px; margin-left:8px; font-family:var(--mono);
+  }
+  .screenpad{padding:16px;}
+  .phonehead{
+    display:flex; align-items:center; justify-content:space-between; padding:10px 14px; border-bottom:1px solid #EFEFEF;
+    font-size:12px; font-weight:700;
+  }
+  .card{
+    border:1px solid var(--line); border-radius:9px; padding:12px 14px; margin-bottom:10px; background:#fff;
+  }
+  .card.df{
+    border-color:#3E6B99; background:#EEF3F8;
+  }
+  .df-badge{
+    display:inline-flex; align-items:center; gap:6px; font-size:12px; font-weight:700; color:var(--crimson);
+  }
+  .df-mark{
+    width:16px; height:16px; border-radius:50%; background:var(--crimson); color:#fff; font-size:9px; font-weight:800;
+    display:inline-flex; align-items:center; justify-content:center;
+  }
+  .cta-amount{font-size:12.5px; font-weight:700; margin-top:3px;}
+  .fineprint{font-size:9.5px; color:var(--gray); margin-top:4px; line-height:1.35;}
+  .btn-dark{
+    background:var(--ink); color:#fff; text-align:center; padding:11px; border-radius:7px; font-size:11px;
+    font-weight:700; letter-spacing:0.06em; text-transform:uppercase;
+  }
+  .btn-navy{
+    background:#1F3B57; color:#fff; text-align:center; padding:11px; border-radius:7px; font-size:11px;
+    font-weight:700; letter-spacing:0.06em; text-transform:uppercase;
+  }
+  .rowline{display:flex; justify-content:space-between; align-items:center; font-size:12px; padding:8px 0; border-bottom:1px solid #F0F0F0;}
+  .muted{color:var(--gray);}
+  .concern-label{
+    background:#2C5F82; color:#fff; font-size:7.5px; font-weight:700; letter-spacing:0.06em; text-transform:uppercase;
+    padding:3px 8px;
+  }
+  .concern-body{display:flex; justify-content:space-between; padding:7px 8px; font-size:11px; border:1px solid #EDEDED; border-top:none;}
+
+  /* text bubble */
+  .bubble{max-width:82%; padding:9px 11px; border-radius:12px; font-size:11.5px; line-height:1.4; margin-bottom:8px;}
+  .bubble.in{background:#EDEDED; color:var(--ink);}
+  .bubble.out{background:var(--crimson); color:#fff; margin-left:auto;}
+  .bubble a, .bubble.link{text-decoration:underline;}
+
+  /* ---------- API console ---------- */
+  .console-wrap{
+    background:var(--panel); border-radius:12px; overflow:hidden; border:1px solid #3a3736;
+    box-shadow:0 24px 50px -20px rgba(0,0,0,0.4);
+  }
+  .console-head{
+    display:flex; align-items:center; justify-content:space-between; padding:14px 18px;
+    border-bottom:1px solid #3a3736; background:var(--panel-2);
+  }
+  .console-head-left{display:flex; align-items:center; gap:10px;}
+  .dots{display:flex; gap:6px;}
+  .dots span{width:9px;height:9px;border-radius:50%;}
+  .console-title{font-family:var(--mono); font-size:12px; color:var(--silver); letter-spacing:0.03em;}
+  .runbtn{
+    font-family:var(--mono); font-size:11.5px; font-weight:600; background:var(--crimson); color:#fff;
+    border:none; padding:8px 16px; border-radius:6px; cursor:pointer; letter-spacing:0.03em;
+    display:inline-flex; align-items:center; gap:8px; transition:background 0.15s;
+  }
+  .runbtn:hover{background:var(--blaze);}
+  .runbtn:disabled{background:#4a4645; cursor:default;}
+  .runbtn .spin{
+    width:11px;height:11px;border-radius:50%;border:2px solid rgba(255,255,255,0.35);
+    border-top-color:#fff; display:none; animation:spin 0.7s linear infinite;
+  }
+  .runbtn.running .spin{display:inline-block;}
+  @keyframes spin{to{transform:rotate(360deg);}}
+
+  .console-body{
+    padding:18px; font-family:var(--mono); font-size:12.5px; min-height:420px; max-height:560px; overflow-y:auto;
+  }
+  .console-empty{color:#6b6866; font-size:12.5px; padding:30px 6px; line-height:1.7;}
+  .console-empty b{color:var(--silver);}
+
+  .evt{
+    border-left:2px solid #3a3736; padding-left:16px; margin-left:6px; padding-bottom:20px; position:relative;
+    opacity:0; transform:translateY(4px); animation:fadein 0.35s ease forwards;
+  }
+  .evt:last-child{padding-bottom:2px;}
+  @keyframes fadein{ to{opacity:1; transform:translateY(0);} }
+  .evt::before{
+    content:""; position:absolute; left:-5px; top:2px; width:8px; height:8px; border-radius:50%;
+    background:var(--gray); border:2px solid var(--panel);
+  }
+  .evt.api::before{background:var(--info);}
+  .evt.webhook::before{background:var(--pending);}
+  .evt.note::before{background:#5a5654;}
+
+  .evt-top{display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:4px;}
+  .method{
+    font-weight:700; font-size:11px; padding:2px 7px; border-radius:4px; background:#2C5F82; color:#fff;
+  }
+  .method.post{background:#2C5F82;}
+  .badge-webhook{
+    font-weight:700; font-size:10px; padding:2px 8px; border-radius:20px; background:rgba(201,138,27,0.18); color:#E3A94C;
+    letter-spacing:0.05em; text-transform:uppercase;
+  }
+  .endpoint{color:#EDEBE9; font-size:12.5px;}
+  .status{font-size:11px; font-weight:700; margin-left:auto;}
+  .status.ok{color:#5CC98E;}
+  .status.pending-text{color:var(--pending);}
+  .evt-desc{color:var(--silver); font-size:11.8px; line-height:1.5; margin:4px 0 8px; font-family:var(--sans);}
+
+  .jsonrow{display:flex; gap:18px; margin-top:6px;}
+  .jsonblock{flex:1; min-width:0;}
+  .jsonlabel{font-size:9.5px; text-transform:uppercase; letter-spacing:0.08em; color:#6b6866; margin-bottom:4px;}
+  pre.json{
+    background:#171514; border:1px solid #3a3736; border-radius:6px; padding:10px 12px; margin:0;
+    font-size:11px; line-height:1.55; color:#D8D5D2; overflow-x:auto;
+  }
+  .k{color:#8FB8DB;} .s{color:#B7D6A8;} .num{color:#E3A94C;}
+
+  .note-box{
+    color:#c9c6c3; font-size:12px; line-height:1.55; font-family:var(--sans); background:#171514;
+    border:1px solid #3a3736; border-radius:6px; padding:10px 12px;
+  }
+  .note-box b{color:#fff;}
+
+  .timestamp{font-size:10.5px; color:#57534f; margin-left:8px;}
+
+  /* footer */
+  .refnote{
+    max-width:1280px; margin:44px auto 0; padding:18px 5vw 0; border-top:1px solid var(--line);
+  }
+  .refnote p{font-size:12px; color:var(--gray); line-height:1.6; max-width:900px; margin:0 0 6px;}
+  .refnote .disclaimer{font-size:11.5px; color:var(--gray); margin-top:14px;}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="brandrow">
+    <div>
+      <div class="brand">Digni<span>Fi</span></div>
+      <div class="kicker">Integration Reference · Internal / Partner Use</div>
+    </div>
+  </div>
+  <h1 class="pagetitle">How each touchpoint works, end to end</h1>
+  <p class="pagesub">Every screen a consumer sees is backed by a specific DigniFi API call or webhook. Pick a touchpoint, then run the flow to see exactly what fires and when.</p>
+</div>
+
+<div class="tabbar-wrap">
+  <div class="tabbar" id="tabbar"></div>
+</div>
+
+<main>
+  <div class="panelgrid">
+    <div>
+      <div class="colhead"><span class="dot blue"></span><h2>Consumer Experience</h2></div>
+      <div id="deviceHost"></div>
+    </div>
+    <div>
+      <div class="colhead"><span class="dot red"></span><h2>API Activity</h2></div>
+      <div class="console-wrap">
+        <div class="console-head">
+          <div class="console-head-left">
+            <div class="dots"><span style="background:#EA6A5B"></span><span style="background:#E3B341"></span><span style="background:#57C270"></span></div>
+            <span class="console-title" id="consoleTitle">checkout-api · live log</span>
+          </div>
+          <button class="runbtn" id="runBtn"><span class="spin"></span><span id="runLabel">Run this flow</span></button>
+        </div>
+        <div class="console-body" id="consoleBody">
+          <div class="console-empty">Press <b>Run this flow</b> to see the exact request, response, and webhook sequence behind this touchpoint.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="touchtext"></div>
+</main>
+
+<div class="refnote">
+  <p>Mapped to DigniFi's Early / Mid / Final Stage integration model. Endpoints and webhook events shown (<code>POST /api/v1/estimate</code>, <code>POST /api/v1/checkouts/initiate</code>, <code>POST /api/v1/checkouts/{id}/finalize</code>, <code>checkout.completed</code>) reflect DigniFi's actual Estimate and Checkout APIs. Field names and sample values in the request/response bodies are illustrative for this walkthrough — refer to the official DigniFi API documentation for exact schemas.</p>
+  <p class="disclaimer">All DigniFi credit products are issued by WebBank.</p>
+</div>
+
+<script>
+// ---------------------------------------------------------------------
+// Content model: one entry per touchpoint
+// ---------------------------------------------------------------------
+const STAGES = {
+  early: { label: "Early Stage", color: "#2C5F82" },
+  mid: { label: "Mid Stage", color: "#C98A1B" },
+  final: { label: "Final Stage", color: "#1F8A55" },
+};
+
+const TOUCHPOINTS = [
+  {
+    id: "scheduling",
+    label: "Service Scheduling",
+    title: "Service Scheduling",
+    stage: "early",
+    desc: "The consumer may still be on the fence about the repair. An /estimate call powers an “as low as” message from a rough transaction amount — this is not a loan approval.",
+    consoleTitle: "estimate-api · POST /estimate",
+    device: () => `
+      <div class="device-browser">
+        <div class="browserbar">
+          <span class="dot" style="background:#E5493F"></span><span class="dot" style="background:#E8B93F"></span><span class="dot" style="background:#3FB950"></span>
+          <div class="url">service.example.com/schedule</div>
+        </div>
+        <div class="screenpad">
+          <div style="font-weight:800;font-size:15px;margin-bottom:10px;">Confirm Your Appointment</div>
+          <div class="card">
+            <div style="font-weight:700;font-size:12.5px;">Tue, Sept 8 · 9:00 AM</div>
+            <div class="muted" style="font-size:11.5px;margin-top:4px;">Brake pad replacement + multi-point inspection</div>
+            <div class="muted" style="font-size:11.5px;margin-top:4px;">Estimated cost: $410 – $560</div>
+          </div>
+          <div class="card df">
+            <div style="font-weight:700;font-size:12.5px;margin-bottom:6px;">Want to spread out the cost?</div>
+            <div class="df-badge"><span class="df-mark">D</span> DigniFi</div>
+            <div class="cta-amount">Finance your purchase for as low as $79/month</div>
+            <div class="fineprint">This is an estimate, not a loan approval or credit check.</div>
+          </div>
+          <div class="btn-dark">Confirm Appointment</div>
+        </div>
+      </div>`,
+    steps: [
+      {
+        type: "api",
+        method: "POST",
+        endpoint: "/api/v1/estimate",
+        desc: "Your system has a rough repair amount, not a finalized one. This call powers the “as low as $79/month” message — no consumer data is required and no credit check runs.",
+        request: {
+          reference_id: "RO-88213-DRAFT",
+          estimated_amount_cents: 48500,
+        },
+        response: {
+          status: 200,
+          estimate_id: "est_2b71f0",
+          estimated_monthly_payment_cents: 7900,
+          term_months: 24,
+          disclaimer: "NOT_A_LOAN_APPROVAL",
+        },
+      },
+      {
+        type: "note",
+        label: "Why Early Stage",
+        desc: "There's no checkout session and no consumer identity yet — just a number. That's what keeps this step lightweight enough to show on a public scheduling page.",
+      },
+    ],
+  },
+  {
+    id: "confirmation",
+    label: "Service Confirmation",
+    title: "Service Confirmation",
+    stage: "mid",
+    desc: "Roughly 50/50 odds the transaction amount is still not finalized here, so Initiate Checkout returns a link where the consumer can see if they prequalify and their approval ceiling — not a monthly payment yet.",
+    consoleTitle: "checkout-api · POST /checkouts/initiate",
+    device: () => `
+      <div class="device-phone">
+        <div class="screen">
+          <div class="phonehead">Service Center</div>
+          <div class="screenpad" style="flex:1;">
+            <div class="bubble in">You're confirmed for Tue 9/8 at 9:00 AM.</div>
+            <div class="bubble in">Estimated cost: $410–$560.</div>
+            <div class="bubble in link">Want to pay over time? See if you're prequalified for up to $7,211 with DigniFi, no credit impact to check →</div>
+          </div>
+        </div>
+      </div>`,
+    steps: [
+      {
+        type: "api",
+        method: "POST",
+        endpoint: "/api/v1/checkouts/initiate",
+        desc: "The consumer taps the link in the confirmation text. Your system creates a checkout session and gets back a checkout URL — the amount isn't locked yet, so the consumer sees an approval ceiling, not loan terms.",
+        request: {
+          currency: "USD",
+          reference_id: "RO-88213",
+          rough_amount_cents: 47500,
+          customer: { first_name: "Jordan", last_name: "M.", mobile: "+1••••••4471" },
+          channel: "sms",
+          redirect_url: "https://partner.example.com/checkout/complete",
+        },
+        response: {
+          status: 201,
+          checkout_id: "chk_9f21ab",
+          status_value: "CREATED",
+          checkout_url: "https://pay.dignifi.com/c/9f21ab",
+          approval_ceiling_cents: 721153,
+        },
+      },
+      {
+        type: "note",
+        label: "What the consumer sees",
+        desc: "On checkout_url, they see whether they're approved and “up to $7,211” — DigniFi's language for an unfinalized approval. They cannot complete financing or see a monthly payment yet.",
+      },
+      {
+        type: "note",
+        label: "What still has to happen",
+        desc: "Finalize Checkout Transaction Amount (see the Payment & Checkout tab) must be called on this same checkout_id before the consumer can see loan terms and complete financing.",
+      },
+    ],
+  },
+  {
+    id: "mpi",
+    label: "MPI & Estimate",
+    title: "MPI & Estimated Repairs",
+    stage: "early",
+    desc: "The consumer hasn't approved this additional work yet, so this is still an Early Stage estimate, recalculated with the technician's updated repair total.",
+    consoleTitle: "estimate-api · POST /estimate",
+    device: () => `
+      <div class="device-phone">
+        <div class="screen">
+          <div class="phonehead"><span>☰ &nbsp;Multi Point Inspection</span><span>$685.00</span></div>
+          <div class="screenpad" style="padding-top:12px;">
+            <div class="df-badge" style="margin-bottom:2px;"><span class="df-mark">D</span> As low as $79/month with DigniFi</div>
+            <div style="font-size:10.5px;color:#2C5F82;text-decoration:underline;margin:2px 0 12px;">See financing options</div>
+            <div style="font-weight:700;font-size:12px;margin-bottom:8px;">City Auto Group</div>
+            <div style="background:#2C5F82;color:#fff;font-size:11px;padding:7px 10px;margin-bottom:0;">🚗 Your 2024 Explorer: (3 items)</div>
+            <div class="concern-label">Your Concern</div>
+            <div class="concern-body"><span>Front brake pads & rotors</span><b>$410</b></div>
+            <div class="concern-label">Your Concern</div>
+            <div class="concern-body"><span>Cabin air filter replacement</span><b>$65</b></div>
+            <div class="concern-label">Your Concern</div>
+            <div class="concern-body"><span>Battery replacement</span><b>$210</b></div>
+            <div class="card df" style="margin-top:12px;">
+              <div style="font-weight:700;font-size:12px;">Estimated Total: $685.00</div>
+              <div class="cta-amount" style="color:var(--crimson);">Finance for as low as $79/month</div>
+            </div>
+          </div>
+        </div>
+      </div>`,
+    steps: [
+      {
+        type: "api",
+        method: "POST",
+        endpoint: "/api/v1/estimate",
+        desc: "The inspection surfaces additional recommended work. The customer hasn't approved it yet, so this reuses the same Early Stage call as scheduling — just with an updated amount.",
+        request: {
+          reference_id: "RO-88213",
+          estimated_amount_cents: 68500,
+        },
+        response: {
+          status: 200,
+          estimate_id: "est_5f19ad",
+          estimated_monthly_payment_cents: 7900,
+          term_months: 24,
+          disclaimer: "NOT_A_LOAN_APPROVAL",
+        },
+      },
+      {
+        type: "note",
+        label: "Why not Initiate Checkout here",
+        desc: "Initiate Checkout implies a real invite for the consumer to go verify their approval. Until they've said yes to this work, it's still just a number on the estimate — same logic as the scheduling step.",
+      },
+    ],
+  },
+  {
+    id: "invite",
+    label: "Manual Text Invite",
+    title: "Manual Text Invite",
+    stage: "mid",
+    desc: "Same Mid Stage mechanics as the automated confirmation — the advisor is just the one triggering it, from the service drive instead of a scheduling system.",
+    consoleTitle: "checkout-api · advisor-initiated",
+    device: () => `
+      <div class="device-phone">
+        <div class="screen">
+          <div class="phonehead">Service Advisor</div>
+          <div class="screenpad" style="flex:1;">
+            <div class="bubble out">Hey! Following up on the brakes, total came to $685.</div>
+            <div class="bubble in">Oh that's more than I expected right now</div>
+            <div class="bubble out link">No problem, here's a link to see if you prequalify, takes under a minute →</div>
+            <div class="bubble in">Just approved, thank you!</div>
+          </div>
+        </div>
+      </div>`,
+    steps: [
+      {
+        type: "api",
+        method: "POST",
+        endpoint: "/api/v1/checkouts/initiate",
+        desc: "The advisor triggers this manually. Identical endpoint to the automated confirmation flow — the only difference is who initiates it and the channel it goes out on.",
+        request: {
+          reference_id: "RO-88213",
+          rough_amount_cents: 68500,
+          customer: { mobile: "+1••••••4471" },
+          channel: "sms",
+          initiated_by: "advisor",
+        },
+        response: {
+          status: 201,
+          checkout_id: "chk_7cd310",
+          status_value: "CREATED",
+          checkout_url: "https://pay.dignifi.com/c/7cd310",
+          approval_ceiling_cents: 721153,
+        },
+      },
+      {
+        type: "webhook",
+        event: "checkout.completed",
+        delay: "~4 minutes later",
+        desc: "The consumer finishes the prequalification on their own phone, away from the shop. Your system needs to be listening for this webhook to know it happened.",
+        request: null,
+        response: {
+          event: "checkout.completed",
+          checkout_id: "chk_7cd310",
+          status_value: "PREQUALIFIED",
+          approval_ceiling_cents: 721153,
+        },
+      },
+      {
+        type: "note",
+        label: "Why this matters",
+        desc: "Because the advisor isn't watching a screen when this completes, the webhook — not a redirect — is the only reliable signal that the RO can be updated with the customer's prequalified status.",
+      },
+    ],
+  },
+  {
+    id: "checkout",
+    label: "Payment & Checkout",
+    title: "Payment & Checkout",
+    stage: "final",
+    desc: "The repair is scheduled or complete and the transaction amount is locked. Finalize unlocks real loan terms on the same checkout session, and the consumer completes financing in a co-branded flow.",
+    consoleTitle: "checkout-api · POST /checkouts/{id}/finalize",
+    device: () => `
+      <div class="device-phone">
+        <div class="screen">
+          <div class="phonehead"><span>‹ Back</span><span>Checkout</span><span>🛒 Review</span></div>
+          <div class="screenpad">
+            <div style="font-weight:800;font-size:14px;margin-bottom:10px;">Payment Options</div>
+            <div class="rowline"><span>Pay with Card</span><span class="muted">$475.00</span></div>
+            <div class="card df" style="margin-top:10px;">
+              <div class="df-badge"><span class="df-mark">D</span> DigniFi</div>
+              <div class="cta-amount">Pay as low as $79/month with DigniFi</div>
+              <div class="fineprint">**Account openings and payment activity are reported to a major credit bureau.</div>
+            </div>
+            <div class="btn-navy" style="margin-top:14px;">Continue</div>
+          </div>
+        </div>
+      </div>`,
+    steps: [
+      {
+        type: "api",
+        method: "POST",
+        endpoint: "/api/v1/checkouts/{id}/finalize",
+        desc: "The invoice is locked. This call sets the binding transaction amount on the same checkout_id created back in Service Confirmation, and unlocks full loan terms on that same checkout_url.",
+        request: {
+          checkout_id: "chk_9f21ab",
+          final_amount_cents: 47500,
+        },
+        response: {
+          status: 200,
+          checkout_id: "chk_9f21ab",
+          status_value: "FINALIZED",
+          checkout_url: "https://pay.dignifi.com/c/9f21ab",
+        },
+      },
+      {
+        type: "note",
+        label: "What the consumer sees now",
+        desc: "The same checkout_url now shows an approved amount, real loan terms (the $79/month figure), and a co-branded flow where they can complete financing on the spot.",
+      },
+      {
+        type: "webhook",
+        event: "checkout.completed",
+        delay: "moments later",
+        desc: "The consumer signs their loan agreement inside DigniFi's hosted flow. Completion fires this webhook back to your system.",
+        request: null,
+        response: {
+          event: "checkout.completed",
+          checkout_id: "chk_9f21ab",
+          status_value: "COMPLETED",
+          financed_amount_cents: 47500,
+        },
+      },
+      {
+        type: "note",
+        label: "What happens next",
+        desc: "Your Payments view updates in real time and the repair order can be marked paid — no manual reconciliation required.",
+      },
+    ],
+  },
+];
+
+// ---------------------------------------------------------------------
+// Render
+// ---------------------------------------------------------------------
+const tabbar = document.getElementById("tabbar");
+const deviceHost = document.getElementById("deviceHost");
+const touchtext = document.getElementById("touchtext");
+const consoleBody = document.getElementById("consoleBody");
+const consoleTitle = document.getElementById("consoleTitle");
+const runBtn = document.getElementById("runBtn");
+const runLabel = document.getElementById("runLabel");
+
+let activeIndex = 0;
+let running = false;
+
+function syntaxHighlight(obj) {
+  const json = JSON.stringify(obj, null, 2);
+  return json
+    .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+    .replace(/"([^"]+)":/g, '<span class="k">"$1"</span>:')
+    .replace(/: "([^"]*)"/g, ': <span class="s">"$1"</span>')
+    .replace(/: (-?\d+\.?\d*)/g, ': <span class="num">$1</span>');
+}
+
+function renderTabs() {
+  tabbar.innerHTML = TOUCHPOINTS.map((t, i) => `
+    <button class="tab ${i === activeIndex ? "active" : ""}" data-i="${i}">
+      <span class="n">${i + 1}</span><span class="stagedot" style="background:${STAGES[t.stage].color}"></span>${t.label}
+    </button>`).join("");
+  tabbar.querySelectorAll(".tab").forEach(btn => {
+    btn.addEventListener("click", () => selectTab(parseInt(btn.dataset.i, 10)));
+  });
+}
+
+function selectTab(i) {
+  activeIndex = i;
+  running = false;
+  renderTabs();
+  const t = TOUCHPOINTS[i];
+  const stage = STAGES[t.stage];
+  deviceHost.innerHTML = t.device();
+  touchtext.innerHTML = `
+    <div style="margin-top:34px;">
+      <div class="stagebadge" style="background:${stage.color}22; color:${stage.color};"><span class="sw" style="background:${stage.color}"></span>${stage.label}</div>
+    </div>
+    <h2 class="touchtitle">${t.title}</h2><p class="touchdesc">${t.desc}</p>`;
+  consoleTitle.textContent = t.consoleTitle;
+  consoleBody.innerHTML = `<div class="console-empty">Press <b>Run this flow</b> to see the exact request, response, and webhook sequence behind this touchpoint.</div>`;
+  runLabel.textContent = "Run this flow";
+  runBtn.disabled = false;
+  runBtn.classList.remove("running");
+}
+
+function eventMarkup(step) {
+  if (step.type === "note") {
+    return `
+      <div class="evt note">
+        <div class="evt-top"><span class="endpoint" style="color:#fff;font-weight:700;">${step.label}</span></div>
+        <div class="note-box">${step.desc}</div>
+      </div>`;
+  }
+  if (step.type === "webhook") {
+    return `
+      <div class="evt webhook">
+        <div class="evt-top">
+          <span class="badge-webhook">Webhook</span>
+          <span class="endpoint">${step.event}</span>
+          <span class="timestamp">${step.delay || ""}</span>
+        </div>
+        <div class="evt-desc">${step.desc}</div>
+        <div class="jsonrow">
+          <div class="jsonblock">
+            <div class="jsonlabel">Payload</div>
+            <pre class="json">${syntaxHighlight(step.response)}</pre>
+          </div>
+        </div>
+      </div>`;
+  }
+  // api
+  return `
+    <div class="evt api">
+      <div class="evt-top">
+        <span class="method post">${step.method}</span>
+        <span class="endpoint">${step.endpoint}</span>
+        <span class="status ok">${step.response.status} OK</span>
+      </div>
+      <div class="evt-desc">${step.desc}</div>
+      <div class="jsonrow">
+        <div class="jsonblock">
+          <div class="jsonlabel">Request</div>
+          <pre class="json">${syntaxHighlight(step.request)}</pre>
+        </div>
+        <div class="jsonblock">
+          <div class="jsonlabel">Response</div>
+          <pre class="json">${syntaxHighlight(step.response)}</pre>
+        </div>
+      </div>
+    </div>`;
+}
+
+function runFlow() {
+  if (running) return;
+  running = true;
+  runBtn.classList.add("running");
+  runLabel.textContent = "Running…";
+  runBtn.disabled = true;
+
+  const steps = TOUCHPOINTS[activeIndex].steps;
+  consoleBody.innerHTML = "";
+  let i = 0;
+
+  function next() {
+    if (i >= steps.length) {
+      running = false;
+      runBtn.classList.remove("running");
+      runLabel.textContent = "Run again";
+      runBtn.disabled = false;
+      return;
+    }
+    const wrap = document.createElement("div");
+    wrap.innerHTML = eventMarkup(steps[i]);
+    consoleBody.appendChild(wrap.firstElementChild);
+    consoleBody.scrollTop = consoleBody.scrollHeight;
+    i++;
+    setTimeout(next, i === 1 ? 250 : 650);
+  }
+  next();
+}
+
+runBtn.addEventListener("click", runFlow);
+
+renderTabs();
+selectTab(0);
+</script>
+</body>
+</html>
