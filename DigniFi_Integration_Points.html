@@ -582,7 +582,7 @@ const TOUCHPOINTS = [
           invite_type: "web", reference_id: "RO-88213", transaction_amount_cents: 48500,
           merchant_id: "mer_city_auto_group", partner_transaction_id: "RO-88213",
           customer: { first_name: "Jordan", last_name: "M.", mobile: "+1••••••4471" },
-          redirect_url: "https://partner.example.com/schedule/complete",
+          redirect_url: "https://partner.example.com/schedule",
         },
         response: { status: 201, checkout_id: "chk_9f21ab", status_value: "CREATED", checkout_url: "https://pay.dignifi.com/c/9f21ab" },
       },
@@ -682,7 +682,7 @@ const TOUCHPOINTS = [
           invite_type: "text", reference_id: "RO-88213", transaction_amount_cents: 47500,
           merchant_id: "mer_city_auto_group", partner_transaction_id: "RO-88213",
           customer: { first_name: "Jordan", last_name: "M.", mobile: "+1••••••4471" },
-          redirect_url: "https://partner.example.com/checkout/complete",
+          redirect_url: "https://partner.example.com/ro/RO-88213",
         },
         response: { status: 201, checkout_id: "chk_c1a002", status_value: "CREATED", checkout_url: "https://pay.dignifi.com/c/c1a002" },
       },
@@ -1133,7 +1133,7 @@ const TOUCHPOINTS = [
         <span class="arrow">←</span>
         <div class="rtext">
           <div class="rtitle">Redirect Out — End of Act 1</div>
-          <div class="rurl">redirect_url from the original invite<br>https://partner.example.com/schedule/complete<span class="q">?checkout_id=chk_9f21ab&status=prequalified</span></div>
+          <div class="rurl">redirect_url from the original invite, returning to the partner's existing flow<br>https://partner.example.com/schedule<span class="q">?checkout_id=chk_9f21ab&status=prequalified</span></div>
         </div>
       </div>
 
@@ -1195,12 +1195,12 @@ const TOUCHPOINTS = [
         <span class="arrow">←</span>
         <div class="rtext">
           <div class="rtitle">Redirect Out — End of Act 2</div>
-          <div class="rurl">redirect_url from the original invite<br>https://partner.example.com/checkout/complete<span class="q">?checkout_id=chk_9f21ab&status=completed</span></div>
+          <div class="rurl">redirect_url from the original invite, returning to the partner's existing flow<br>https://partner.example.com/checkout<span class="q">?checkout_id=chk_9f21ab&status=completed</span></div>
         </div>
       </div>
 
       <p style="text-align:center; font-size:11.5px; color:var(--gray); max-width:480px; margin:18px auto 0; line-height:1.6;">
-        Two separate visits, one checkout_id. You only need to build two small landing pages for these redirect_url calls — DigniFi handles every screen above. If the consumer is declined instead, the same webhook pattern applies with <code>checkout.declined</code>.
+        The redirect just returns the consumer to the page they were already on in your existing flow — it's not a new page you have to build. The actual status update comes from the webhook firing separately, in the background. If the consumer is declined instead, the same pattern applies with <code>checkout.declined</code>.
       </p>`,
   },
 ];
