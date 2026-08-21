@@ -518,7 +518,7 @@ const TOUCHPOINTS = [
     desc: (pq) => pq
       ? "The consumer tapped in and prequalified right here. That approval now follows them through every touchpoint that comes after."
       : "The consumer can prequalify right here, before they ever set foot in the shop. Tap the card in the preview to see what happens.",
-    consoleTitle: "estimate-api → checkout-api",
+    consoleTitle: "checkout-api · initiate → estimates",
     session: (pq) => pq ? "chk_9f21ab · Prequalified for up to $7,211 (created here)" : null,
     device: (pq) => pq ? `
       <div class="device-browser">
@@ -566,48 +566,64 @@ const TOUCHPOINTS = [
       {
         type: "api",
         method: "POST",
-        endpoint: "/api/v1/estimate",
-        name: "Estimate API",
-        desc: "Before the consumer commits to anything, this powers a passive “as low as $79/month” message from a rough amount — no session, no identity, no credit check.",
-        request: { reference_id: "RO-88213-DRAFT", estimated_amount_cents: 48500 },
-        response: { status: 200, estimate_id: "est_2b71f0", estimated_monthly_payment_cents: 7900, disclaimer: "NOT_A_LOAN_APPROVAL" },
+        endpoint: "/api/v1/checkouts/initiate",
+        name: "Invite to Checkout API",
+        desc: "The moment the scheduling page loads with a rough repair amount, your system creates a checkout in the background — this is required before any estimate can be requested.",
+        request: {
+          inviteType: "web", referenceId: "RO-88213", transactionAmountCents: 48500,
+          merchantId: "mer_city_auto_group", partnerTransactionId: "RO-88213",
+          customer: { firstName: "Jordan", lastName: "M.", mobile: "+1••••••4471" },
+          preliminaryRedirectUri: "https://partner.example.com/schedule",
+          redirectUri: "https://partner.example.com/ro/RO-88213",
+        },
+        response: { status: 201, checkoutId: "chk_9f21ab", checkoutStatus: "CREATED", checkoutUrl: "https://pay.dignifi.com/c/9f21ab" },
       },
       {
         type: "api",
         method: "POST",
-        endpoint: "/api/v1/checkouts/initiate",
-        name: "Invite to Checkout API",
-        desc: "The consumer tapped the card. This is DigniFi's Invite to Checkout API — it creates a real checkout session and sends them into DigniFi's hosted experience.",
-        request: {
-          invite_type: "web", reference_id: "RO-88213", transaction_amount_cents: 48500,
-          merchant_id: "mer_city_auto_group", partner_transaction_id: "RO-88213",
-          customer: { first_name: "Jordan", last_name: "M.", mobile: "+1••••••4471" },
-          redirect_url: "https://partner.example.com/schedule",
-        },
-        response: { status: 201, checkout_id: "chk_9f21ab", status_value: "CREATED", checkout_url: "https://pay.dignifi.com/c/9f21ab" },
+        endpoint: "/api/v1/checkouts/{id}/estimates",
+        name: "Payment Estimate API",
+        desc: "With a checkout now in hand, this powers the passive “as low as $79/month” message from the rough amount — no identity, no credit check yet.",
+        request: { checkoutId: "chk_9f21ab", estimatedAmountCents: 48500 },
+        response: { status: 200, estimateId: "est_2b71f0", estimatedMonthlyPaymentCents: 7900, disclaimer: "NOT_A_LOAN_APPROVAL" },
       },
       {
         type: "webhook",
         event: "checkout.approved",
         delay: "~90 seconds later",
-        desc: "The consumer finished DigniFi's hosted experience — signup, KYC, and a soft credit pull — before leaving the page. This webhook confirms the approval and which product they qualified for.",
+        desc: "The consumer tapped the card and finished DigniFi's hosted experience — signup, KYC, and a soft credit pull. This webhook confirms the approval and which product they qualified for.",
         request: null,
-        response: { event: "checkout.approved", checkout_id: "chk_9f21ab", status_value: "PREQUALIFIED", product: "ROADWAY_INSTALLMENT_LOAN", approval_ceiling_cents: 721153 },
+        response: { event: "checkout.approved", checkoutId: "chk_9f21ab", checkoutStatus: "PREQUALIFIED", product: "ROADWAY_INSTALLMENT_LOAN", approvalCeilingCents: 721153 },
       },
       {
         type: "note",
         label: "This is the key moment",
-        desc: "checkout_id chk_9f21ab and its $7,211 approval ceiling now exist. Switch the scenario toggle to “Prequalified” and every other tab will pick this session up automatically. Want to see exactly what happened during those “~90 seconds”? Check the “Inside DigniFi's Experience” tab.",
+        desc: "checkoutId chk_9f21ab and its $7,211 approval ceiling now exist. Switch the scenario toggle to “Prequalified” and every other tab will pick this session up automatically. Want to see exactly what happened during those “~90 seconds”? Check the “Inside DigniFi's Experience” tab.",
       },
     ] : [
       {
         type: "api",
         method: "POST",
-        endpoint: "/api/v1/estimate",
-        name: "Estimate API",
-        desc: "The consumer hasn't tapped anything yet. This passive call is all that's fired so far — it just powers the “as low as $79/month” message.",
-        request: { reference_id: "RO-88213-DRAFT", estimated_amount_cents: 48500 },
-        response: { status: 200, estimate_id: "est_2b71f0", estimated_monthly_payment_cents: 7900, disclaimer: "NOT_A_LOAN_APPROVAL" },
+        endpoint: "/api/v1/checkouts/initiate",
+        name: "Invite to Checkout API",
+        desc: "The moment the scheduling page loads with a rough repair amount, your system creates a checkout in the background — this is required before any estimate can be requested.",
+        request: {
+          inviteType: "web", referenceId: "RO-88213", transactionAmountCents: 48500,
+          merchantId: "mer_city_auto_group", partnerTransactionId: "RO-88213",
+          customer: { firstName: "Jordan", lastName: "M.", mobile: "+1••••••4471" },
+          preliminaryRedirectUri: "https://partner.example.com/schedule",
+          redirectUri: "https://partner.example.com/ro/RO-88213",
+        },
+        response: { status: 201, checkoutId: "chk_9f21ab", checkoutStatus: "CREATED", checkoutUrl: "https://pay.dignifi.com/c/9f21ab" },
+      },
+      {
+        type: "api",
+        method: "POST",
+        endpoint: "/api/v1/checkouts/{id}/estimates",
+        name: "Payment Estimate API",
+        desc: "The consumer hasn't tapped anything yet, but a checkout already exists in the background so this call can run. It just powers the “as low as $79/month” message.",
+        request: { checkoutId: "chk_9f21ab", estimatedAmountCents: 48500 },
+        response: { status: 200, estimateId: "est_2b71f0", estimatedMonthlyPaymentCents: 7900, disclaimer: "NOT_A_LOAN_APPROVAL" },
       },
       {
         type: "note",
@@ -654,13 +670,13 @@ const TOUCHPOINTS = [
         endpoint: "/api/v1/checkouts/{id}",
         name: "Fetch Checkout Details",
         desc: "Before drafting the confirmation message, your system checks whether this consumer already has an active checkout session.",
-        request: { checkout_id: "chk_9f21ab" },
-        response: { status: 200, checkout_id: "chk_9f21ab", status_value: "PREQUALIFIED", approval_ceiling_cents: 721153 },
+        request: { checkoutId: "chk_9f21ab" },
+        response: { status: 200, checkoutId: "chk_9f21ab", checkoutStatus: "PREQUALIFIED", approvalCeilingCents: 721153 },
       },
       {
         type: "note",
         label: "Reuse, don't recreate",
-        desc: "Because a PREQUALIFIED session already exists, Initiate Checkout is never called here — the confirmation template just renders approval_ceiling_cents from the lookup.",
+        desc: "Because a PREQUALIFIED checkout already exists, Invite to Checkout is never called here — the confirmation template just renders approvalCeilingCents from the lookup.",
       },
     ] : [
       {
@@ -669,7 +685,7 @@ const TOUCHPOINTS = [
         endpoint: "/api/v1/checkouts/{id}",
         name: "Fetch Checkout Details",
         desc: "Your system checks first, same as every touchpoint. This consumer skipped prequalifying at scheduling, so there's nothing to find yet.",
-        request: { reference_id: "RO-88213" },
+        request: { referenceId: "RO-88213" },
         response: { status: 404, error: "checkout_not_found" },
       },
       {
@@ -679,17 +695,18 @@ const TOUCHPOINTS = [
         name: "Invite to Checkout API",
         desc: "Because nothing existed, the confirmation template includes a fresh invite link instead of a reassurance message.",
         request: {
-          invite_type: "text", reference_id: "RO-88213", transaction_amount_cents: 47500,
-          merchant_id: "mer_city_auto_group", partner_transaction_id: "RO-88213",
-          customer: { first_name: "Jordan", last_name: "M.", mobile: "+1••••••4471" },
-          redirect_url: "https://partner.example.com/ro/RO-88213",
+          inviteType: "text", referenceId: "RO-88213", transactionAmountCents: 47500,
+          merchantId: "mer_city_auto_group", partnerTransactionId: "RO-88213",
+          customer: { firstName: "Jordan", lastName: "M.", mobile: "+1••••••4471" },
+          preliminaryRedirectUri: "https://partner.example.com/ro/RO-88213",
+          redirectUri: "https://partner.example.com/ro/RO-88213",
         },
-        response: { status: 201, checkout_id: "chk_c1a002", status_value: "CREATED", checkout_url: "https://pay.dignifi.com/c/c1a002" },
+        response: { status: 201, checkoutId: "chk_c1a002", checkoutStatus: "CREATED", checkoutUrl: "https://pay.dignifi.com/c/c1a002" },
       },
       {
         type: "note",
         label: "This session now follows them",
-        desc: "If the consumer completes this one, chk_c1a002 becomes the session every later touchpoint looks up — same as if it had been created at scheduling.",
+        desc: "If the consumer completes this one, chk_c1a002 becomes the checkout every later touchpoint looks up — same as if it had been created at scheduling.",
       },
     ],
   },
@@ -701,7 +718,7 @@ const TOUCHPOINTS = [
     desc: (pq) => pq
       ? "The technician's inspection adds to the repair total. The consumer's existing approval is checked against it and shown right alongside the new number."
       : "The technician's inspection adds to the repair total, and this consumer still hasn't prequalified. The advisor can prompt them right from this screen.",
-    consoleTitle: "checkout-api · GET /checkouts/{id}",
+    consoleTitle: (pq) => pq ? "checkout-api · GET /checkouts/{id}" : "checkout-api · GET → POST /initiate → /estimates",
     session: (pq) => pq ? "chk_9f21ab · Prequalified for up to $7,211 (from Scheduling)" : "No active session found for this consumer",
     device: (pq) => pq ? `
       <div class="device-phone">
@@ -755,8 +772,8 @@ const TOUCHPOINTS = [
         endpoint: "/api/v1/checkouts/{id}",
         name: "Fetch Checkout Details",
         desc: "Same session, same lookup pattern as Confirmation. The advisor's screen and the consumer's screen both read from this one call.",
-        request: { checkout_id: "chk_9f21ab" },
-        response: { status: 200, checkout_id: "chk_9f21ab", status_value: "PREQUALIFIED", approval_ceiling_cents: 721153 },
+        request: { checkoutId: "chk_9f21ab" },
+        response: { status: 200, checkoutId: "chk_9f21ab", checkoutStatus: "PREQUALIFIED", approvalCeilingCents: 721153 },
       },
       {
         type: "note",
@@ -775,17 +792,31 @@ const TOUCHPOINTS = [
         endpoint: "/api/v1/checkouts/{id}",
         name: "Fetch Checkout Details",
         desc: "The advisor's screen checks first. This consumer still hasn't prequalified at any earlier touchpoint.",
-        request: { reference_id: "RO-88213" },
+        request: { referenceId: "RO-88213" },
         response: { status: 404, error: "checkout_not_found" },
       },
       {
         type: "api",
         method: "POST",
-        endpoint: "/api/v1/estimate",
-        name: "Estimate API",
-        desc: "With no session to fall back on, the screen shows the same lightweight, non-binding estimate as scheduling — recalculated with the technician's updated total.",
-        request: { reference_id: "RO-88213", estimated_amount_cents: 68500 },
-        response: { status: 200, estimate_id: "est_5f19ad", estimated_monthly_payment_cents: 7900, disclaimer: "NOT_A_LOAN_APPROVAL" },
+        endpoint: "/api/v1/checkouts/initiate",
+        name: "Invite to Checkout API",
+        desc: "With no checkout to fall back on, one is created here so an estimate can even be requested — using the technician's updated repair total.",
+        request: {
+          inviteType: "web", referenceId: "RO-88213", transactionAmountCents: 68500,
+          merchantId: "mer_city_auto_group", partnerTransactionId: "RO-88213",
+          preliminaryRedirectUri: "https://partner.example.com/ro/RO-88213",
+          redirectUri: "https://partner.example.com/ro/RO-88213",
+        },
+        response: { status: 201, checkoutId: "chk_5f19ad", checkoutStatus: "CREATED", checkoutUrl: "https://pay.dignifi.com/c/5f19ad" },
+      },
+      {
+        type: "api",
+        method: "POST",
+        endpoint: "/api/v1/checkouts/{id}/estimates",
+        name: "Payment Estimate API",
+        desc: "Now that a checkout exists, the screen can show the same lightweight, non-binding estimate as scheduling — recalculated against the updated total.",
+        request: { checkoutId: "chk_5f19ad", estimatedAmountCents: 68500 },
+        response: { status: 200, estimateId: "est_5f19ad", estimatedMonthlyPaymentCents: 7900, disclaimer: "NOT_A_LOAN_APPROVAL" },
       },
       {
         type: "note",
@@ -832,14 +863,14 @@ const TOUCHPOINTS = [
         method: "GET",
         endpoint: "/api/v1/checkouts/{id}",
         name: "Fetch Checkout Details",
-        desc: "The advisor's system checks first, same as every touchpoint, and finds the session created back at scheduling.",
-        request: { checkout_id: "chk_9f21ab" },
-        response: { status: 200, checkout_id: "chk_9f21ab", status_value: "PREQUALIFIED", approval_ceiling_cents: 721153 },
+        desc: "The advisor's system checks first, same as every touchpoint, and finds the checkout created back at scheduling.",
+        request: { checkoutId: "chk_9f21ab" },
+        response: { status: 200, checkoutId: "chk_9f21ab", checkoutStatus: "PREQUALIFIED", approvalCeilingCents: 721153 },
       },
       {
         type: "note",
         label: "No new invite needed",
-        desc: "Initiate Checkout is never called here — the text is just a reminder pulled from the existing session, not a new offer.",
+        desc: "Invite to Checkout is never called here — the text is just a reminder pulled from the existing checkout, not a new offer.",
       },
     ] : [
       {
@@ -848,7 +879,7 @@ const TOUCHPOINTS = [
         endpoint: "/api/v1/checkouts/{id}",
         name: "Fetch Checkout Details",
         desc: "The advisor's system checks first, same as every other touchpoint. This consumer never prequalified anywhere upstream, so there's nothing to find.",
-        request: { reference_id: "RO-88213" },
+        request: { referenceId: "RO-88213" },
         response: { status: 404, error: "checkout_not_found" },
       },
       {
@@ -856,13 +887,15 @@ const TOUCHPOINTS = [
         method: "POST",
         endpoint: "/api/v1/checkouts/initiate",
         name: "Invite to Checkout API",
-        desc: "Only because nothing existed does the advisor's system fall back to creating a brand new session — triggered manually, from the service drive.",
+        desc: "Only because nothing existed does the advisor's system fall back to creating a brand new checkout — triggered manually, from the service drive.",
         request: {
-          invite_type: "text", reference_id: "RO-88213", transaction_amount_cents: 68500,
-          merchant_id: "mer_city_auto_group", partner_transaction_id: "RO-88213",
-          customer: { mobile: "+1••••••4471" }, initiated_by: "advisor",
+          inviteType: "text", referenceId: "RO-88213", transactionAmountCents: 68500,
+          merchantId: "mer_city_auto_group", partnerTransactionId: "RO-88213",
+          customer: { mobile: "+1••••••4471" }, initiatedBy: "advisor",
+          preliminaryRedirectUri: "https://partner.example.com/ro/RO-88213",
+          redirectUri: "https://partner.example.com/ro/RO-88213",
         },
-        response: { status: 201, checkout_id: "chk_7cd310", status_value: "CREATED", checkout_url: "https://pay.dignifi.com/c/7cd310" },
+        response: { status: 201, checkoutId: "chk_7cd310", checkoutStatus: "CREATED", checkoutUrl: "https://pay.dignifi.com/c/7cd310" },
       },
       {
         type: "webhook",
@@ -870,12 +903,12 @@ const TOUCHPOINTS = [
         delay: "~4 minutes later",
         desc: "The consumer finishes prequalifying on their own phone, away from the shop. Your system needs to be listening for this webhook to know it happened.",
         request: null,
-        response: { event: "checkout.approved", checkout_id: "chk_7cd310", status_value: "PREQUALIFIED", product: "ROADWAY_INSTALLMENT_LOAN", approval_ceiling_cents: 721153 },
+        response: { event: "checkout.approved", checkoutId: "chk_7cd310", checkoutStatus: "PREQUALIFIED", product: "ROADWAY_INSTALLMENT_LOAN", approvalCeilingCents: 721153 },
       },
       {
         type: "note",
         label: "Same rules from here on",
-        desc: "chk_7cd310 now behaves exactly like chk_9f21ab did — any later touchpoint for this consumer will GET this session instead of creating another one.",
+        desc: "chk_7cd310 now behaves exactly like chk_9f21ab did — any later touchpoint for this consumer will GET this checkout instead of creating another one.",
       },
     ],
   },
@@ -930,8 +963,8 @@ const TOUCHPOINTS = [
         endpoint: "/api/v1/checkouts/{id}",
         name: "Fetch Checkout Details",
         desc: "One last lookup before locking the invoice, confirming the consumer's prequalification is still active and reading their approval ceiling.",
-        request: { checkout_id: "chk_9f21ab" },
-        response: { status: 200, checkout_id: "chk_9f21ab", status_value: "PREQUALIFIED", approval_ceiling_cents: 721153 },
+        request: { checkoutId: "chk_9f21ab" },
+        response: { status: 200, checkoutId: "chk_9f21ab", checkoutStatus: "PREQUALIFIED", approvalCeilingCents: 721153 },
       },
       {
         type: "api",
@@ -939,13 +972,13 @@ const TOUCHPOINTS = [
         endpoint: "/api/v1/checkouts/{id}/finalize",
         name: "Finalize Checkout Transaction Amount",
         desc: "The invoice is locked at $475.00 — comfortably inside the $7,211 ceiling. This is the only step that sets a binding transaction amount.",
-        request: { checkout_id: "chk_9f21ab", final_amount_cents: 47500 },
-        response: { status: 200, checkout_id: "chk_9f21ab", status_value: "FINALIZED", checkout_url: "https://pay.dignifi.com/c/9f21ab" },
+        request: { checkoutId: "chk_9f21ab", finalAmountCents: 47500 },
+        response: { status: 200, checkoutId: "chk_9f21ab", checkoutStatus: "FINALIZED", checkoutUrl: "https://pay.dignifi.com/c/9f21ab" },
       },
       {
         type: "note",
         label: "What the consumer sees now",
-        desc: "The same checkout_url that started at scheduling now shows real loan terms — the $79/month figure — and lets them complete financing on the spot.",
+        desc: "The consumer is redirected back into DigniFi's flow using this same checkoutUrl to finalize their loan terms and sign — the $79/month figure becomes real here.",
       },
       {
         type: "webhook",
@@ -953,7 +986,7 @@ const TOUCHPOINTS = [
         delay: "moments later",
         desc: "The consumer signs their loan agreement inside DigniFi's hosted flow. Completion fires this webhook back to your system.",
         request: null,
-        response: { event: "checkout.completed", checkout_id: "chk_9f21ab", status_value: "COMPLETED", financed_amount_cents: 47500 },
+        response: { event: "checkout.completed", checkoutId: "chk_9f21ab", checkoutStatus: "COMPLETED", financedAmountCents: 47500 },
       },
       {
         type: "note",
@@ -967,7 +1000,7 @@ const TOUCHPOINTS = [
         endpoint: "/api/v1/checkouts/{id}",
         name: "Fetch Checkout Details",
         desc: "Checkout always checks first. This consumer skipped every earlier chance to prequalify, so there's still nothing on file.",
-        request: { reference_id: "RO-88213" },
+        request: { referenceId: "RO-88213" },
         response: { status: 404, error: "checkout_not_found" },
       },
       {
@@ -977,11 +1010,12 @@ const TOUCHPOINTS = [
         name: "Invite to Checkout API",
         desc: "Since the invoice is already final, this call can include the real amount right away rather than a rough one.",
         request: {
-          invite_type: "web", reference_id: "RO-88213", transaction_amount_cents: 47500,
-          merchant_id: "mer_city_auto_group", partner_transaction_id: "RO-88213",
-          customer: { first_name: "Jordan", last_name: "M.", mobile: "+1••••••4471" },
+          inviteType: "web", referenceId: "RO-88213", transactionAmountCents: 47500,
+          merchantId: "mer_city_auto_group", partnerTransactionId: "RO-88213",
+          customer: { firstName: "Jordan", lastName: "M.", mobile: "+1••••••4471" },
+          redirectUri: "https://partner.example.com/ro/RO-88213",
         },
-        response: { status: 201, checkout_id: "chk_k3c024", status_value: "CREATED", checkout_url: "https://pay.dignifi.com/c/k3c024" },
+        response: { status: 201, checkoutId: "chk_k3c024", checkoutStatus: "CREATED", checkoutUrl: "https://pay.dignifi.com/c/k3c024" },
       },
       {
         type: "api",
@@ -989,8 +1023,8 @@ const TOUCHPOINTS = [
         endpoint: "/api/v1/checkouts/{id}/finalize",
         name: "Finalize Checkout Transaction Amount",
         desc: "Immediately after prequalifying, the amount is finalized in the same visit — the consumer prequalifies and completes financing back to back.",
-        request: { checkout_id: "chk_k3c024", final_amount_cents: 47500 },
-        response: { status: 200, checkout_id: "chk_k3c024", status_value: "FINALIZED", checkout_url: "https://pay.dignifi.com/c/k3c024" },
+        request: { checkoutId: "chk_k3c024", finalAmountCents: 47500 },
+        response: { status: 200, checkoutId: "chk_k3c024", checkoutStatus: "FINALIZED", checkoutUrl: "https://pay.dignifi.com/c/k3c024" },
       },
       {
         type: "webhook",
@@ -998,12 +1032,12 @@ const TOUCHPOINTS = [
         delay: "moments later",
         desc: "The consumer completes both prequalification and loan signing in one sitting at the point of sale.",
         request: null,
-        response: { event: "checkout.completed", checkout_id: "chk_k3c024", status_value: "COMPLETED", financed_amount_cents: 47500 },
+        response: { event: "checkout.completed", checkoutId: "chk_k3c024", checkoutStatus: "COMPLETED", financedAmountCents: 47500 },
       },
       {
         type: "note",
         label: "The cost of waiting",
-        desc: "This works, but it's the slowest path — three calls back to back at the exact moment the consumer is ready to leave, instead of one lookup against a session that already existed.",
+        desc: "This works, but it's the slowest path — three calls back to back at the exact moment the consumer is ready to leave, instead of one lookup against a checkout that already existed. Note also there's no preliminaryRedirectUri here — with everything happening in one visit, there's no mid-flow return to the partner to redirect back from.",
       },
     ],
   },
@@ -1023,7 +1057,7 @@ const TOUCHPOINTS = [
         <span class="arrow">→</span>
         <div class="rtext">
           <div class="rtitle">Redirect In</div>
-          <div class="rurl">checkout_url from the Invite to Checkout API<br>https://pay.dignifi.com<span class="q">/c/9f21ab</span></div>
+          <div class="rurl">checkoutUrl from the Invite to Checkout API<br>https://pay.dignifi.com<span class="q">/c/9f21ab</span></div>
         </div>
       </div>
 
@@ -1136,9 +1170,12 @@ const TOUCHPOINTS = [
         <span class="arrow">←</span>
         <div class="rtext">
           <div class="rtitle">Redirect Out — End of Act 1</div>
-          <div class="rurl">redirect_url from the original invite, returning to the partner's existing flow<br>https://partner.example.com/schedule<span class="q">?checkout_id=chk_9f21ab&status=prequalified</span></div>
+          <div class="rurl">preliminaryRedirectUri from the original invite, returning to the partner's existing flow<br>https://partner.example.com/schedule<span class="q">?checkoutId=chk_9f21ab&status=prequalified</span></div>
         </div>
       </div>
+      <p style="text-align:center; font-size:11px; color:var(--gray); max-width:440px; margin:8px auto 0; line-height:1.6;">
+        This only happens if a <b>preliminaryRedirectUri</b> was supplied on the original Invite to Checkout call. If it wasn't, the consumer just continues straight into Act 2 below without ever leaving DigniFi.
+      </p>
 
       <div class="act-divider">
         <div class="act-divider-label">Meanwhile, back with the partner</div>
@@ -1154,7 +1191,7 @@ const TOUCHPOINTS = [
         <span class="arrow">→</span>
         <div class="rtext">
           <div class="rtitle">Redirect In — from Payment &amp; Checkout</div>
-          <div class="rurl">checkout_url, resumed with the finalized amount<br>https://pay.dignifi.com<span class="q">/c/9f21ab</span></div>
+          <div class="rurl">checkoutUrl, resumed with the finalized amount<br>https://pay.dignifi.com<span class="q">/c/9f21ab</span></div>
         </div>
       </div>
 
@@ -1198,7 +1235,7 @@ const TOUCHPOINTS = [
         <span class="arrow">←</span>
         <div class="rtext">
           <div class="rtitle">Redirect Out — End of Act 2</div>
-          <div class="rurl">redirect_url from the original invite, returning to the partner's existing flow<br>https://partner.example.com/checkout<span class="q">?checkout_id=chk_9f21ab&status=completed</span></div>
+          <div class="rurl">redirectUri from the original invite, returning to the partner's existing flow<br>https://partner.example.com/checkout<span class="q">?checkoutId=chk_9f21ab&status=completed</span></div>
         </div>
       </div>
 
