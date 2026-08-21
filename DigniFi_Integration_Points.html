@@ -254,6 +254,26 @@
   .branch.go{background:#EAF6EF; border:1px solid #1F8A55; color:#166B41;}
   .branch-label{font-weight:700; font-size:11px; margin-bottom:5px; display:flex; align-items:center; gap:5px;}
 
+  .act-header{
+    display:flex; align-items:center; gap:8px; justify-content:center; font-family:var(--mono); font-size:11.5px;
+    font-weight:700; letter-spacing:0.03em; padding:9px 16px; border-radius:8px; margin:26px auto 18px; max-width:520px;
+    text-align:center;
+  }
+  .act-header .sw{width:7px;height:7px;border-radius:50%; flex:none;}
+  .act-header-mid{background:#FBF3E4; color:#8A5D0E;}
+  .act-header-mid .sw{background:#C98A1B;}
+  .act-header-final{background:#EAF6EF; color:#166B41;}
+  .act-header-final .sw{background:#1F8A55;}
+
+  .act-divider{
+    display:flex; align-items:center; gap:12px; max-width:520px; margin:24px auto 8px;
+  }
+  .act-divider::before, .act-divider::after{content:""; flex:1; height:1px; background:var(--line);}
+  .act-divider-label{
+    font-family:var(--mono); font-size:10.5px; color:var(--gray); text-transform:uppercase; letter-spacing:0.06em;
+    white-space:nowrap;
+  }
+
   @media (max-width:680px){
     .decision-branches{grid-template-columns:1fr;}
     .mini-fieldrow{flex-direction:column;}
@@ -993,6 +1013,9 @@ const TOUCHPOINTS = [
     session: () => null,
     isVisualJourney: true,
     journey: () => `
+      <div class="act-header act-header-mid">
+        <span class="sw"></span>Act 1 · Prequalification — begins at Scheduling, Confirmation, or Manual Invite
+      </div>
       <div class="redirect-banner">
         <span class="arrow">→</span>
         <div class="rtext">
@@ -1106,14 +1129,42 @@ const TOUCHPOINTS = [
       </div>
 
       <div class="jconnector"></div>
+      <div class="redirect-banner">
+        <span class="arrow">←</span>
+        <div class="rtext">
+          <div class="rtitle">Redirect Out — End of Act 1</div>
+          <div class="rurl">redirect_url from the original invite<br>https://partner.example.com/schedule/complete<span class="q">?checkout_id=chk_9f21ab&status=prequalified</span></div>
+        </div>
+      </div>
+
+      <div class="act-divider">
+        <div class="act-divider-label">Meanwhile, back with the partner</div>
+      </div>
+      <p style="text-align:center; font-size:11.5px; color:var(--gray); max-width:440px; margin:0 auto 4px; line-height:1.6;">
+        The consumer is back on your site with a $7,211.53 approval attached to chk_9f21ab. This could be minutes or days later — they finish the MPI, the repair happens, the invoice gets finalized. Every touchpoint in between just calls <b>GET /checkouts/{id}</b> to read this same approval, exactly like the Confirmation and MPI tabs show.
+      </p>
+
+      <div class="act-header act-header-final">
+        <span class="sw"></span>Act 2 · Finalize &amp; Sign — begins at Checkout
+      </div>
+      <div class="redirect-banner">
+        <span class="arrow">→</span>
+        <div class="rtext">
+          <div class="rtitle">Redirect In — from Payment &amp; Checkout</div>
+          <div class="rurl">checkout_url, resumed with the finalized amount<br>https://pay.dignifi.com<span class="q">/c/9f21ab</span></div>
+        </div>
+      </div>
+
+      <div class="jconnector"></div>
       <div class="mini-screen" style="max-width:340px;">
         <div class="mini-step-n">7</div>
         <div class="mini-header"><span class="mini-logo">Digni<span>Fi</span></span></div>
         <div class="mini-title">Select Your Loan Package</div>
+        <div class="mini-sub">Based on your finalized $475.00 invoice.</div>
         <table class="mini-table">
           <tr><th></th><th>Monthly</th><th>Term</th></tr>
-          <tr><td>◉ Option A</td><td>$77.30</td><td>40 mo + Roadside</td></tr>
-          <tr><td>○ Option B</td><td>$76.99</td><td>36 mo</td></tr>
+          <tr><td>◉ Option A</td><td>$79.00</td><td>24 mo</td></tr>
+          <tr><td>○ Option B</td><td>$54.20</td><td>36 mo</td></tr>
         </table>
         <div class="mini-btn">🔒 Save Terms & Continue</div>
       </div>
@@ -1126,7 +1177,7 @@ const TOUCHPOINTS = [
         <div class="mini-sub">Unsecured Loan Agreement (Fixed Rate) — review and agree to terms.</div>
         <div class="mini-field">✓ Fully Viewed</div>
         <div class="mini-btn">🔒 Accept Offer</div>
-        <div class="mini-note">Accepting authorizes a <b>hard credit inquiry</b> — the only one in this entire journey.</div>
+        <div class="mini-note">Accepting authorizes a <b>hard credit inquiry</b> — the only one in this entire journey, and it only happens here at Act 2.</div>
       </div>
 
       <div class="jconnector"></div>
@@ -1143,13 +1194,13 @@ const TOUCHPOINTS = [
       <div class="redirect-banner">
         <span class="arrow">←</span>
         <div class="rtext">
-          <div class="rtitle">Redirect Out</div>
-          <div class="rurl">redirect_url from the original invite<br>https://partner.example.com/checkout/complete<span class="q">?checkout_id=chk_9f21ab&status=approved</span></div>
+          <div class="rtitle">Redirect Out — End of Act 2</div>
+          <div class="rurl">redirect_url from the original invite<br>https://partner.example.com/checkout/complete<span class="q">?checkout_id=chk_9f21ab&status=completed</span></div>
         </div>
       </div>
 
       <p style="text-align:center; font-size:11.5px; color:var(--gray); max-width:480px; margin:18px auto 0; line-height:1.6;">
-        You only need to build one landing page for that redirect_url — DigniFi handles every screen above. If the consumer is declined instead, the same webhook pattern applies with <code>checkout.declined</code>.
+        Two separate visits, one checkout_id. You only need to build two small landing pages for these redirect_url calls — DigniFi handles every screen above. If the consumer is declined instead, the same webhook pattern applies with <code>checkout.declined</code>.
       </p>`,
   },
 ];
