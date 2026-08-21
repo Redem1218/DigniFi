@@ -175,6 +175,90 @@
     letter-spacing:0.05em; text-transform:uppercase;
   }
 
+  /* ---------- Full visual journey (Inside DigniFi's Experience) ---------- */
+  .journey-full{max-width:620px; margin:0 auto; display:none;}
+  .journey-full.active{display:block;}
+  .panelgrid.hidden{display:none;}
+
+  .jconnector{
+    width:2px; height:26px; background:var(--line); margin:0 auto;
+  }
+  .jconnector.branch-out{background:transparent; position:relative;}
+
+  .mini-screen{
+    background:#fff; border:1px solid var(--line); border-radius:12px; padding:18px 20px; margin:0 auto;
+    box-shadow:0 10px 26px -16px rgba(0,0,0,0.25); position:relative;
+  }
+  .mini-header{
+    display:flex; align-items:center; gap:8px; margin-bottom:12px;
+  }
+  .mini-logo{font-family:var(--sans); font-weight:800; font-size:15px; color:var(--ink);}
+  .mini-logo span{color:var(--crimson);}
+  .mini-step-n{
+    position:absolute; top:-11px; left:20px; width:24px; height:24px; border-radius:50%; background:var(--crimson);
+    color:#fff; font-size:11px; font-weight:700; display:flex; align-items:center; justify-content:center;
+    box-shadow:0 2px 6px rgba(171,35,40,0.4);
+  }
+  .mini-title{font-size:13.5px; font-weight:700; color:var(--ink); margin-bottom:4px;}
+  .mini-sub{font-size:11px; color:var(--gray); margin-bottom:12px; line-height:1.4;}
+  .mini-field{
+    background:var(--wash); border:1px solid var(--line); border-radius:6px; padding:8px 10px; font-size:10.5px;
+    color:#9a9793; margin-bottom:7px;
+  }
+  .mini-fieldrow{display:flex; gap:7px;}
+  .mini-fieldrow .mini-field{flex:1;}
+  .mini-btn{
+    background:var(--crimson); color:#fff; text-align:center; font-size:11px; font-weight:700; letter-spacing:0.03em;
+    padding:9px; border-radius:6px; margin-top:10px;
+  }
+  .mini-btn.dark{background:var(--ink);}
+  .mini-radio-row{display:flex; gap:14px; margin-bottom:10px;}
+  .mini-radio{display:flex; align-items:center; gap:5px; font-size:10.5px; color:var(--ink);}
+  .mini-radio .dot{width:10px;height:10px;border-radius:50%;border:1.5px solid var(--crimson);}
+  .mini-radio.sel .dot{background:var(--crimson);}
+  .mini-table{width:100%; border-collapse:collapse; font-size:10px; margin-bottom:8px;}
+  .mini-table th{text-align:left; color:var(--gray); font-weight:600; padding:4px 6px; border-bottom:1px solid var(--line);}
+  .mini-table td{padding:5px 6px; border-bottom:1px solid #F3F2F1;}
+  .mini-processing{
+    display:flex; flex-direction:column; align-items:center; gap:10px; padding:8px 0;
+  }
+  .mini-spinner{
+    width:28px; height:28px; border-radius:50%; border:3px solid #E7E5E3; border-top-color:var(--info);
+  }
+  .mini-approved-amt{
+    font-size:22px; font-weight:800; color:#1F8A55; margin:4px 0 2px;
+  }
+  .mini-note{
+    background:var(--wash); border-radius:6px; padding:8px 10px; font-size:10px; color:var(--gray); margin-top:10px; line-height:1.4;
+  }
+  .event-tag{
+    display:inline-flex; align-items:center; gap:6px; font-family:var(--mono); font-size:10px; font-weight:600;
+    background:var(--ink); color:#fff; padding:5px 10px; border-radius:20px; margin-top:12px;
+  }
+  .event-tag .ping{width:6px;height:6px;border-radius:50%; background:#5CC98E;}
+  .event-tag.signed .ping{background:#8FB8DB;}
+  .purple-note{
+    background:#F3EBFB; border:1px solid #C9A6E8; color:#5A3A78; font-size:11px; font-weight:600; text-align:center;
+    padding:10px 14px; border-radius:9px; max-width:340px; margin:0 auto;
+  }
+
+  .decision-block{max-width:520px; margin:6px auto;}
+  .decision-badge{
+    display:inline-flex; align-items:center; gap:6px; background:#EFEDEC; color:var(--ink); font-size:11px; font-weight:700;
+    padding:6px 14px; border-radius:20px; margin:0 auto 12px; text-align:center;
+  }
+  .decision-badge-wrap{text-align:center;}
+  .decision-branches{display:grid; grid-template-columns:1fr 1fr; gap:14px;}
+  .branch{border-radius:10px; padding:12px 14px; font-size:11px; line-height:1.45;}
+  .branch.declined{background:#FBEFEF; border:1px dashed #D89A9C; color:#8A2226;}
+  .branch.go{background:#EAF6EF; border:1px solid #1F8A55; color:#166B41;}
+  .branch-label{font-weight:700; font-size:11px; margin-bottom:5px; display:flex; align-items:center; gap:5px;}
+
+  @media (max-width:680px){
+    .decision-branches{grid-template-columns:1fr;}
+    .mini-fieldrow{flex-direction:column;}
+  }
+
   /* ---------- Device mockups ---------- */
   .device-phone{
     width:100%; max-width:340px; margin:0 auto;
@@ -363,7 +447,8 @@
 </div>
 
 <main>
-  <div class="panelgrid">
+  <div id="touchtext"></div>
+  <div class="panelgrid" id="panelgrid">
     <div>
       <div class="colhead"><span class="dot blue"></span><h2>Consumer Experience</h2></div>
       <div id="deviceHost"></div>
@@ -385,7 +470,7 @@
     </div>
   </div>
 
-  <div id="touchtext"></div>
+  <div class="journey-full" id="journeyFull"></div>
 </main>
 
 <div class="refnote">
@@ -904,120 +989,168 @@ const TOUCHPOINTS = [
     label: "Inside DigniFi's Experience",
     title: "Inside DigniFi's Experience",
     stage: "handoff",
-    desc: () => "The moment a consumer taps a DigniFi link — from Scheduling, Confirmation, or a Manual Invite — they leave your site entirely. Here's the full journey that happens on DigniFi's domain before they're handed back.",
-    consoleTitle: () => "checkout-api · webhooks + redirect",
+    desc: () => "The moment a consumer taps a DigniFi link — from Scheduling, Confirmation, or a Manual Invite — they leave your site entirely. These are the actual screens they walk through before they're handed back.",
     session: () => null,
-    device: () => `
+    isVisualJourney: true,
+    journey: () => `
       <div class="redirect-banner">
         <span class="arrow">→</span>
         <div class="rtext">
           <div class="rtitle">Redirect In</div>
-          <div class="rurl">checkout_url from Invite to Checkout API<br>https://pay.dignifi.com<span class="q">/c/9f21ab</span></div>
+          <div class="rurl">checkout_url from the Invite to Checkout API<br>https://pay.dignifi.com<span class="q">/c/9f21ab</span></div>
         </div>
       </div>
-      <div class="journey-track">
-        <div class="filmstrip">
-          <div class="filmcard">
-            <div class="fnum">1</div>
-            <div class="fbrand">DigniFi</div>
-            <div class="ftitle">Create Account</div>
-            <div class="fdesc">First name, last name, mobile, email, password. “[Merchant name] have partnered to provide you with access to financing.”</div>
+
+      <div class="jconnector"></div>
+      <div class="mini-screen" style="max-width:340px;">
+        <div class="mini-step-n">1</div>
+        <div class="mini-header"><span class="mini-logo">Digni<span>Fi</span></span></div>
+        <div class="mini-title">Create Account</div>
+        <div class="mini-sub">“City Auto Group have partnered to provide you with access to financing. Prequalifying is quick, easy, and won't impact your credit score.”</div>
+        <div class="mini-fieldrow"><div class="mini-field">First Name</div><div class="mini-field">Last Name</div></div>
+        <div class="mini-field">Mobile Number</div>
+        <div class="mini-field">Email Address</div>
+        <div class="mini-field">Password</div>
+        <div class="mini-btn">🔒 Create Account</div>
+      </div>
+
+      <div class="jconnector"></div>
+      <div class="mini-screen" style="max-width:300px;">
+        <div class="mini-step-n">2</div>
+        <div class="mini-header"><span class="mini-logo">Digni<span>Fi</span></span></div>
+        <div class="mini-title">Verify Your Mobile Number</div>
+        <div class="mini-sub">Enter the six-digit code sent to (•••) •••-4471.</div>
+        <div class="mini-field">Verification Code</div>
+        <div class="mini-btn">🔒 Verify</div>
+      </div>
+
+      <div class="jconnector"></div>
+      <div class="mini-screen" style="max-width:340px;">
+        <div class="mini-step-n">3</div>
+        <div class="mini-header"><span class="mini-logo">Digni<span>Fi</span></span></div>
+        <div class="mini-title">Home Address & Personal Details</div>
+        <div class="mini-sub">Street, city, state, ZIP — then SSN/ITIN, date of birth, and monthly income. “Safe, secure, and won't impact your credit score.”</div>
+        <div class="mini-fieldrow"><div class="mini-field">Street Address</div><div class="mini-field">City</div></div>
+        <div class="mini-fieldrow"><div class="mini-field">SSN / ITIN</div><div class="mini-field">Date of Birth</div></div>
+        <div class="mini-field">Monthly Income</div>
+        <div class="mini-btn">🔒 Continue</div>
+      </div>
+
+      <div class="jconnector"></div>
+      <div class="mini-screen" style="max-width:300px;">
+        <div class="mini-step-n">4</div>
+        <div class="mini-header"><span class="mini-logo">Digni<span>Fi</span></span></div>
+        <div class="mini-title">Vehicle Information</div>
+        <div class="mini-sub">Select the type of vehicle you're seeking financing for.</div>
+        <div class="mini-radio-row">
+          <div class="mini-radio sel"><span class="dot"></span>Automobile</div>
+          <div class="mini-radio"><span class="dot"></span>Motorcycle</div>
+          <div class="mini-radio"><span class="dot"></span>RV</div>
+        </div>
+        <div class="mini-fieldrow"><div class="mini-field">Year</div><div class="mini-field">Make</div><div class="mini-field">Model</div></div>
+        <div class="mini-btn">🔒 Continue</div>
+      </div>
+
+      <div class="jconnector"></div>
+      <div class="mini-screen" style="max-width:260px;">
+        <div class="mini-step-n">5</div>
+        <div class="mini-processing">
+          <div class="mini-spinner"></div>
+          <div class="mini-title" style="margin-bottom:0;">Reviewing your information</div>
+          <div class="mini-sub" style="margin-bottom:0;">Soft credit pull via Equifax. Do not close the browser.</div>
+        </div>
+      </div>
+
+      <div class="jconnector"></div>
+      <div class="decision-block">
+        <div class="decision-badge-wrap"><span class="decision-badge">◆ Decision: Soft Credit Pull</span></div>
+        <div class="decision-branches">
+          <div class="branch declined">
+            <div class="branch-label">✕ Unsuccessful</div>
+            Consumer is routed to a paused-application screen and asked to verify details or try again later.
           </div>
-          <div class="filmcard">
-            <div class="fnum">2</div>
-            <div class="fbrand">DigniFi</div>
-            <div class="ftitle">Verify Mobile</div>
-            <div class="fdesc">Six-digit code sent by text, confirms the number before anything else proceeds.</div>
-          </div>
-          <div class="filmcard">
-            <div class="fnum">3</div>
-            <div class="fbrand">DigniFi</div>
-            <div class="ftitle">Address & Details</div>
-            <div class="fdesc">Home address, then SSN/ITIN, date of birth, and monthly income — “safe, secure, won't impact your credit score.”</div>
-          </div>
-          <div class="filmcard">
-            <div class="fnum">4</div>
-            <div class="fbrand">DigniFi</div>
-            <div class="ftitle">Vehicle Info</div>
-            <div class="fdesc">Type (auto/motorcycle/RV), year, make, model — ties the financing to what's being repaired.</div>
-          </div>
-          <div class="filmcard">
-            <div class="fnum">5</div>
-            <div class="fbrand">DigniFi</div>
-            <div class="ftitle">Soft Credit Pull</div>
-            <div class="fdesc">Equifax soft pull runs. “Do not click back or close your browser.” No impact to credit score at this step.</div>
-          </div>
-          <div class="filmcard">
-            <div class="fnum">6</div>
-            <div class="fbrand">DigniFi</div>
-            <div class="ftitle">Underwriting</div>
-            <div class="fdesc">Approved consumers are qualified for either ExpressWay (revolving line of credit) or RoadWay (installment loan).</div>
-          </div>
-          <div class="filmcard">
-            <div class="fnum">7</div>
-            <div class="fbrand">DigniFi</div>
-            <div class="ftitle">Select Loan Package</div>
-            <div class="fdesc">E.g. $77.30/month · 40 months, or $76.99/month · 36 months. Consumer picks a term and taps Save Terms.</div>
-          </div>
-          <div class="filmcard">
-            <div class="fnum">8</div>
-            <div class="fbrand">DigniFi</div>
-            <div class="ftitle">Accept & E-Sign</div>
-            <div class="fdesc">Reviews the Unsecured Loan Agreement, taps Accept Offer. A hard credit inquiry runs at this step only.</div>
-          </div>
-          <div class="filmcard">
-            <div class="fnum">9</div>
-            <div class="fbrand">DigniFi</div>
-            <div class="ftitle">Signed Confirmation</div>
-            <div class="fdesc">“You have successfully signed your loan documents.” Consumer taps Continue.</div>
+          <div class="branch go">
+            <div class="branch-label">✓ Valid — continues</div>
+            Moves on to full underwriting. No credit impact yet.
           </div>
         </div>
       </div>
-      <div class="redirect-banner" style="margin-top:6px;">
+
+      <div class="jconnector"></div>
+      <div class="purple-note">DigniFi underwrites the applicant</div>
+
+      <div class="jconnector"></div>
+      <div class="decision-block">
+        <div class="decision-badge-wrap"><span class="decision-badge">◆ Decision: Underwriting</span></div>
+        <div class="decision-branches">
+          <div class="branch declined">
+            <div class="branch-label">✕ Declined</div>
+            “Unfortunately, your application could not be approved at this time.” Credit score is unaffected.
+          </div>
+          <div class="branch go">
+            <div class="branch-label">✓ Approved — continues</div>
+            Qualifies for either RoadWay (installment loan) or ExpressWay (revolving line of credit).
+          </div>
+        </div>
+      </div>
+
+      <div class="jconnector"></div>
+      <div class="mini-screen" style="max-width:320px; text-align:center;">
+        <div class="mini-step-n">6</div>
+        <div class="mini-header" style="justify-content:center;"><span class="mini-logo">Digni<span>Fi</span></span></div>
+        <div class="mini-title">Congratulations!</div>
+        <div class="mini-sub">You've prequalified for a RoadWay Installment Loan, issued by WebBank, for up to</div>
+        <div class="mini-approved-amt">$7,211.53</div>
+        <div class="mini-note">Consumers may instead qualify for ExpressWay, a revolving line of credit, depending on underwriting.</div>
+        <div class="event-tag"><span class="ping"></span>checkout.approved fires to partner here</div>
+      </div>
+
+      <div class="jconnector"></div>
+      <div class="mini-screen" style="max-width:340px;">
+        <div class="mini-step-n">7</div>
+        <div class="mini-header"><span class="mini-logo">Digni<span>Fi</span></span></div>
+        <div class="mini-title">Select Your Loan Package</div>
+        <table class="mini-table">
+          <tr><th></th><th>Monthly</th><th>Term</th></tr>
+          <tr><td>◉ Option A</td><td>$77.30</td><td>40 mo + Roadside</td></tr>
+          <tr><td>○ Option B</td><td>$76.99</td><td>36 mo</td></tr>
+        </table>
+        <div class="mini-btn">🔒 Save Terms & Continue</div>
+      </div>
+
+      <div class="jconnector"></div>
+      <div class="mini-screen" style="max-width:340px;">
+        <div class="mini-step-n">8</div>
+        <div class="mini-header"><span class="mini-logo">Digni<span>Fi</span></span></div>
+        <div class="mini-title">Finalize Your Loan Agreement</div>
+        <div class="mini-sub">Unsecured Loan Agreement (Fixed Rate) — review and agree to terms.</div>
+        <div class="mini-field">✓ Fully Viewed</div>
+        <div class="mini-btn">🔒 Accept Offer</div>
+        <div class="mini-note">Accepting authorizes a <b>hard credit inquiry</b> — the only one in this entire journey.</div>
+      </div>
+
+      <div class="jconnector"></div>
+      <div class="mini-screen" style="max-width:300px; text-align:center;">
+        <div class="mini-step-n">9</div>
+        <div class="mini-header" style="justify-content:center;"><span class="mini-logo">Digni<span>Fi</span></span></div>
+        <div class="mini-title">You've successfully signed your loan documents.</div>
+        <div class="mini-sub">Check your email for a copy of your signed documents.</div>
+        <div class="mini-btn dark">Continue</div>
+        <div class="event-tag signed"><span class="ping"></span>checkout.completed fires to partner here</div>
+      </div>
+
+      <div class="jconnector"></div>
+      <div class="redirect-banner">
         <span class="arrow">←</span>
         <div class="rtext">
           <div class="rtitle">Redirect Out</div>
           <div class="rurl">redirect_url from the original invite<br>https://partner.example.com/checkout/complete<span class="q">?checkout_id=chk_9f21ab&status=approved</span></div>
         </div>
-      </div>`,
-    steps: () => [
-      {
-        type: "note",
-        label: "Step 1–4 · Identity & vehicle",
-        desc: "None of this touches your system. DigniFi collects it directly and it's covered by DigniFi's own consent and disclosure language, not your integration.",
-      },
-      {
-        type: "webhook",
-        event: "checkout.approved",
-        delay: "after underwriting",
-        desc: "Fires the moment the consumer is approved — before they've even picked a term or signed anything. This is the same event the Scheduling and Manual Invite tabs are listening for.",
-        request: null,
-        response: { event: "checkout.approved", checkout_id: "chk_9f21ab", status_value: "PREQUALIFIED", product: "ROADWAY_INSTALLMENT_LOAN", approval_ceiling_cents: 721153 },
-      },
-      {
-        type: "note",
-        label: "Step 7–9 · Terms & signing",
-        desc: "The consumer selects a term, DigniFi runs a hard credit inquiry only at final acceptance, and they e-sign the Unsecured Loan Agreement — all still inside DigniFi's domain.",
-      },
-      {
-        type: "webhook",
-        event: "checkout.completed",
-        delay: "moments later",
-        desc: "Fires once the loan is actually signed. This is the terminal event your Payments view listens for to mark the invoice paid.",
-        request: null,
-        response: { event: "checkout.completed", checkout_id: "chk_9f21ab", status_value: "COMPLETED", financed_amount_cents: 47500 },
-      },
-      {
-        type: "redirect",
-        desc: "The consumer taps Continue on the signed-confirmation screen. Their browser is sent back to the redirect_url you supplied in the original Invite to Checkout call — with the checkout_id and status appended as query params.",
-        url: "https://partner.example.com/checkout/complete?checkout_id=chk_9f21ab&status=approved",
-      },
-      {
-        type: "note",
-        label: "Why this matters for your build",
-        desc: "You only need to build one landing page for that redirect_url — DigniFi handles every screen in between. If the consumer is declined instead, the same webhook pattern applies with checkout.declined.",
-      },
-    ],
+      </div>
+
+      <p style="text-align:center; font-size:11.5px; color:var(--gray); max-width:480px; margin:18px auto 0; line-height:1.6;">
+        You only need to build one landing page for that redirect_url — DigniFi handles every screen above. If the consumer is declined instead, the same webhook pattern applies with <code>checkout.declined</code>.
+      </p>`,
   },
 ];
 
@@ -1083,7 +1216,9 @@ function selectTab(i) {
   renderTabs();
   const t = TOUCHPOINTS[i];
   const stage = STAGES[t.stage];
-  deviceHost.innerHTML = resolve(t.device, consumerPrequalified);
+  const panelgrid = document.getElementById("panelgrid");
+  const journeyFull = document.getElementById("journeyFull");
+
   const sessionText = resolve(t.session, consumerPrequalified);
   const hasSession = sessionText && !sessionText.startsWith("No active");
   const sessionPill = sessionText ? `
@@ -1096,6 +1231,18 @@ function selectTab(i) {
     </div>
     <h2 class="touchtitle">${t.title}</h2><p class="touchdesc">${resolve(t.desc, consumerPrequalified)}</p>
     ${sessionPill}`;
+
+  if (t.isVisualJourney) {
+    panelgrid.classList.add("hidden");
+    journeyFull.classList.add("active");
+    journeyFull.innerHTML = resolve(t.journey, consumerPrequalified);
+    return;
+  }
+  panelgrid.classList.remove("hidden");
+  journeyFull.classList.remove("active");
+  journeyFull.innerHTML = "";
+
+  deviceHost.innerHTML = resolve(t.device, consumerPrequalified);
   consoleTitle.textContent = resolve(t.consoleTitle, consumerPrequalified);
   consoleBody.innerHTML = `<div class="console-empty">Press <b>Run this flow</b> to see the exact request, response, and webhook sequence behind this touchpoint.</div>`;
   runLabel.textContent = "Run this flow";
@@ -1169,6 +1316,7 @@ function eventMarkup(step) {
 
 function runFlow() {
   if (running) return;
+  if (TOUCHPOINTS[activeIndex].isVisualJourney) return;
   running = true;
   runBtn.classList.add("running");
   runLabel.textContent = "Running…";
