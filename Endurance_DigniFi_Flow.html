@@ -164,6 +164,30 @@
   .portal-screen .p-row{display:flex;justify-content:space-between;margin:8px 0;}
   .portal-screen .p-label{color:var(--gray-400);font-size:10.5px;}
   .portal-screen .p-val{font-weight:700;color:var(--coral);font-size:13px;}
+
+  .flow-diagram{display:flex;flex-direction:column;align-items:center;}
+  .flow-trunk{width:360px;}
+  .flow-split-label{font-size:10.5px;font-weight:700;letter-spacing:0.04em;text-transform:uppercase;color:var(--gray-400);margin:18px 0 14px;text-align:center;}
+  .flow-cols{display:flex;gap:20px;align-items:flex-start;justify-content:center;flex-wrap:wrap;max-width:920px;}
+  .flow-col{display:flex;flex-direction:column;align-items:center;width:270px;}
+  .flow-col-title{font-size:13px;font-weight:700;margin-bottom:12px;text-align:center;color:var(--navy);line-height:1.4;}
+  .flow-col-title span{display:block;font-size:10.5px;font-weight:400;color:var(--gray-400);margin-top:2px;}
+  .flow-box{width:100%;border-radius:12px;padding:12px 14px;margin-bottom:2px;}
+  .flow-box .fb-title{font-size:12.5px;font-weight:700;margin:0 0 3px;}
+  .flow-box .fb-sub{font-size:11px;margin:0;line-height:1.4;}
+  .flow-arrow{color:var(--gray-400);font-size:15px;margin:2px 0;line-height:1;}
+  .flow-box.blue{background:var(--blue-light);border:1px solid #b5d4f4;}
+  .flow-box.blue .fb-title{color:#0c447c;}
+  .flow-box.blue .fb-sub{color:#185fa5;}
+  .flow-box.green{background:var(--teal-light);border:1px solid #9fe1cb;}
+  .flow-box.green .fb-title{color:#085041;}
+  .flow-box.green .fb-sub{color:#0f6e56;}
+  .flow-box.tan{background:var(--gray-100);border:1px solid var(--gray-200);}
+  .flow-box.tan .fb-title{color:var(--gray-900);}
+  .flow-box.tan .fb-sub{color:var(--gray-600);}
+  .flow-box.coral{background:var(--coral-light);border:1px solid #f0997b;}
+  .flow-box.coral .fb-title{color:var(--coral);}
+  .flow-box.coral .fb-sub{color:var(--coral);}
 </style>
 </head>
 <body>
@@ -175,10 +199,64 @@
   </div>
 
   <div class="tabs">
-    <button class="tab-btn active" data-tab="t1">Option 1<span class="sub">Only show what fits</span></button>
+    <button class="tab-btn active" data-tab="t0">Overview<span class="sub">All 3 paths compared</span></button>
+    <button class="tab-btn" data-tab="t1">Option 1<span class="sub">Only show what fits</span></button>
     <button class="tab-btn" data-tab="t2">Option 2<span class="sub">Downpayment + Endurance checkout</span></button>
     <button class="tab-btn" data-tab="t3">Option 3<span class="sub">Native Stripe payment (concept, not built)</span></button>
     <button class="tab-btn" data-tab="t4">API needs<span class="sub">What each option requires to build</span></button>
+  </div>
+
+  <!-- TAB 0 -->
+  <div class="panel active" id="t0">
+    <div class="flow-note"><b>Same starting point, three different resolutions.</b> All three options share the same trunk — consumer picks a plan that costs more than their leftover funds — and only diverge once that shortfall has to be resolved.</div>
+    <div class="flow-diagram">
+      <div class="flow-trunk">
+        <div class="flow-box tan"><p class="fb-title">Consumer selects Advantage</p><p class="fb-sub">$2,890.00 — exceeds $2,430.00 available</p></div>
+        <div class="flow-arrow" style="text-align:center;">↓</div>
+        <div class="flow-box tan"><p class="fb-title">Shortfall identified</p><p class="fb-sub">$460.00 has to be resolved before the loan can finalize</p></div>
+      </div>
+      <div class="flow-split-label">Splits into three paths</div>
+      <div class="flow-cols">
+
+        <div class="flow-col">
+          <div class="flow-col-title">Option 1<span>Only show what fits</span></div>
+          <div class="flow-box tan"><p class="fb-title">Advantage stays disabled</p><p class="fb-sub">No path to buy it in this flow</p></div>
+          <div class="flow-arrow">↓</div>
+          <div class="flow-box blue"><p class="fb-title">Consumer picks an affordable plan</p><p class="fb-sub">e.g. Superior, fully within $2,430</p></div>
+          <div class="flow-arrow">↓</div>
+          <div class="flow-box green"><p class="fb-title">Endurance issues contract</p><p class="fb-sub">Embedded e-sign required — no redirect</p></div>
+          <div class="flow-arrow">↓</div>
+          <div class="flow-box blue"><p class="fb-title">Loan finalizes normally</p><p class="fb-sub">Single DigniFi checkout, no split</p></div>
+        </div>
+
+        <div class="flow-col">
+          <div class="flow-col-title">Option 2<span>Downpayment + Endurance checkout</span></div>
+          <div class="flow-box blue"><p class="fb-title">$2,430.00 held as pending</p><p class="fb-sub">Not disbursed until Endurance confirms</p></div>
+          <div class="flow-arrow">↓</div>
+          <div class="flow-box tan"><p class="fb-title">Automatic redirect to Endurance</p><p class="fb-sub">applied_amount=2430, balance_due=460</p></div>
+          <div class="flow-arrow">↓</div>
+          <div class="flow-box green"><p class="fb-title">Consumer accepts contract & pays $460</p><p class="fb-sub">Hosted entirely on Endurance's checkout</p></div>
+          <div class="flow-arrow">↓</div>
+          <div class="flow-box green"><p class="fb-title">Endurance confirms, fires webhook</p><p class="fb-sub">Required before DigniFi's loan can finalize</p></div>
+          <div class="flow-arrow">↓</div>
+          <div class="flow-box blue"><p class="fb-title">Loan finalizes, funds disburse</p><p class="fb-sub">Or consumer removes the plan and continues without it</p></div>
+        </div>
+
+        <div class="flow-col">
+          <div class="flow-col-title">Option 3<span>Native Stripe payment</span></div>
+          <div class="flow-box coral"><p class="fb-title">DigniFi collects $460 directly</p><p class="fb-sub">Concept only — not built today</p></div>
+          <div class="flow-arrow">↓</div>
+          <div class="flow-box green"><p class="fb-title">Consumer accepts contract</p><p class="fb-sub">Requires Endurance embedded e-sign</p></div>
+          <div class="flow-arrow">↓</div>
+          <div class="flow-box coral"><p class="fb-title">DigniFi remits $460 to Endurance</p><p class="fb-sub">New merchant-of-record payout, not built</p></div>
+          <div class="flow-arrow">↓</div>
+          <div class="flow-box green"><p class="fb-title">Endurance issues contract, fires webhook</p><p class="fb-sub">Same confirmation requirement as Option 2</p></div>
+          <div class="flow-arrow">↓</div>
+          <div class="flow-box blue"><p class="fb-title">Loan finalizes, funds disburse</p><p class="fb-sub">Or consumer removes the plan and continues without it</p></div>
+        </div>
+
+      </div>
+    </div>
   </div>
 
   <!-- TAB 4 -->
@@ -296,7 +374,7 @@
   <!-- Shared opening filmstrip, duplicated per tab so each is a self-contained journey -->
 
   <!-- TAB 1 -->
-  <div class="panel active" id="t1">
+  <div class="panel" id="t1">
     <div class="flow-note"><b>No split payment involved.</b> DigniFi filters the plan list to what leftover funds fully cover. Advantage is shown but disabled — no path to buy it here.</div>
     <div class="journey">
 
