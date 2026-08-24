@@ -56,11 +56,10 @@
     color:var(--gray-400);margin:20px 0 10px;text-align:center;
   }
 
-  .filmstrip{display:flex;gap:10px;overflow-x:auto;padding:2px 2px 14px;max-width:720px;}
-  .filmcard{flex:0 0 148px;border:1px solid var(--gray-200);border-radius:8px;padding:10px;background:var(--white);}
-  .filmcard .fnum{font-size:10px;color:var(--blue);font-weight:700;}
-  .filmcard .ftitle{font-size:12px;font-weight:600;margin:4px 0 3px;}
-  .filmcard .fdesc{font-size:10.5px;color:var(--gray-600);line-height:1.4;}
+  .step-strip{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:6px 4px;max-width:680px;margin:0 auto 20px;}
+  .step-item{font-size:12px;color:var(--gray-600);white-space:nowrap;}
+  .step-item b{color:var(--gray-900);font-weight:600;}
+  .step-sep{color:var(--gray-400);font-size:12px;}
 
   .screen{
     width:340px;background:var(--white);border:1px solid var(--gray-200);
@@ -302,13 +301,13 @@
     <div class="journey">
 
       <div class="redirect-banner">→ Redirect in via Invite to Checkout (Option 1) · checkout_url https://pay.dignifi.com/c/9f21ab</div>
-      <div class="filmstrip">
-        <div class="filmcard"><div class="fnum">1</div><div class="ftitle">Create account</div><div class="fdesc">First name, last name, mobile, email, password. "[Merchant] have partnered to provide you with access to financing."</div></div>
-        <div class="filmcard"><div class="fnum">2</div><div class="ftitle">Verify mobile</div><div class="fdesc">Six-digit code by text, confirms the number before anything else proceeds.</div></div>
-        <div class="filmcard"><div class="fnum">3</div><div class="ftitle">Address & details</div><div class="fdesc">Address, then SSN/ITIN, DOB, monthly income — "safe, secure, won't impact your credit score."</div></div>
-        <div class="filmcard"><div class="fnum">4</div><div class="ftitle">Vehicle info</div><div class="fdesc">Type, year, make, model — ties the financing to what's being repaired.</div></div>
-        <div class="filmcard"><div class="fnum">5</div><div class="ftitle">Soft credit pull</div><div class="fdesc">Equifax soft pull runs. "Do not click back or close your browser." No credit impact.</div></div>
-        <div class="filmcard"><div class="fnum">6</div><div class="ftitle">Underwriting</div><div class="fdesc">Decision engine runs against the soft pull data.</div></div>
+      <div class="step-strip">
+        <span class="step-item"><b>1</b> Create account</span><span class="step-sep">→</span>
+        <span class="step-item"><b>2</b> Verify mobile</span><span class="step-sep">→</span>
+        <span class="step-item"><b>3</b> Address &amp; details</span><span class="step-sep">→</span>
+        <span class="step-item"><b>4</b> Vehicle info</span><span class="step-sep">→</span>
+        <span class="step-item"><b>5</b> Soft credit pull</span><span class="step-sep">→</span>
+        <span class="step-item"><b>6</b> Underwriting</span>
       </div>
 
       <div class="screen center" style="padding:14px 18px;">
@@ -479,13 +478,13 @@
     <div class="journey">
 
       <div class="redirect-banner">→ Redirect in via Invite to Checkout (Option 1) · checkout_url https://pay.dignifi.com/c/9f21ab</div>
-      <div class="filmstrip">
-        <div class="filmcard"><div class="fnum">1</div><div class="ftitle">Create account</div><div class="fdesc">First name, last name, mobile, email, password. "[Merchant] have partnered to provide you with access to financing."</div></div>
-        <div class="filmcard"><div class="fnum">2</div><div class="ftitle">Verify mobile</div><div class="fdesc">Six-digit code by text, confirms the number before anything else proceeds.</div></div>
-        <div class="filmcard"><div class="fnum">3</div><div class="ftitle">Address & details</div><div class="fdesc">Address, then SSN/ITIN, DOB, monthly income — "safe, secure, won't impact your credit score."</div></div>
-        <div class="filmcard"><div class="fnum">4</div><div class="ftitle">Vehicle info</div><div class="fdesc">Type, year, make, model — ties the financing to what's being repaired.</div></div>
-        <div class="filmcard"><div class="fnum">5</div><div class="ftitle">Soft credit pull</div><div class="fdesc">Equifax soft pull runs. "Do not click back or close your browser." No credit impact.</div></div>
-        <div class="filmcard"><div class="fnum">6</div><div class="ftitle">Underwriting</div><div class="fdesc">Decision engine runs against the soft pull data.</div></div>
+      <div class="step-strip">
+        <span class="step-item"><b>1</b> Create account</span><span class="step-sep">→</span>
+        <span class="step-item"><b>2</b> Verify mobile</span><span class="step-sep">→</span>
+        <span class="step-item"><b>3</b> Address &amp; details</span><span class="step-sep">→</span>
+        <span class="step-item"><b>4</b> Vehicle info</span><span class="step-sep">→</span>
+        <span class="step-item"><b>5</b> Soft credit pull</span><span class="step-sep">→</span>
+        <span class="step-item"><b>6</b> Underwriting</span>
       </div>
 
       <div class="screen center" style="padding:14px 18px;">
@@ -674,13 +673,13 @@
     <div class="journey">
 
       <div class="redirect-banner">→ Redirect in via Invite to Checkout (Option 1) · checkout_url https://pay.dignifi.com/c/9f21ab</div>
-      <div class="filmstrip">
-        <div class="filmcard"><div class="fnum">1</div><div class="ftitle">Create account</div><div class="fdesc">First name, last name, mobile, email, password. "[Merchant] have partnered to provide you with access to financing."</div></div>
-        <div class="filmcard"><div class="fnum">2</div><div class="ftitle">Verify mobile</div><div class="fdesc">Six-digit code by text, confirms the number before anything else proceeds.</div></div>
-        <div class="filmcard"><div class="fnum">3</div><div class="ftitle">Address & details</div><div class="fdesc">Address, then SSN/ITIN, DOB, monthly income — "safe, secure, won't impact your credit score."</div></div>
-        <div class="filmcard"><div class="fnum">4</div><div class="ftitle">Vehicle info</div><div class="fdesc">Type, year, make, model — ties the financing to what's being repaired.</div></div>
-        <div class="filmcard"><div class="fnum">5</div><div class="ftitle">Soft credit pull</div><div class="fdesc">Equifax soft pull runs. "Do not click back or close your browser." No credit impact.</div></div>
-        <div class="filmcard"><div class="fnum">6</div><div class="ftitle">Underwriting</div><div class="fdesc">Decision engine runs against the soft pull data.</div></div>
+      <div class="step-strip">
+        <span class="step-item"><b>1</b> Create account</span><span class="step-sep">→</span>
+        <span class="step-item"><b>2</b> Verify mobile</span><span class="step-sep">→</span>
+        <span class="step-item"><b>3</b> Address &amp; details</span><span class="step-sep">→</span>
+        <span class="step-item"><b>4</b> Vehicle info</span><span class="step-sep">→</span>
+        <span class="step-item"><b>5</b> Soft credit pull</span><span class="step-sep">→</span>
+        <span class="step-item"><b>6</b> Underwriting</span>
       </div>
 
       <div class="screen center" style="padding:14px 18px;">
