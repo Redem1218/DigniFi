@@ -6,6 +6,7 @@
 <style>
   :root{
     --navy:#0c2340;
+    --brand:#9c2b3c;
     --blue:#1f5fb8;
     --blue-light:#e8f0fc;
     --teal:#0f6e56;
@@ -68,8 +69,8 @@
   .screen.center{text-align:center;}
   .screen.center .screen-head{justify-content:center;}
   .screen-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;}
-  .logo{font-size:13px;font-weight:700;color:var(--navy);}
-  .logo span{color:var(--blue);}
+  .logo{font-size:13px;font-weight:700;color:var(--brand);}
+  .logo span{color:var(--brand);}
   .step-tag{font-size:10.5px;color:var(--gray-400);}
   .screen h2{font-size:15px;font-weight:600;margin:10px 0 4px;}
   .screen p.sub{font-size:12.5px;color:var(--gray-600);margin:0 0 14px;line-height:1.55;}
@@ -101,10 +102,15 @@
 
   .primary-btn{
     width:100%;margin-top:14px;padding:11px;border:none;border-radius:8px;
-    background:var(--navy);color:var(--white);font-size:13.5px;font-weight:600;cursor:default;
+    background:var(--brand);color:var(--white);font-size:13.5px;font-weight:600;cursor:default;
   }
   .primary-btn.dark{background:var(--gray-900);}
   .skip{text-align:center;font-size:11.5px;color:var(--gray-400);margin-top:10px;}
+
+  .callout-box{background:var(--blue-light);border-radius:8px;padding:10px 12px;margin-bottom:12px;}
+  .callout-title{font-size:13px;font-weight:600;margin:0 0 4px;color:var(--navy);}
+  .callout-desc{font-size:11.5px;color:var(--gray-600);margin:0;line-height:1.5;}
+  .callout-desc a{color:var(--blue);font-weight:600;text-decoration:none;}
 
   .summary-table{width:100%;font-size:12.5px;border-top:1px solid var(--gray-200);border-bottom:1px solid var(--gray-200);padding:10px 0;margin-bottom:12px;}
   .summary-table td{padding:3px 0;}
@@ -145,6 +151,20 @@
   .tag.have{background:var(--teal-light);color:var(--teal);}
   .tag.ask{background:var(--blue-light);color:var(--blue);}
   .tag.new{background:var(--coral-light);color:var(--coral);}
+
+  .loan-table{width:100%;font-size:11.5px;border-collapse:collapse;margin:10px 0;}
+  .loan-table th{background:var(--navy);color:var(--white);font-weight:600;padding:5px 6px;text-align:left;}
+  .loan-table td{padding:5px 6px;border-bottom:1px solid var(--gray-200);}
+  .comm-row{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin:4px 0 0;max-width:340px;}
+  .comm-tag{border:1px solid #e8c468;background:#fdf3d9;color:#8a6d1a;font-size:10.5px;font-weight:600;padding:6px 10px;border-radius:8px;text-align:center;}
+  .event-box{width:220px;border-radius:10px;padding:12px 14px;text-align:center;font-size:12px;font-weight:700;color:var(--white);}
+  .event-box.purple{background:#8b6fd8;}
+  .event-box.teal{background:#1a5c56;}
+  .event-box .ev-sub{display:block;font-style:italic;font-size:11px;font-weight:600;margin-top:2px;}
+  .portal-screen{width:260px;background:var(--white);border:1px solid var(--gray-200);border-radius:12px;padding:14px 16px;font-size:11.5px;}
+  .portal-screen .p-row{display:flex;justify-content:space-between;margin:8px 0;}
+  .portal-screen .p-label{color:var(--gray-400);font-size:10.5px;}
+  .portal-screen .p-val{font-weight:700;color:var(--coral);font-size:13px;}
 </style>
 </head>
 <body>
@@ -152,7 +172,7 @@
 
   <div class="page-header">
     <h1>Endurance VSC add-on — full DigniFi journey, three ways</h1>
-    <p>Scenario: consumer enters through an existing embedded integration, arriving with a checkout already created — this is DigniFi's own hosted experience from that handoff forward. Roadside Assistance has been retired as a bundled offering; Endurance VSC replaces it as the vehicle protection add-on. Repair cost $4,890.00 against a $7,211.53 approval, leaving $2,430.00 in leftover funds. Consumer wants Advantage ($2,890.00), which exceeds what's available. Loan terms shown are 12, 18, 24, and 36 months — VSC monthly deltas below assume the 36-month term is selected; a shorter term raises the added monthly cost of any VSC plan.</p>
+    <p>Scenario: consumer enters via DigniFi Invite to Checkout <b>Option 1 — Fastest Path to Integration</b> (DigniFi controls the full consumer experience; partner integrates only the Checkout API and webhooks, no PII passed upfront) — so account, address, and vehicle info below are all collected fresh, not pre-filled. Repair cost $4,890.00 against a $7,211.53 approval, leaving $2,430.00 in leftover funds. Consumer wants Advantage ($2,890.00), which exceeds what's available. Loan terms shown are 12, 18, 24, and 36 months — VSC monthly deltas below assume the 36-month term is selected; a shorter term raises the added monthly cost of any VSC plan.</p>
   </div>
 
   <div class="tabs">
@@ -281,7 +301,7 @@
     <div class="flow-note"><b>No split payment involved.</b> DigniFi filters the plan list to what leftover funds fully cover. Advantage is shown but disabled — no path to buy it here.</div>
     <div class="journey">
 
-      <div class="redirect-banner">→ Redirect in from embedded integration · checkout_url https://pay.dignifi.com/c/9f21ab</div>
+      <div class="redirect-banner">→ Redirect in via Invite to Checkout (Option 1) · checkout_url https://pay.dignifi.com/c/9f21ab</div>
       <div class="filmstrip">
         <div class="filmcard"><div class="fnum">1</div><div class="ftitle">Create account</div><div class="fdesc">First name, last name, mobile, email, password. "[Merchant] have partnered to provide you with access to financing."</div></div>
         <div class="filmcard"><div class="fnum">2</div><div class="ftitle">Verify mobile</div><div class="fdesc">Six-digit code by text, confirms the number before anything else proceeds.</div></div>
@@ -297,27 +317,43 @@
         <p class="footnote" style="color:var(--teal);margin:0;">✓ Approved — continues. Qualifies for RoadWay (installment loan) or ExpressWay (revolving line of credit).</p>
       </div>
 
-      <div class="screen center">
-        <div class="screen-head"><span class="logo">Digni<span>Fi</span></span></div>
-        <h2>Congratulations!</h2>
-        <p class="sub">You've prequalified for a RoadWay Installment Loan for up to</p>
-        <div class="amount">$7,211.53</div>
-        <div class="event-tag">checkout.approved fires to partner here</div>
+      <div class="screen">
+        <div class="screen-head" style="justify-content:center;"><span class="logo">Digni<span>Fi</span></span></div>
+        <h2 style="text-align:center;">Congratulations!</h2>
+        <p class="sub" style="text-align:center;">You've prequalified for a RoadWay Installment Loan for up to</p>
+        <div class="amount" style="text-align:center;">$7,211.53</div>
+        <p class="sub">This installment loan is distinct from a credit card — a single use up to your approved limit. Final terms depend on the amount financed:</p>
+        <table class="summary-table">
+          <tr><td>Repair amount</td><td>$500 &ndash; $7,211.53</td></tr>
+          <tr><td>Term length</td><td>12 &ndash; 36 months</td></tr>
+          <tr><td>APR</td><td>19.99% &ndash; 35.99%</td></tr>
+          <tr><td>Monthly payment</td><td>$46.00 &ndash; $459.00</td></tr>
+        </table>
+        <div class="event-tag" style="display:block;text-align:center;">checkout.approved fires to partner here</div>
+      </div>
+
+      <div class="comm-row">
+        <div class="comm-tag">Communication<br>Customer: Loan Approved Email</div>
+        <div class="comm-tag">Communication<br>Dealer: Prequal Approved Email</div>
       </div>
 
       <div class="connector"></div>
 
       <div class="screen">
         <div class="screen-head"><span class="logo">Digni<span>Fi</span></span><span class="step-tag">Step 7 of 9</span></div>
-        <h2>Select your loan package</h2>
-        <p class="sub">Repair cost: $4,890.00. Leaves $2,430.00 in leftover approved funds.</p>
+        <h2>Loan packages</h2>
+        <p class="sub">Your loan qualifies for a special offer!</p>
+        <div class="callout-box">
+          <p class="callout-title">Vehicle protection available</p>
+          <p class="callout-desc">Add an Endurance Vehicle Service Contract to your loan so unexpected repairs are covered. Options shown after you pick a term.</p>
+        </div>
         <div class="plan-list">
           <div class="plan"><div class="plan-row"><span class="plan-name">○ 12 months</span><span class="plan-price">$459.00/mo</span></div></div>
           <div class="plan"><div class="plan-row"><span class="plan-name">○ 18 months</span><span class="plan-price">$321.00/mo</span></div></div>
           <div class="plan"><div class="plan-row"><span class="plan-name">○ 24 months</span><span class="plan-price">$255.00/mo</span></div></div>
           <div class="plan featured"><div class="plan-row"><span class="plan-name">◉ 36 months</span><span class="plan-price">$187.00/mo</span></div></div>
         </div>
-        <p class="footnote">Illustrative payments — actual pricing engine not reflected. Roadside Assistance retired as a bundled term — Endurance VSC below is now the vehicle protection offer.</p>
+        <p class="footnote">Illustrative payments — actual pricing engine not reflected.</p>
         <button class="primary-btn">Save terms & continue</button>
       </div>
 
@@ -359,9 +395,27 @@
       <div class="stage-label">Step 8 — resumes as normal</div>
 
       <div class="screen">
+        <div class="screen-head"><span class="logo">Digni<span>Fi</span></span></div>
+        <h2>Enroll in autopay</h2>
+        <p class="sub">Your monthly payment</p>
+        <div class="amount">$227.28</div>
+        <p class="plan-desc">We'll process your payment automatically each month, helping you avoid late fees.</p>
+        <p class="plan-desc">Easily change the payment date and amount within your portal.</p>
+        <button class="primary-btn">Enroll in autopay</button>
+        <p class="skip">I'll make manual payments</p>
+      </div>
+
+      <div class="connector"></div>
+
+      <div class="screen">
         <div class="screen-head"><span class="logo">Digni<span>Fi</span></span><span class="step-tag">Step 8 of 9</span></div>
         <h2>Finalize your loan agreement</h2>
         <p class="sub">Unsecured Loan Agreement (Fixed Rate), now including Superior VSC — review and agree to terms.</p>
+        <table class="summary-table" style="text-align:left;">
+          <tr><td>Unsecured Loan Agreement</td><td>Fixed rate</td></tr>
+          <tr><td>Date of loan</td><td>08/24/2026</td></tr>
+          <tr><td>Loan number</td><td>8276</td></tr>
+        </table>
         <div class="field-check">✓ Fully viewed</div>
         <button class="primary-btn">Accept offer</button>
         <p class="footnote">Authorizes a hard credit inquiry — the only one in this journey</p>
@@ -369,12 +423,49 @@
 
       <div class="connector"></div>
 
+      <div class="event-box purple">DigniFi performs hard credit inquiry</div>
+
+      <div class="connector"></div>
+
+      <div class="event-box teal">Checkout Webhook Event to Partner<span class="ev-sub">checkout.completed</span></div>
+
+      <div class="connector"></div>
+
+      <div class="comm-row">
+        <div class="comm-tag">Communication<br>Customer: Welcome</div>
+        <div class="comm-tag">Communication<br>Dealer: Loan Docs Signed</div>
+      </div>
+
+      <div class="connector"></div>
+
       <div class="screen center">
         <div class="screen-head"><span class="logo">Digni<span>Fi</span></span></div>
         <h2>You've successfully signed your loan documents.</h2>
-        <p class="sub">Check your email for a copy of your signed documents.</p>
+        <p class="sub">Check your email inbox for a copy of your signed loan documents.</p>
         <button class="primary-btn dark">Continue</button>
-        <div class="event-tag">checkout.completed fires to partner here</div>
+      </div>
+
+      <div class="connector"></div>
+
+      <div class="screen">
+        <div class="screen-head"><span class="logo">Digni<span>Fi</span></span></div>
+        <h2>We are processing your loan.</h2>
+        <p class="sub">Please log back into your portal in a couple of minutes.</p>
+      </div>
+
+      <div class="connector"></div>
+      <div class="stage-label">Later — DigniFi customer portal</div>
+
+      <div class="portal-screen">
+        <div class="provider-label" style="margin-bottom:2px;">My Loans</div>
+        <p style="font-size:12px;font-weight:700;margin:2px 0 0;">85715 / $1,982.00</p>
+        <p style="font-size:11px;color:var(--gray-600);margin:2px 0 10px;">2011 Acura Legend &middot; Test Dealership</p>
+        <div class="p-row"><span class="p-label">Payoff balance</span></div>
+        <p class="p-val" style="margin:0 0 6px;">$1,982.00</p>
+        <div class="p-row"><span class="p-label">Monthly payment</span><span class="p-label">Due date</span></div>
+        <div class="p-row"><span class="p-val" style="font-size:13px;">$187.00</span><span style="font-size:11.5px;font-weight:600;">03/25/2027</span></div>
+        <button class="primary-btn" style="margin-top:14px;">View contract</button>
+        <p class="footnote" style="margin-top:10px;">There's still time to pay off with no added interest, if the full balance clears by the promo deadline.</p>
       </div>
 
       <div class="connector"></div>
@@ -387,7 +478,7 @@
     <div class="flow-note"><b>Warranty presentation first, then the split.</b> The consumer picks Advantage from the same plan list as Option 1 — but here it's selectable. <b>The loan can't finalize until this resolves</b> — either Endurance confirms payment, or the consumer explicitly removes the plan.</div>
     <div class="journey">
 
-      <div class="redirect-banner">→ Redirect in from embedded integration · checkout_url https://pay.dignifi.com/c/9f21ab</div>
+      <div class="redirect-banner">→ Redirect in via Invite to Checkout (Option 1) · checkout_url https://pay.dignifi.com/c/9f21ab</div>
       <div class="filmstrip">
         <div class="filmcard"><div class="fnum">1</div><div class="ftitle">Create account</div><div class="fdesc">First name, last name, mobile, email, password. "[Merchant] have partnered to provide you with access to financing."</div></div>
         <div class="filmcard"><div class="fnum">2</div><div class="ftitle">Verify mobile</div><div class="fdesc">Six-digit code by text, confirms the number before anything else proceeds.</div></div>
@@ -403,27 +494,43 @@
         <p class="footnote" style="color:var(--teal);margin:0;">✓ Approved — continues. Qualifies for RoadWay (installment loan) or ExpressWay (revolving line of credit).</p>
       </div>
 
-      <div class="screen center">
-        <div class="screen-head"><span class="logo">Digni<span>Fi</span></span></div>
-        <h2>Congratulations!</h2>
-        <p class="sub">You've prequalified for a RoadWay Installment Loan for up to</p>
-        <div class="amount">$7,211.53</div>
-        <div class="event-tag">checkout.approved fires to partner here</div>
+      <div class="screen">
+        <div class="screen-head" style="justify-content:center;"><span class="logo">Digni<span>Fi</span></span></div>
+        <h2 style="text-align:center;">Congratulations!</h2>
+        <p class="sub" style="text-align:center;">You've prequalified for a RoadWay Installment Loan for up to</p>
+        <div class="amount" style="text-align:center;">$7,211.53</div>
+        <p class="sub">This installment loan is distinct from a credit card — a single use up to your approved limit. Final terms depend on the amount financed:</p>
+        <table class="summary-table">
+          <tr><td>Repair amount</td><td>$500 &ndash; $7,211.53</td></tr>
+          <tr><td>Term length</td><td>12 &ndash; 36 months</td></tr>
+          <tr><td>APR</td><td>19.99% &ndash; 35.99%</td></tr>
+          <tr><td>Monthly payment</td><td>$46.00 &ndash; $459.00</td></tr>
+        </table>
+        <div class="event-tag" style="display:block;text-align:center;">checkout.approved fires to partner here</div>
+      </div>
+
+      <div class="comm-row">
+        <div class="comm-tag">Communication<br>Customer: Loan Approved Email</div>
+        <div class="comm-tag">Communication<br>Dealer: Prequal Approved Email</div>
       </div>
 
       <div class="connector"></div>
 
       <div class="screen">
         <div class="screen-head"><span class="logo">Digni<span>Fi</span></span><span class="step-tag">Step 7 of 9</span></div>
-        <h2>Select your loan package</h2>
-        <p class="sub">Repair cost: $4,890.00. Leaves $2,430.00 in leftover approved funds.</p>
+        <h2>Loan packages</h2>
+        <p class="sub">Your loan qualifies for a special offer!</p>
+        <div class="callout-box">
+          <p class="callout-title">Vehicle protection available</p>
+          <p class="callout-desc">Add an Endurance Vehicle Service Contract to your loan so unexpected repairs are covered. Options shown after you pick a term.</p>
+        </div>
         <div class="plan-list">
           <div class="plan"><div class="plan-row"><span class="plan-name">○ 12 months</span><span class="plan-price">$459.00/mo</span></div></div>
           <div class="plan"><div class="plan-row"><span class="plan-name">○ 18 months</span><span class="plan-price">$321.00/mo</span></div></div>
           <div class="plan"><div class="plan-row"><span class="plan-name">○ 24 months</span><span class="plan-price">$255.00/mo</span></div></div>
           <div class="plan featured"><div class="plan-row"><span class="plan-name">◉ 36 months</span><span class="plan-price">$187.00/mo</span></div></div>
         </div>
-        <p class="footnote">Illustrative payments — actual pricing engine not reflected. Roadside Assistance retired as a bundled term — Endurance VSC below is now the vehicle protection offer.</p>
+        <p class="footnote">Illustrative payments — actual pricing engine not reflected.</p>
         <button class="primary-btn">Save terms & continue</button>
       </div>
 
@@ -480,9 +587,27 @@
       <div class="redirect-banner">↑ redirect back to DigniFi on confirmation</div>
 
       <div class="screen">
+        <div class="screen-head"><span class="logo">Digni<span>Fi</span></span></div>
+        <h2>Enroll in autopay</h2>
+        <p class="sub">Your monthly payment</p>
+        <div class="amount">$254.50</div>
+        <p class="plan-desc">We'll process your payment automatically each month, helping you avoid late fees.</p>
+        <p class="plan-desc">Easily change the payment date and amount within your portal.</p>
+        <button class="primary-btn">Enroll in autopay</button>
+        <p class="skip">I'll make manual payments</p>
+      </div>
+
+      <div class="connector"></div>
+
+      <div class="screen">
         <div class="screen-head"><span class="logo">Digni<span>Fi</span></span><span class="step-tag">Step 8 of 9</span></div>
         <h2>Finalize your loan agreement</h2>
         <p class="sub">Unsecured Loan Agreement (Fixed Rate) — VSC confirmed, ready to sign.</p>
+        <table class="summary-table" style="text-align:left;">
+          <tr><td>Unsecured Loan Agreement</td><td>Fixed rate</td></tr>
+          <tr><td>Date of loan</td><td>08/24/2026</td></tr>
+          <tr><td>Loan number</td><td>8276</td></tr>
+        </table>
         <div class="field-check">✓ Fully viewed</div>
         <button class="primary-btn">Accept offer</button>
         <p class="footnote">Authorizes a hard credit inquiry — the only one in this journey</p>
@@ -490,12 +615,49 @@
 
       <div class="connector"></div>
 
+      <div class="event-box purple">DigniFi performs hard credit inquiry</div>
+
+      <div class="connector"></div>
+
+      <div class="event-box teal">Checkout Webhook Event to Partner<span class="ev-sub">checkout.completed</span></div>
+
+      <div class="connector"></div>
+
+      <div class="comm-row">
+        <div class="comm-tag">Communication<br>Customer: Welcome</div>
+        <div class="comm-tag">Communication<br>Dealer: Loan Docs Signed</div>
+      </div>
+
+      <div class="connector"></div>
+
       <div class="screen center">
         <div class="screen-head"><span class="logo">Digni<span>Fi</span></span></div>
         <h2>You've successfully signed your loan documents.</h2>
-        <p class="sub">Check your email for a copy of your signed documents.</p>
+        <p class="sub">Check your email inbox for a copy of your signed loan documents.</p>
         <button class="primary-btn dark">Continue</button>
-        <div class="event-tag">checkout.completed fires to partner here</div>
+      </div>
+
+      <div class="connector"></div>
+
+      <div class="screen">
+        <div class="screen-head"><span class="logo">Digni<span>Fi</span></span></div>
+        <h2>We are processing your loan.</h2>
+        <p class="sub">Please log back into your portal in a couple of minutes.</p>
+      </div>
+
+      <div class="connector"></div>
+      <div class="stage-label">Later — DigniFi customer portal</div>
+
+      <div class="portal-screen">
+        <div class="provider-label" style="margin-bottom:2px;">My Loans</div>
+        <p style="font-size:12px;font-weight:700;margin:2px 0 0;">85715 / $1,982.00</p>
+        <p style="font-size:11px;color:var(--gray-600);margin:2px 0 10px;">2011 Acura Legend &middot; Test Dealership</p>
+        <div class="p-row"><span class="p-label">Payoff balance</span></div>
+        <p class="p-val" style="margin:0 0 6px;">$6,161.28</p>
+        <div class="p-row"><span class="p-label">Monthly payment</span><span class="p-label">Due date</span></div>
+        <div class="p-row"><span class="p-val" style="font-size:13px;">$254.50</span><span style="font-size:11.5px;font-weight:600;">03/25/2027</span></div>
+        <button class="primary-btn" style="margin-top:14px;">View contract</button>
+        <p class="footnote" style="margin-top:10px;">There's still time to pay off with no added interest, if the full balance clears by the promo deadline.</p>
       </div>
 
       <div class="connector"></div>
@@ -511,7 +673,7 @@
     </div>
     <div class="journey">
 
-      <div class="redirect-banner">→ Redirect in from embedded integration · checkout_url https://pay.dignifi.com/c/9f21ab</div>
+      <div class="redirect-banner">→ Redirect in via Invite to Checkout (Option 1) · checkout_url https://pay.dignifi.com/c/9f21ab</div>
       <div class="filmstrip">
         <div class="filmcard"><div class="fnum">1</div><div class="ftitle">Create account</div><div class="fdesc">First name, last name, mobile, email, password. "[Merchant] have partnered to provide you with access to financing."</div></div>
         <div class="filmcard"><div class="fnum">2</div><div class="ftitle">Verify mobile</div><div class="fdesc">Six-digit code by text, confirms the number before anything else proceeds.</div></div>
@@ -527,27 +689,43 @@
         <p class="footnote" style="color:var(--teal);margin:0;">✓ Approved — continues. Qualifies for RoadWay (installment loan) or ExpressWay (revolving line of credit).</p>
       </div>
 
-      <div class="screen center">
-        <div class="screen-head"><span class="logo">Digni<span>Fi</span></span></div>
-        <h2>Congratulations!</h2>
-        <p class="sub">You've prequalified for a RoadWay Installment Loan for up to</p>
-        <div class="amount">$7,211.53</div>
-        <div class="event-tag">checkout.approved fires to partner here</div>
+      <div class="screen">
+        <div class="screen-head" style="justify-content:center;"><span class="logo">Digni<span>Fi</span></span></div>
+        <h2 style="text-align:center;">Congratulations!</h2>
+        <p class="sub" style="text-align:center;">You've prequalified for a RoadWay Installment Loan for up to</p>
+        <div class="amount" style="text-align:center;">$7,211.53</div>
+        <p class="sub">This installment loan is distinct from a credit card — a single use up to your approved limit. Final terms depend on the amount financed:</p>
+        <table class="summary-table">
+          <tr><td>Repair amount</td><td>$500 &ndash; $7,211.53</td></tr>
+          <tr><td>Term length</td><td>12 &ndash; 36 months</td></tr>
+          <tr><td>APR</td><td>19.99% &ndash; 35.99%</td></tr>
+          <tr><td>Monthly payment</td><td>$46.00 &ndash; $459.00</td></tr>
+        </table>
+        <div class="event-tag" style="display:block;text-align:center;">checkout.approved fires to partner here</div>
+      </div>
+
+      <div class="comm-row">
+        <div class="comm-tag">Communication<br>Customer: Loan Approved Email</div>
+        <div class="comm-tag">Communication<br>Dealer: Prequal Approved Email</div>
       </div>
 
       <div class="connector"></div>
 
       <div class="screen">
         <div class="screen-head"><span class="logo">Digni<span>Fi</span></span><span class="step-tag">Step 7 of 9</span></div>
-        <h2>Select your loan package</h2>
-        <p class="sub">Repair cost: $4,890.00. Leaves $2,430.00 in leftover approved funds.</p>
+        <h2>Loan packages</h2>
+        <p class="sub">Your loan qualifies for a special offer!</p>
+        <div class="callout-box">
+          <p class="callout-title">Vehicle protection available</p>
+          <p class="callout-desc">Add an Endurance Vehicle Service Contract to your loan so unexpected repairs are covered. Options shown after you pick a term.</p>
+        </div>
         <div class="plan-list">
           <div class="plan"><div class="plan-row"><span class="plan-name">○ 12 months</span><span class="plan-price">$459.00/mo</span></div></div>
           <div class="plan"><div class="plan-row"><span class="plan-name">○ 18 months</span><span class="plan-price">$321.00/mo</span></div></div>
           <div class="plan"><div class="plan-row"><span class="plan-name">○ 24 months</span><span class="plan-price">$255.00/mo</span></div></div>
           <div class="plan featured"><div class="plan-row"><span class="plan-name">◉ 36 months</span><span class="plan-price">$187.00/mo</span></div></div>
         </div>
-        <p class="footnote">Illustrative payments — actual pricing engine not reflected. Roadside Assistance retired as a bundled term — Endurance VSC below is now the vehicle protection offer.</p>
+        <p class="footnote">Illustrative payments — actual pricing engine not reflected.</p>
         <button class="primary-btn">Save terms & continue</button>
       </div>
 
@@ -606,9 +784,27 @@
       <div class="connector"></div>
 
       <div class="screen">
+        <div class="screen-head"><span class="logo">Digni<span>Fi</span></span></div>
+        <h2>Enroll in autopay</h2>
+        <p class="sub">Your monthly payment</p>
+        <div class="amount">$254.50</div>
+        <p class="plan-desc">We'll process your payment automatically each month, helping you avoid late fees.</p>
+        <p class="plan-desc">Easily change the payment date and amount within your portal.</p>
+        <button class="primary-btn">Enroll in autopay</button>
+        <p class="skip">I'll make manual payments</p>
+      </div>
+
+      <div class="connector"></div>
+
+      <div class="screen">
         <div class="screen-head"><span class="logo">Digni<span>Fi</span></span><span class="step-tag">Step 8 of 9</span></div>
         <h2>Finalize your loan agreement</h2>
         <p class="sub">Unsecured Loan Agreement (Fixed Rate) — VSC balance paid, ready to sign.</p>
+        <table class="summary-table" style="text-align:left;">
+          <tr><td>Unsecured Loan Agreement</td><td>Fixed rate</td></tr>
+          <tr><td>Date of loan</td><td>08/24/2026</td></tr>
+          <tr><td>Loan number</td><td>8276</td></tr>
+        </table>
         <div class="field-check">✓ Fully viewed</div>
         <button class="primary-btn">Accept offer</button>
         <p class="footnote">Authorizes a hard credit inquiry — the only one in this journey</p>
@@ -616,12 +812,49 @@
 
       <div class="connector"></div>
 
+      <div class="event-box purple">DigniFi performs hard credit inquiry</div>
+
+      <div class="connector"></div>
+
+      <div class="event-box teal">Checkout Webhook Event to Partner<span class="ev-sub">checkout.completed</span></div>
+
+      <div class="connector"></div>
+
+      <div class="comm-row">
+        <div class="comm-tag">Communication<br>Customer: Welcome</div>
+        <div class="comm-tag">Communication<br>Dealer: Loan Docs Signed</div>
+      </div>
+
+      <div class="connector"></div>
+
       <div class="screen center">
         <div class="screen-head"><span class="logo">Digni<span>Fi</span></span></div>
         <h2>You've successfully signed your loan documents.</h2>
-        <p class="sub">Check your email for a copy of your signed documents.</p>
+        <p class="sub">Check your email inbox for a copy of your signed loan documents.</p>
         <button class="primary-btn dark">Continue</button>
-        <div class="event-tag">checkout.completed fires to partner here</div>
+      </div>
+
+      <div class="connector"></div>
+
+      <div class="screen">
+        <div class="screen-head"><span class="logo">Digni<span>Fi</span></span></div>
+        <h2>We are processing your loan.</h2>
+        <p class="sub">Please log back into your portal in a couple of minutes.</p>
+      </div>
+
+      <div class="connector"></div>
+      <div class="stage-label">Later — DigniFi customer portal</div>
+
+      <div class="portal-screen">
+        <div class="provider-label" style="margin-bottom:2px;">My Loans</div>
+        <p style="font-size:12px;font-weight:700;margin:2px 0 0;">85715 / $1,982.00</p>
+        <p style="font-size:11px;color:var(--gray-600);margin:2px 0 10px;">2011 Acura Legend &middot; Test Dealership</p>
+        <div class="p-row"><span class="p-label">Payoff balance</span></div>
+        <p class="p-val" style="margin:0 0 6px;">$6,161.28</p>
+        <div class="p-row"><span class="p-label">Monthly payment</span><span class="p-label">Due date</span></div>
+        <div class="p-row"><span class="p-val" style="font-size:13px;">$254.50</span><span style="font-size:11.5px;font-weight:600;">03/25/2027</span></div>
+        <button class="primary-btn" style="margin-top:14px;">View contract</button>
+        <p class="footnote" style="margin-top:10px;">There's still time to pay off with no added interest, if the full balance clears by the promo deadline.</p>
       </div>
 
       <div class="connector"></div>
