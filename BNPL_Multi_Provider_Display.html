@@ -1326,18 +1326,11 @@ function selectTab(i) {
   const panelgrid = document.getElementById("panelgrid");
   const journeyFull = document.getElementById("journeyFull");
 
-  const sessionText = resolve(t.session, consumerPrequalified);
-  const hasSession = sessionText && !sessionText.startsWith("No active");
-  const sessionPill = sessionText ? `
-    <div class="sessionpill ${hasSession ? "has" : "none"}">
-      <span class="sw"></span>${sessionText}
-    </div>` : "";
   touchtext.innerHTML = `
     <div style="margin-top:34px;">
       <div class="stagebadge" style="background:${stage.color}22; color:${stage.color};"><span class="sw" style="background:${stage.color}"></span>${stage.label}</div>
     </div>
-    <h2 class="touchtitle">${t.title}</h2><p class="touchdesc">${resolve(t.desc, consumerPrequalified)}</p>
-    ${sessionPill}`;
+    <h2 class="touchtitle">${t.title}</h2><p class="touchdesc">${resolve(t.desc, consumerPrequalified)}</p>`;
 
   if (t.isVisualJourney) {
     panelgrid.classList.add("hidden");
