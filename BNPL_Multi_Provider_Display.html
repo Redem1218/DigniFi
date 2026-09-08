@@ -38,67 +38,32 @@
   }
 
   /* ---------- Header ---------- */
-  .topbar{
-    background:var(--ink);
-    color:#fff;
-    padding:28px 5vw 26px;
-  }
-  .brandrow{
-    display:flex; align-items:baseline; justify-content:space-between; flex-wrap:wrap; gap:14px;
-    max-width:1280px; margin:0 auto;
-  }
-  .brand{
-    font-weight:800; font-size:22px; letter-spacing:-0.02em;
-  }
+  .topbar{ background:var(--ink); color:#fff; padding:28px 5vw 26px; }
+  .brandrow{ display:flex; align-items:baseline; justify-content:space-between; flex-wrap:wrap; gap:14px; max-width:1280px; margin:0 auto; }
+  .brand{ font-weight:800; font-size:22px; letter-spacing:-0.02em; }
   .brand span{color:var(--blaze);}
-  .kicker{
-    font-family:var(--mono); font-size:11px; letter-spacing:0.14em; text-transform:uppercase;
-    color:var(--silver); margin-top:2px;
-  }
-  h1.pagetitle{
-    max-width:1280px; margin:18px auto 6px; font-size:clamp(28px,3.4vw,42px); font-weight:800;
-    letter-spacing:-0.02em; line-height:1.08;
-  }
-  p.pagesub{
-    max-width:1280px; margin:0 auto; color:var(--silver); font-size:15px; max-width:680px; line-height:1.5;
-  }
+  .kicker{ font-family:var(--mono); font-size:11px; letter-spacing:0.14em; text-transform:uppercase; color:var(--silver); margin-top:2px; }
+  h1.pagetitle{ max-width:1280px; margin:18px auto 6px; font-size:clamp(28px,3.4vw,42px); font-weight:800; letter-spacing:-0.02em; line-height:1.08; }
+  p.pagesub{ max-width:680px; margin:0 auto; color:var(--silver); font-size:15px; line-height:1.5; }
   p.pagesub b{color:#fff;}
 
   /* ---------- Tabs ---------- */
-  .tabbar-wrap{
-    background:var(--ink); border-top:1px solid #3a3736; position:sticky; top:0; z-index:20;
-  }
-  .tabbar{
-    max-width:1280px; margin:0 auto; display:flex; gap:4px; padding:0 5vw; overflow-x:auto;
-    scrollbar-width:none;
-  }
+  .tabbar-wrap{ background:var(--ink); border-top:1px solid #3a3736; position:sticky; top:0; z-index:20; }
+  .tabbar{ max-width:1280px; margin:0 auto; display:flex; gap:4px; padding:0 5vw; overflow-x:auto; scrollbar-width:none; }
   .tabbar::-webkit-scrollbar{display:none;}
-  .tab{
-    font-family:var(--mono); font-size:12.5px; color:var(--silver); background:transparent; border:none;
-    padding:16px 16px 14px; cursor:pointer; white-space:nowrap; position:relative; letter-spacing:0.02em;
-    display:flex; align-items:center; gap:8px;
-  }
-  .tab .n{
-    width:18px; height:18px; border-radius:50%; border:1px solid #55504e; display:inline-flex;
-    align-items:center; justify-content:center; font-size:10px; flex:none;
-  }
+  .tab{ font-family:var(--mono); font-size:12.5px; color:var(--silver); background:transparent; border:none; padding:16px 16px 14px; cursor:pointer; white-space:nowrap; position:relative; letter-spacing:0.02em; display:flex; align-items:center; gap:8px; }
+  .tab .n{ width:18px; height:18px; border-radius:50%; border:1px solid #55504e; display:inline-flex; align-items:center; justify-content:center; font-size:10px; flex:none; }
   .tab.active{color:#fff;}
   .tab.active .n{background:var(--crimson); border-color:var(--crimson); color:#fff;}
-  .tab.active::after{
-    content:""; position:absolute; left:16px; right:16px; bottom:0; height:2px; background:var(--crimson);
-  }
+  .tab.active::after{ content:""; position:absolute; left:16px; right:16px; bottom:0; height:2px; background:var(--crimson); }
   .tab:hover:not(.active){color:#fff;}
 
   /* ---------- Main layout ---------- */
   main{max-width:1280px; margin:0 auto; padding:36px 5vw 80px;}
-  .panelgrid{
-    display:grid; grid-template-columns: minmax(300px,380px) 1fr; gap:34px; align-items:start;
-  }
+  .panelgrid{ display:grid; grid-template-columns: minmax(300px,380px) 1fr; gap:34px; align-items:start; }
   @media (max-width: 880px){ .panelgrid{grid-template-columns:1fr;} }
 
-  .colhead{
-    display:flex; align-items:center; gap:10px; margin-bottom:14px;
-  }
+  .colhead{ display:flex; align-items:center; gap:10px; margin-bottom:14px; }
   .colhead .dot{width:8px;height:8px;border-radius:50%;}
   .colhead .dot.blue{background:var(--info);}
   .colhead .dot.red{background:var(--crimson);}
@@ -106,16 +71,10 @@
 
   .touchtitle{font-size:26px; font-weight:800; letter-spacing:-0.01em; margin:0 0 6px; display:inline-block;}
   .touchdesc{color:var(--gray); font-size:14.5px; line-height:1.55; max-width:640px; margin:0 0 30px;}
-  .stagebadge{
-    display:inline-flex; align-items:center; gap:6px; font-family:var(--mono); font-size:11px; font-weight:600;
-    letter-spacing:0.06em; text-transform:uppercase; padding:4px 10px; border-radius:20px; margin-bottom:12px;
-  }
+  .stagebadge{ display:inline-flex; align-items:center; gap:6px; font-family:var(--mono); font-size:11px; font-weight:600; letter-spacing:0.06em; text-transform:uppercase; padding:4px 10px; border-radius:20px; margin-bottom:12px; }
   .stagebadge .sw{width:7px;height:7px;border-radius:50%;}
   .tab .stagedot{width:6px;height:6px;border-radius:50%; flex:none;}
-  .sessionpill{
-    display:inline-flex; align-items:center; gap:8px; font-family:var(--mono); font-size:11.5px;
-    padding:8px 14px; border-radius:8px; margin-bottom:26px; line-height:1.5; max-width:100%;
-  }
+  .sessionpill{ display:inline-flex; align-items:center; gap:8px; font-family:var(--mono); font-size:11.5px; padding:8px 14px; border-radius:8px; margin-bottom:26px; line-height:1.5; max-width:100%; }
   .sessionpill .sw{width:7px;height:7px;border-radius:50%; flex:none; margin-top:5px;}
   .sessionpill.has{background:#EAF6EF; color:#166B41;}
   .sessionpill.none{background:#FBEFEF; color:#8A2226;}
@@ -126,61 +85,55 @@
   .offer-summary.ready{border-color:#1F8A55; background:#EAF6EF;}
   .offer-summary .ostitle{font-weight:700; font-size:12.5px; margin-bottom:3px;}
   .offer-summary .osub{font-size:11px; color:var(--gray); line-height:1.4;}
-  .offer-summary .oslink{font-size:11px; color:var(--crimson); text-decoration:underline; margin-top:6px; display:inline-block; font-weight:600;}
-
-  /* ---------- Named provider cards (only shown at the actual decision point) ---------- */
-  .provider-mini{border:1px solid var(--line); border-left:4px solid var(--line); border-radius:9px; padding:10px 12px; margin-bottom:8px;}
-  .provider-mini.dignifi{border-left-color:var(--success); background:#F5FBF7;}
-  .provider-mini.sunbit{border-left-color:var(--pending); background:#FCF6EC;}
-  .provider-mini .pm-top{display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;}
-  .provider-mini .pm-name{font-weight:700; font-size:12px;}
-  .provider-mini .pm-amt{font-weight:800; font-size:15px;}
-  .provider-mini .pm-line{font-size:10.5px; color:var(--gray); margin-top:1px;}
-  .provider-mini .pm-flag{font-size:9.5px; font-weight:700; padding:2px 7px; border-radius:20px; display:inline-block; margin-top:5px;}
-  .provider-mini .pm-flag.ok{background:#EAF6EF; color:#166B41;}
-  .provider-mini .pm-flag.warn{background:#FBF3E4; color:#8A5D0E;}
-  .provider-mini .pm-flag.gap{background:#FBEFEF; color:#8A2226; margin-left:5px;}
-  .provider-mini .pm-btn{margin-top:8px; text-align:center; font-size:10.5px; font-weight:700; padding:7px; border-radius:6px; letter-spacing:0.03em;}
-  .provider-mini.dignifi .pm-btn{background:var(--success); color:#fff;}
-  .provider-mini.sunbit .pm-btn{background:var(--pending); color:#fff;}
+  .offer-summary .oslink{font-size:11px; color:var(--crimson); text-decoration:underline; margin-top:6px; display:inline-block; font-weight:600; cursor:pointer;}
 
   .scenario-bar{background:var(--wash); border-bottom:1px solid var(--line);}
-  .scenario-inner{
-    max-width:1280px; margin:0 auto; padding:12px 5vw; display:flex; align-items:center; justify-content:space-between;
-    gap:14px; flex-wrap:wrap;
-  }
+  .scenario-inner{ max-width:1280px; margin:0 auto; padding:12px 5vw; display:flex; align-items:center; justify-content:space-between; gap:14px; flex-wrap:wrap; }
   .scenario-label{font-size:12.5px; color:var(--gray); font-weight:500;}
-  .scenario-toggle{
-    display:inline-flex; background:#fff; border:1px solid var(--line); border-radius:8px; padding:3px; gap:2px;
-  }
-  .scenario-toggle .seg{
-    font-family:var(--sans); font-size:12px; font-weight:600; border:none; background:transparent; color:var(--gray);
-    padding:7px 14px; border-radius:6px; cursor:pointer; transition:all 0.15s;
-  }
+  .scenario-toggle{ display:inline-flex; background:#fff; border:1px solid var(--line); border-radius:8px; padding:3px; gap:2px; }
+  .scenario-toggle .seg{ font-family:var(--sans); font-size:12px; font-weight:600; border:none; background:transparent; color:var(--gray); padding:7px 14px; border-radius:6px; cursor:pointer; transition:all 0.15s; }
   .scenario-toggle .seg.on{background:var(--ink); color:#fff;}
   .scenario-toggle .seg:not(.on):hover{background:var(--line);}
 
-  /* provider toggle (handoff tab) */
-  .provider-toggle{display:inline-flex; background:#fff; border:1px solid var(--line); border-radius:8px; padding:3px; gap:2px; margin-bottom:22px;}
-  .provider-toggle .pseg{
-    font-family:var(--sans); font-size:12.5px; font-weight:700; border:none; background:transparent; padding:8px 18px;
-    border-radius:6px; cursor:pointer; color:var(--gray); display:inline-flex; align-items:center; gap:7px;
-  }
-  .provider-toggle .pseg .sw{width:8px; height:8px; border-radius:50%;}
-  .provider-toggle .pseg.on{background:var(--ink); color:#fff;}
+  /* ---------- Offers comparison modal ---------- */
+  .modal-overlay{position:fixed;inset:0;background:rgba(27,25,24,0.55);display:none;align-items:center;justify-content:center;z-index:100;padding:20px;}
+  .modal-overlay.open{display:flex;}
+  .modal-card{background:#fff;border-radius:16px;max-width:460px;width:100%;max-height:90vh;overflow-y:auto;padding:26px 26px 22px;box-shadow:0 30px 80px rgba(0,0,0,0.35);position:relative;}
+  .modal-close-x{position:absolute;top:14px;right:16px;background:none;border:none;font-size:18px;color:var(--gray);cursor:pointer;line-height:1;}
+  .modal-title{font-size:18px;font-weight:800;margin:0 0 4px;}
+  .modal-sub{font-size:12.5px;color:var(--gray);margin:0 0 14px;line-height:1.5;}
+  .modal-note{background:var(--wash);border-radius:8px;padding:10px 12px;font-size:11.5px;color:var(--gray);margin-bottom:16px;line-height:1.5;}
+  .offer-pick{border:1.5px solid var(--line);border-radius:14px;padding:16px 18px;margin-bottom:14px;cursor:pointer;transition:border-color .15s, box-shadow .15s;background:#fff;position:relative;}
+  .offer-pick.dignifi{background:linear-gradient(180deg,#FBECEC 0%,#FFFFFF 60%);}
+  .offer-pick.sunbit{background:linear-gradient(180deg,#EAF0FE 0%,#FFFFFF 60%);}
+  .offer-pick.selected{border-color:var(--ink);box-shadow:0 8px 20px -12px rgba(0,0,0,0.3);}
+  .offer-pick .op-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;}
+  .offer-pick .op-logo{height:24px;width:auto;display:block;}
+  .offer-pick .op-name{font-weight:800;font-size:14.5px;display:flex;align-items:center;gap:8px;}
+  .offer-pick .op-name .sw{width:9px;height:9px;border-radius:50%;}
+  .offer-pick .op-radio{width:18px;height:18px;border-radius:50%;border:1.5px solid var(--line);background:#fff;flex:none;}
+  .offer-pick.selected .op-radio{border-color:var(--ink);background:var(--ink);position:relative;}
+  .offer-pick.selected .op-radio::after{content:"";display:block;width:6px;height:6px;background:#fff;border-radius:50%;margin:5px auto 0;}
+  .offer-pick .op-amt{font-size:22px;font-weight:800;letter-spacing:-.3px;margin-bottom:1px;}
+  .offer-pick .op-amtlabel{font-size:11px;color:var(--gray);margin-bottom:10px;}
+  .offer-pick .op-rows{display:flex;flex-direction:column;gap:6px;font-size:12px;border-top:1px solid var(--line);padding-top:10px;}
+  .offer-pick .op-rows > div{display:flex;justify-content:space-between;gap:10px;}
+  .offer-pick .op-rows .k{color:var(--gray);}
+  .offer-pick .op-rows .v{font-weight:700;text-align:right;}
+  .offer-pick .op-flags{margin-top:9px;display:flex;gap:6px;flex-wrap:wrap;}
+  .op-flag{font-size:9.5px;font-weight:700;padding:3px 8px;border-radius:20px;}
+  .op-flag.ok{background:#EAF6EF;color:#166B41;}
+  .op-flag.warn{background:#FBF3E4;color:#8A5D0E;}
+  .op-flag.gap{background:#FBEFEF;color:#8A2226;}
+  .modal-continue{width:100%;border:0;border-radius:9px;padding:13px;font-weight:800;font-size:13.5px;background:var(--ink);color:#fff;cursor:pointer;margin-top:4px;font-family:inherit;}
+  .modal-continue:disabled{opacity:.4;cursor:not-allowed;}
+  .modal-confirm{text-align:center;padding:14px 4px 6px;}
+  .modal-confirm .mc-icon{font-size:32px;margin-bottom:8px;color:#1F8A55;}
+  .modal-confirm .mc-title{font-weight:800;font-size:15.5px;margin-bottom:6px;}
+  .modal-confirm .mc-sub{font-size:12.5px;color:var(--gray);line-height:1.5;}
 
-  /* down payment highlight, used inside Sunbit's hosted journey */
-  .down-highlight{background:#FBF3E4; border:1px solid var(--pending); border-radius:8px; padding:10px 12px; margin-top:10px;}
-  .down-highlight .dh-title{font-weight:700; font-size:11px; color:#8A5D0E; text-transform:uppercase; letter-spacing:0.04em; margin-bottom:5px;}
-  .down-highlight .dh-amt{font-size:19px; font-weight:800; color:#8A5D0E;}
-  .down-highlight .dh-sub{font-size:10.5px; color:#8A5D0E; margin-top:5px; line-height:1.4;}
-  .gap-note{background:#FBEFEF; border:1px solid #D89A9C; border-radius:8px; padding:9px 12px; margin-top:8px; font-size:10.5px; color:#8A2226; line-height:1.45;}
-
-  /* ---------- Handoff journey (Inside a Provider's Experience) ---------- */
-  .redirect-banner{
-    display:flex; align-items:center; gap:12px; background:var(--ink); color:#fff; border-radius:10px;
-    padding:14px 18px; margin-bottom:18px;
-  }
+  /* ---------- Handoff journey (Inside DigniFi's Experience) ---------- */
+  .redirect-banner{ display:flex; align-items:center; gap:12px; background:var(--ink); color:#fff; border-radius:10px; padding:14px 18px; margin-bottom:18px; }
   .redirect-banner .arrow{font-size:18px; color:var(--blaze); flex:none;}
   .redirect-banner .rtext{flex:1; min-width:0;}
   .redirect-banner .rtitle{font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; color:var(--silver); margin-bottom:3px;}
@@ -191,40 +144,20 @@
   .journey-full.active{display:block;}
   .panelgrid.hidden{display:none;}
 
-  .jconnector{
-    width:2px; height:26px; background:var(--line); margin:0 auto;
-  }
+  .jconnector{ width:2px; height:26px; background:var(--line); margin:0 auto; }
 
-  .mini-screen{
-    background:#fff; border:1px solid var(--line); border-radius:12px; padding:18px 20px; margin:0 auto;
-    box-shadow:0 10px 26px -16px rgba(0,0,0,0.25); position:relative;
-  }
-  .mini-header{
-    display:flex; align-items:center; gap:8px; margin-bottom:12px;
-  }
+  .mini-screen{ background:#fff; border:1px solid var(--line); border-radius:12px; padding:18px 20px; margin:0 auto; box-shadow:0 10px 26px -16px rgba(0,0,0,0.25); position:relative; }
+  .mini-header{ display:flex; align-items:center; gap:8px; margin-bottom:12px; }
   .mini-logo{font-family:var(--sans); font-weight:800; font-size:15px; color:var(--ink);}
   .mini-logo span{color:var(--crimson);}
-  .mini-logo.amber{color:var(--pending);}
-  .mini-step-n{
-    position:absolute; top:-11px; left:20px; width:24px; height:24px; border-radius:50%; background:var(--crimson);
-    color:#fff; font-size:11px; font-weight:700; display:flex; align-items:center; justify-content:center;
-    box-shadow:0 2px 6px rgba(171,35,40,0.4);
-  }
-  .mini-step-n.amber{background:var(--pending); box-shadow:0 2px 6px rgba(201,138,27,0.4);}
+  .mini-step-n{ position:absolute; top:-11px; left:20px; width:24px; height:24px; border-radius:50%; background:var(--crimson); color:#fff; font-size:11px; font-weight:700; display:flex; align-items:center; justify-content:center; box-shadow:0 2px 6px rgba(171,35,40,0.4); }
   .mini-title{font-size:13.5px; font-weight:700; color:var(--ink); margin-bottom:4px;}
   .mini-sub{font-size:11px; color:var(--gray); margin-bottom:12px; line-height:1.4;}
-  .mini-field{
-    background:var(--wash); border:1px solid var(--line); border-radius:6px; padding:8px 10px; font-size:10.5px;
-    color:#9a9793; margin-bottom:7px;
-  }
+  .mini-field{ background:var(--wash); border:1px solid var(--line); border-radius:6px; padding:8px 10px; font-size:10.5px; color:#9a9793; margin-bottom:7px; }
   .mini-fieldrow{display:flex; gap:7px;}
   .mini-fieldrow .mini-field{flex:1;}
-  .mini-btn{
-    background:var(--crimson); color:#fff; text-align:center; font-size:11px; font-weight:700; letter-spacing:0.03em;
-    padding:9px; border-radius:6px; margin-top:10px;
-  }
+  .mini-btn{ background:var(--crimson); color:#fff; text-align:center; font-size:11px; font-weight:700; letter-spacing:0.03em; padding:9px; border-radius:6px; margin-top:10px; }
   .mini-btn.dark{background:var(--ink);}
-  .mini-btn.amber{background:var(--pending);}
   .mini-radio-row{display:flex; gap:14px; margin-bottom:10px;}
   .mini-radio{display:flex; align-items:center; gap:5px; font-size:10.5px; color:var(--ink);}
   .mini-radio .dot{width:10px;height:10px;border-radius:50%;border:1.5px solid var(--crimson);}
@@ -232,34 +165,17 @@
   .mini-table{width:100%; border-collapse:collapse; font-size:10px; margin-bottom:8px;}
   .mini-table th{text-align:left; color:var(--gray); font-weight:600; padding:4px 6px; border-bottom:1px solid var(--line);}
   .mini-table td{padding:5px 6px; border-bottom:1px solid #F3F2F1;}
-  .mini-processing{
-    display:flex; flex-direction:column; align-items:center; gap:10px; padding:8px 0;
-  }
-  .mini-spinner{
-    width:28px; height:28px; border-radius:50%; border:3px solid #E7E5E3; border-top-color:var(--info);
-  }
-  .mini-approved-amt{
-    font-size:22px; font-weight:800; color:#1F8A55; margin:4px 0 2px;
-  }
-  .mini-note{
-    background:var(--wash); border-radius:6px; padding:8px 10px; font-size:10px; color:var(--gray); margin-top:10px; line-height:1.4;
-  }
-  .event-tag{
-    display:inline-flex; align-items:center; gap:6px; font-family:var(--mono); font-size:10px; font-weight:600;
-    background:var(--ink); color:#fff; padding:5px 10px; border-radius:20px; margin-top:12px;
-  }
+  .mini-processing{ display:flex; flex-direction:column; align-items:center; gap:10px; padding:8px 0; }
+  .mini-spinner{ width:28px; height:28px; border-radius:50%; border:3px solid #E7E5E3; border-top-color:var(--info); }
+  .mini-approved-amt{ font-size:22px; font-weight:800; color:#1F8A55; margin:4px 0 2px; }
+  .mini-note{ background:var(--wash); border-radius:6px; padding:8px 10px; font-size:10px; color:var(--gray); margin-top:10px; line-height:1.4; }
+  .event-tag{ display:inline-flex; align-items:center; gap:6px; font-family:var(--mono); font-size:10px; font-weight:600; background:var(--ink); color:#fff; padding:5px 10px; border-radius:20px; margin-top:12px; }
   .event-tag .ping{width:6px;height:6px;border-radius:50%; background:#5CC98E;}
   .event-tag.signed .ping{background:#8FB8DB;}
-  .purple-note{
-    background:#F3EBFB; border:1px solid #C9A6E8; color:#5A3A78; font-size:11px; font-weight:600; text-align:center;
-    padding:10px 14px; border-radius:9px; max-width:340px; margin:0 auto;
-  }
+  .purple-note{ background:#F3EBFB; border:1px solid #C9A6E8; color:#5A3A78; font-size:11px; font-weight:600; text-align:center; padding:10px 14px; border-radius:9px; max-width:340px; margin:0 auto; }
 
   .decision-block{max-width:520px; margin:6px auto;}
-  .decision-badge{
-    display:inline-flex; align-items:center; gap:6px; background:#EFEDEC; color:var(--ink); font-size:11px; font-weight:700;
-    padding:6px 14px; border-radius:20px; margin:0 auto 12px; text-align:center;
-  }
+  .decision-badge{ display:inline-flex; align-items:center; gap:6px; background:#EFEDEC; color:var(--ink); font-size:11px; font-weight:700; padding:6px 14px; border-radius:20px; margin:0 auto 12px; text-align:center; }
   .decision-badge-wrap{text-align:center;}
   .decision-branches{display:grid; grid-template-columns:1fr 1fr; gap:14px;}
   .branch{border-radius:10px; padding:12px 14px; font-size:11px; line-height:1.45;}
@@ -267,25 +183,16 @@
   .branch.go{background:#EAF6EF; border:1px solid #1F8A55; color:#166B41;}
   .branch-label{font-weight:700; font-size:11px; margin-bottom:5px; display:flex; align-items:center; gap:5px;}
 
-  .act-header{
-    display:flex; align-items:center; gap:8px; justify-content:center; font-family:var(--mono); font-size:11.5px;
-    font-weight:700; letter-spacing:0.03em; padding:9px 16px; border-radius:8px; margin:26px auto 18px; max-width:520px;
-    text-align:center;
-  }
+  .act-header{ display:flex; align-items:center; gap:8px; justify-content:center; font-family:var(--mono); font-size:11.5px; font-weight:700; letter-spacing:0.03em; padding:9px 16px; border-radius:8px; margin:26px auto 18px; max-width:520px; text-align:center; }
   .act-header .sw{width:7px;height:7px;border-radius:50%; flex:none;}
   .act-header-mid{background:#FBF3E4; color:#8A5D0E;}
   .act-header-mid .sw{background:#C98A1B;}
   .act-header-final{background:#EAF6EF; color:#166B41;}
   .act-header-final .sw{background:#1F8A55;}
 
-  .act-divider{
-    display:flex; align-items:center; gap:12px; max-width:520px; margin:24px auto 8px;
-  }
+  .act-divider{ display:flex; align-items:center; gap:12px; max-width:520px; margin:24px auto 8px; }
   .act-divider::before, .act-divider::after{content:""; flex:1; height:1px; background:var(--line);}
-  .act-divider-label{
-    font-family:var(--mono); font-size:10.5px; color:var(--gray); text-transform:uppercase; letter-spacing:0.06em;
-    white-space:nowrap;
-  }
+  .act-divider-label{ font-family:var(--mono); font-size:10.5px; color:var(--gray); text-transform:uppercase; letter-spacing:0.06em; white-space:nowrap; }
 
   @media (max-width:680px){
     .decision-branches{grid-template-columns:1fr;}
@@ -293,109 +200,55 @@
   }
 
   /* ---------- Device mockups ---------- */
-  .device-phone{
-    width:100%; max-width:340px; margin:0 auto;
-    background:var(--ink); border-radius:34px; padding:10px; box-shadow:0 18px 40px -12px rgba(0,0,0,0.35);
-  }
-  .device-phone .screen{
-    background:#fff; border-radius:24px; overflow:hidden; min-height:520px; position:relative;
-    display:flex; flex-direction:column;
-  }
-  .device-browser{
-    width:100%; background:#fff; border-radius:10px; overflow:hidden; border:1px solid var(--line);
-    box-shadow:0 18px 40px -18px rgba(0,0,0,0.28);
-  }
-  .browserbar{
-    background:#F0F0F0; padding:8px 12px; display:flex; align-items:center; gap:6px;
-  }
+  .device-phone{ width:100%; max-width:340px; margin:0 auto; background:var(--ink); border-radius:34px; padding:10px; box-shadow:0 18px 40px -12px rgba(0,0,0,0.35); }
+  .device-phone .screen{ background:#fff; border-radius:24px; overflow:hidden; min-height:520px; position:relative; display:flex; flex-direction:column; }
+  .device-browser{ width:100%; background:#fff; border-radius:10px; overflow:hidden; border:1px solid var(--line); box-shadow:0 18px 40px -18px rgba(0,0,0,0.28); }
+  .browserbar{ background:#F0F0F0; padding:8px 12px; display:flex; align-items:center; gap:6px; }
   .browserbar .dot{width:9px;height:9px;border-radius:50%;}
-  .browserbar .url{
-    flex:1; background:#fff; border:1px solid #DCDCDC; border-radius:5px; font-size:10.5px; color:var(--gray);
-    padding:3px 10px; margin-left:8px; font-family:var(--mono);
-  }
+  .browserbar .url{ flex:1; background:#fff; border:1px solid #DCDCDC; border-radius:5px; font-size:10.5px; color:var(--gray); padding:3px 10px; margin-left:8px; font-family:var(--mono); }
   .screenpad{padding:16px;}
-  .phonehead{
-    display:flex; align-items:center; justify-content:space-between; padding:10px 14px; border-bottom:1px solid #EFEFEF;
-    font-size:12px; font-weight:700;
-  }
-  .card{
-    border:1px solid var(--line); border-radius:9px; padding:12px 14px; margin-bottom:10px; background:#fff;
-  }
-  .card.clickable{
-    width:100%; text-align:left; cursor:pointer; font-family:var(--sans); transition:transform 0.12s, box-shadow 0.12s;
-    box-shadow:0 0 0 0 rgba(171,35,40,0);
-  }
-  .card.clickable:hover{
-    transform:translateY(-1px); box-shadow:0 6px 16px -6px rgba(171,35,40,0.35); border-color:var(--crimson);
-  }
+  .phonehead{ display:flex; align-items:center; justify-content:space-between; padding:10px 14px; border-bottom:1px solid #EFEFEF; font-size:12px; font-weight:700; }
+  .card{ border:1px solid var(--line); border-radius:9px; padding:12px 14px; margin-bottom:10px; background:#fff; }
+  .card.clickable{ width:100%; text-align:left; cursor:pointer; font-family:var(--sans); transition:transform 0.12s, box-shadow 0.12s; box-shadow:0 0 0 0 rgba(171,35,40,0); }
+  .card.clickable:hover{ transform:translateY(-1px); box-shadow:0 6px 16px -6px rgba(171,35,40,0.35); border-color:var(--crimson); }
   .card.clickable:active{transform:translateY(0px);}
   .cta-amount{font-size:12.5px; font-weight:700; margin-top:3px;}
   .fineprint{font-size:9.5px; color:var(--gray); margin-top:4px; line-height:1.35;}
-  .btn-dark{
-    background:var(--ink); color:#fff; text-align:center; padding:11px; border-radius:7px; font-size:11px;
-    font-weight:700; letter-spacing:0.06em; text-transform:uppercase;
-  }
-  .btn-navy{
-    background:#1F3B57; color:#fff; text-align:center; padding:11px; border-radius:7px; font-size:11px;
-    font-weight:700; letter-spacing:0.06em; text-transform:uppercase;
-  }
+  .btn-dark{ background:var(--ink); color:#fff; text-align:center; padding:11px; border-radius:7px; font-size:11px; font-weight:700; letter-spacing:0.06em; text-transform:uppercase; }
+  .btn-navy{ background:#1F3B57; color:#fff; text-align:center; padding:11px; border-radius:7px; font-size:11px; font-weight:700; letter-spacing:0.06em; text-transform:uppercase; }
   .rowline{display:flex; justify-content:space-between; align-items:center; font-size:12px; padding:8px 0; border-bottom:1px solid #F0F0F0;}
   .muted{color:var(--gray);}
-  .concern-label{
-    background:#2C5F82; color:#fff; font-size:7.5px; font-weight:700; letter-spacing:0.06em; text-transform:uppercase;
-    padding:3px 8px;
-  }
+  .concern-label{ background:#2C5F82; color:#fff; font-size:7.5px; font-weight:700; letter-spacing:0.06em; text-transform:uppercase; padding:3px 8px; }
   .concern-body{display:flex; justify-content:space-between; padding:7px 8px; font-size:11px; border:1px solid #EDEDED; border-top:none;}
 
   /* text bubble */
   .bubble{max-width:82%; padding:9px 11px; border-radius:12px; font-size:11.5px; line-height:1.4; margin-bottom:8px;}
   .bubble.in{background:#EDEDED; color:var(--ink);}
   .bubble.out{background:var(--crimson); color:#fff; margin-left:auto;}
-  .bubble a, .bubble.link{text-decoration:underline;}
+  .bubble a, .bubble.link{text-decoration:underline; cursor:pointer;}
 
   /* ---------- API console ---------- */
-  .console-wrap{
-    background:var(--panel); border-radius:12px; overflow:hidden; border:1px solid #3a3736;
-    box-shadow:0 24px 50px -20px rgba(0,0,0,0.4);
-  }
-  .console-head{
-    display:flex; align-items:center; justify-content:space-between; padding:14px 18px;
-    border-bottom:1px solid #3a3736; background:var(--panel-2);
-  }
+  .console-wrap{ background:var(--panel); border-radius:12px; overflow:hidden; border:1px solid #3a3736; box-shadow:0 24px 50px -20px rgba(0,0,0,0.4); }
+  .console-head{ display:flex; align-items:center; justify-content:space-between; padding:14px 18px; border-bottom:1px solid #3a3736; background:var(--panel-2); }
   .console-head-left{display:flex; align-items:center; gap:10px;}
   .dots{display:flex; gap:6px;}
   .dots span{width:9px;height:9px;border-radius:50%;}
   .console-title{font-family:var(--mono); font-size:12px; color:var(--silver); letter-spacing:0.03em;}
-  .runbtn{
-    font-family:var(--mono); font-size:11.5px; font-weight:600; background:var(--crimson); color:#fff;
-    border:none; padding:8px 16px; border-radius:6px; cursor:pointer; letter-spacing:0.03em;
-    display:inline-flex; align-items:center; gap:8px; transition:background 0.15s;
-  }
+  .runbtn{ font-family:var(--mono); font-size:11.5px; font-weight:600; background:var(--crimson); color:#fff; border:none; padding:8px 16px; border-radius:6px; cursor:pointer; letter-spacing:0.03em; display:inline-flex; align-items:center; gap:8px; transition:background 0.15s; }
   .runbtn:hover{background:var(--blaze);}
   .runbtn:disabled{background:#4a4645; cursor:default;}
-  .runbtn .spin{
-    width:11px;height:11px;border-radius:50%;border:2px solid rgba(255,255,255,0.35);
-    border-top-color:#fff; display:none; animation:spin 0.7s linear infinite;
-  }
+  .runbtn .spin{ width:11px;height:11px;border-radius:50%;border:2px solid rgba(255,255,255,0.35); border-top-color:#fff; display:none; animation:spin 0.7s linear infinite; }
   .runbtn.running .spin{display:inline-block;}
   @keyframes spin{to{transform:rotate(360deg);}}
 
-  .console-body{
-    padding:18px; font-family:var(--mono); font-size:12.5px; min-height:420px; max-height:560px; overflow-y:auto;
-  }
+  .console-body{ padding:18px; font-family:var(--mono); font-size:12.5px; min-height:420px; max-height:560px; overflow-y:auto; }
   .console-empty{color:#6b6866; font-size:12.5px; padding:30px 6px; line-height:1.7;}
   .console-empty b{color:var(--silver);}
 
-  .evt{
-    border-left:2px solid #3a3736; padding-left:16px; margin-left:6px; padding-bottom:20px; position:relative;
-    opacity:0; transform:translateY(4px); animation:fadein 0.35s ease forwards;
-  }
+  .evt{ border-left:2px solid #3a3736; padding-left:16px; margin-left:6px; padding-bottom:20px; position:relative; opacity:0; transform:translateY(4px); animation:fadein 0.35s ease forwards; }
   .evt:last-child{padding-bottom:2px;}
   @keyframes fadein{ to{opacity:1; transform:translateY(0);} }
-  .evt::before{
-    content:""; position:absolute; left:-5px; top:2px; width:8px; height:8px; border-radius:50%;
-    background:var(--gray); border:2px solid var(--panel);
-  }
+  .evt::before{ content:""; position:absolute; left:-5px; top:2px; width:8px; height:8px; border-radius:50%; background:var(--gray); border:2px solid var(--panel); }
   .evt.api::before{background:var(--info);}
   .evt.webhook::before{background:var(--pending);}
   .evt.note::before{background:#5a5654;}
@@ -405,18 +258,11 @@
   .evt.webhook.sunbit::before{background:var(--pending);}
 
   .evt-top{display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:4px;}
-  .method{
-    font-weight:700; font-size:11px; padding:2px 7px; border-radius:4px; background:#2C5F82; color:#fff;
-  }
+  .method{ font-weight:700; font-size:11px; padding:2px 7px; border-radius:4px; background:#2C5F82; color:#fff; }
   .method.post{background:#2C5F82;}
   .method.get{background:#5A5654;}
-  .badge-webhook{
-    font-weight:700; font-size:10px; padding:2px 8px; border-radius:20px; background:rgba(201,138,27,0.18); color:#E3A94C;
-    letter-spacing:0.05em; text-transform:uppercase;
-  }
-  .badge-provider{
-    font-weight:700; font-size:9.5px; padding:2px 8px; border-radius:20px; letter-spacing:0.05em; text-transform:uppercase;
-  }
+  .badge-webhook{ font-weight:700; font-size:10px; padding:2px 8px; border-radius:20px; background:rgba(201,138,27,0.18); color:#E3A94C; letter-spacing:0.05em; text-transform:uppercase; }
+  .badge-provider{ font-weight:700; font-size:9.5px; padding:2px 8px; border-radius:20px; letter-spacing:0.05em; text-transform:uppercase; }
   .badge-provider.dignifi{background:rgba(31,138,85,0.16); color:#1F8A55;}
   .badge-provider.sunbit{background:rgba(201,138,27,0.16); color:#C98A1B;}
   .endpoint{color:#EDEBE9; font-size:12.5px;}
@@ -428,24 +274,16 @@
   .jsonrow{display:flex; gap:18px; margin-top:6px;}
   .jsonblock{flex:1; min-width:0;}
   .jsonlabel{font-size:9.5px; text-transform:uppercase; letter-spacing:0.08em; color:#6b6866; margin-bottom:4px;}
-  pre.json{
-    background:#171514; border:1px solid #3a3736; border-radius:6px; padding:10px 12px; margin:0;
-    font-size:11px; line-height:1.55; color:#D8D5D2; overflow-x:auto;
-  }
+  pre.json{ background:#171514; border:1px solid #3a3736; border-radius:6px; padding:10px 12px; margin:0; font-size:11px; line-height:1.55; color:#D8D5D2; overflow-x:auto; }
   .k{color:#8FB8DB;} .s{color:#B7D6A8;} .num{color:#E3A94C;}
 
-  .note-box{
-    color:#c9c6c3; font-size:12px; line-height:1.55; font-family:var(--sans); background:#171514;
-    border:1px solid #3a3736; border-radius:6px; padding:10px 12px;
-  }
+  .note-box{ color:#c9c6c3; font-size:12px; line-height:1.55; font-family:var(--sans); background:#171514; border:1px solid #3a3736; border-radius:6px; padding:10px 12px; }
   .note-box b{color:#fff;}
 
   .timestamp{font-size:10.5px; color:#57534f; margin-left:8px;}
 
   /* footer */
-  .refnote{
-    max-width:1280px; margin:44px auto 0; padding:18px 5vw 0; border-top:1px solid var(--line);
-  }
+  .refnote{ max-width:1280px; margin:44px auto 0; padding:18px 5vw 0; border-top:1px solid var(--line); }
   .refnote p{font-size:12px; color:var(--gray); line-height:1.6; max-width:900px; margin:0 0 6px;}
   .refnote .disclaimer{font-size:11.5px; color:var(--gray); margin-top:14px;}
 </style>
@@ -460,7 +298,7 @@
     </div>
   </div>
   <h1 class="pagetitle">How each touchpoint works, end to end — with more than one provider in play</h1>
-  <p class="pagesub">A consumer can request <b>Pay Over Time</b> as early as scheduling — one neutral button, no provider names shown yet. The moment they tap it, the partner platform pings every enrolled provider at once. Each one decisions independently and, if approved, <b>texts its own invite straight to the consumer</b> — not through the partner's messaging rails. That gives the consumer 2 live offers, side by side, before they've even reached checkout. Tab 6 goes inside each provider's own hosted experience, the part that happens after the handoff.</p>
+  <p class="pagesub">A consumer can request <b>Pay Over Time</b> as early as scheduling — one neutral button, no provider names shown yet. The moment they tap it, the partner platform pings every enrolled provider at once. Each one decisions independently and, if approved, <b>texts its own invite straight to the consumer</b> — not through the partner's messaging rails. From any touchpoint, tapping <b>View my offers</b> opens a side‑by‑side comparison the consumer has to choose from before moving forward. Tab 6 goes inside DigniFi's own hosted experience, the part that happens after the handoff.</p>
 </div>
 
 <div class="tabbar-wrap">
@@ -506,44 +344,59 @@
 
 <div class="refnote">
   <p>© DigniFi, Inc. | This demo application is the property of DigniFi, Inc. and is provided for demonstration purposes only, illustrating how DigniFi's integration behaves alongside other enrolled financing providers. The functionality, features, and behavior shown in this demo are not guaranteed and may not reflect actual product performance, capabilities, or future updates. This demo is intended for evaluation and educational purposes only and should not be relied upon as a representation of final product functionality. DigniFi makes no warranties, express or implied, regarding this demonstration software. Use of this demo is at your own risk.</p>
-  <p class="disclaimer">DigniFi's credit products are issued by WebBank. Other enrolled providers issue and service their own financing products under their own terms.</p>
+  <p class="disclaimer">DigniFi's credit products are issued by WebBank. Other enrolled providers issue and service their own financing products under their own terms. APR ranges shown are illustrative — actual rate depends on state and applicant creditworthiness, and both providers' rates are capped at their state's legal maximum.</p>
+</div>
+
+<!-- ===== Offers comparison modal ===== -->
+<div class="modal-overlay" id="offersModal">
+  <div class="modal-card" id="offersModalCard"></div>
 </div>
 
 <script>
 // ---------------------------------------------------------------------
-// Content model: one entry per touchpoint
+// Shared figures for this scenario
 // ---------------------------------------------------------------------
-const STAGES = {
-  early: { label: "Early Stage", color: "#2C5F82" },
-  mid: { label: "Mid Stage", color: "#C98A1B" },
-  final: { label: "Final Stage", color: "#1F8A55" },
-  handoff: { label: "Provider‑Hosted", color: "#AB2328" },
-};
-
-// Shared figures used across every touchpoint for this scenario
 const RO_TOTAL_CENTS = 185000;          // $1,850.00 repair order
 const DIGNIFI_APPROVAL_CENTS = 560000;  // $5,600.00
 const SUNBIT_APPROVAL_CENTS = 150000;   // $1,500.00
 const SUNBIT_DOWN_CENTS = 45000;        // $450.00 (~30% of Sunbit's approval)
 const SUNBIT_FINANCED_CENTS = SUNBIT_APPROVAL_CENTS - SUNBIT_DOWN_CENTS; // $1,050.00
 const SUNBIT_GAP_CENTS = RO_TOTAL_CENTS - SUNBIT_APPROVAL_CENTS;         // $350.00 short of the repair
+const DIGNIFI_APR = "9.99%–29.99%";
+const SUNBIT_APR = "19.99%–29.99%";
+const DIGNIFI_LOGO = "data:image/png;base64,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";
+const SUNBIT_LOGO = "data:image/webp;base64,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";
 
-const OFFER_SUMMARY_READY = `
-  <div class="offer-summary ready">
-    <div class="ostitle">✓ You have 2 payment plan offers</div>
-    <div class="osub">As low as $77/mo. These follow you through your visit — no need to check again.</div>
-    <span class="oslink">View my offers →</span>
-  </div>`;
+const STAGES = {
+  early: { label: "Early Stage", color: "#2C5F82" },
+  mid: { label: "Mid Stage", color: "#C98A1B" },
+  final: { label: "Final Stage", color: "#1F8A55" },
+  handoff: { label: "DigniFi‑Hosted", color: "#AB2328" },
+};
 
-const OFFER_SUMMARY_NONE = (onclickAttr) => `
-  <button class="card clickable" style="width:100%;text-align:left;border:0;padding:0;background:none;" ${onclickAttr}>
-    <div class="card">
-      <div style="font-weight:700;font-size:12.5px;margin-bottom:6px;">Want to spread out the cost?</div>
-      <div class="cta-amount">Pay Over Time — as low as $77/mo</div>
-      <div class="fineprint">Tap to check every enrolled provider at once — won't affect your credit score.</div>
-    </div>
-  </button>`;
+function offerSummaryReady(estimateKnown){
+  return `
+    <div class="offer-summary ready">
+      <div class="ostitle">✓ You have 2 payment plan offers</div>
+      <div class="osub">${estimateKnown ? "See exact terms for today's $1,850.00 repair." : "Your final invoice isn't ready yet — approval amounts are ready to view now."}</div>
+      <span class="oslink" onclick="openOffersModal(${estimateKnown})">View my offers →</span>
+    </div>`;
+}
 
+function offerSummaryNone(onclickAttr){
+  return `
+    <button class="card clickable" style="width:100%;text-align:left;border:0;padding:0;background:none;" ${onclickAttr}>
+      <div class="card">
+        <div style="font-weight:700;font-size:12.5px;margin-bottom:6px;">Want to spread out the cost?</div>
+        <div class="cta-amount">Pay Over Time — as low as $77/mo</div>
+        <div class="fineprint">Tap to check every enrolled provider at once — won't affect your credit score.</div>
+      </div>
+    </button>`;
+}
+
+// ---------------------------------------------------------------------
+// Content model: one entry per touchpoint
+// ---------------------------------------------------------------------
 const TOUCHPOINTS = [
   {
     id: "scheduling",
@@ -555,7 +408,7 @@ const TOUCHPOINTS = [
       : "The consumer can request Pay Over Time right here, before they ever set foot in the shop. Tap the card in the preview to see every enrolled provider get pinged at once.",
     consoleTitle: (pq) => pq ? "financing-hub-api · GET /offers" : "financing-hub-api · broadcast → provider APIs",
     session: (pq) => pq
-      ? "2 offers active — DigniFi up to $5,600 ($0 down) · Sunbit up to $1,500 (~$450 down, doesn't fully cover the repair)"
+      ? "2 offers active — DigniFi up to $5,600 (9.99–29.99% APR, $0 down) · Sunbit up to $1,500 (19.99–29.99% APR, ~$450 down, doesn't fully cover the repair)"
       : "No active offers for this consumer",
     device: (pq) => pq ? `
       <div class="device-browser">
@@ -570,7 +423,7 @@ const TOUCHPOINTS = [
             <div class="muted" style="font-size:11.5px;margin-top:4px;">Brake service + multi-point inspection</div>
             <div class="muted" style="font-size:11.5px;margin-top:4px;">Estimated cost: $1,700 – $1,950</div>
           </div>
-          ${OFFER_SUMMARY_READY}
+          ${offerSummaryReady(false)}
           <div class="btn-dark">Confirm Appointment</div>
         </div>
       </div>` : `
@@ -586,7 +439,7 @@ const TOUCHPOINTS = [
             <div class="muted" style="font-size:11.5px;margin-top:4px;">Brake service + multi-point inspection</div>
             <div class="muted" style="font-size:11.5px;margin-top:4px;">Estimated cost: $1,700 – $1,950</div>
           </div>
-          ${OFFER_SUMMARY_NONE('onclick="prequalifyNow()" id="prequalCta"')}
+          ${offerSummaryNone('onclick="prequalifyNow()" id="prequalCta"')}
           <div class="btn-dark">Confirm Appointment</div>
         </div>
       </div>`,
@@ -599,8 +452,8 @@ const TOUCHPOINTS = [
         desc: "Before rendering the scheduling page, your system checks whether this consumer already has any live offers on file.",
         request: { referenceId: "RO-88213" },
         response: { status: 200, offers: [
-          { provider: "dignifi", checkoutId: "chk_9f21ab", status: "PREQUALIFIED", approvalCeilingCents: DIGNIFI_APPROVAL_CENTS, downPaymentRequiredCents: 0 },
-          { provider: "sunbit", applicationId: "snb_2b88f1", status: "PREQUALIFIED", approvalCeilingCents: SUNBIT_APPROVAL_CENTS, downPaymentRequiredCents: SUNBIT_DOWN_CENTS },
+          { provider: "dignifi", checkoutId: "chk_9f21ab", status: "PREQUALIFIED", approvalCeilingCents: DIGNIFI_APPROVAL_CENTS, downPaymentRequiredCents: 0, aprRange: DIGNIFI_APR },
+          { provider: "sunbit", applicationId: "snb_2b88f1", status: "PREQUALIFIED", approvalCeilingCents: SUNBIT_APPROVAL_CENTS, downPaymentRequiredCents: SUNBIT_DOWN_CENTS, aprRange: SUNBIT_APR },
         ] },
       },
       {
@@ -648,18 +501,18 @@ const TOUCHPOINTS = [
         cls: "dignifi",
         event: "checkout.approved",
         delay: "~70 seconds later",
-        desc: "The consumer completed DigniFi's hosted signup and soft credit pull. DigniFi texts the approval link directly to the consumer — see “Inside a Provider's Experience” for what that looked like.",
+        desc: "The consumer completed DigniFi's hosted signup and soft credit pull. DigniFi texts the approval link directly to the consumer — see “Inside DigniFi's Experience” for what that looked like.",
         request: null,
-        response: { event: "checkout.approved", checkoutId: "chk_9f21ab", checkoutStatus: "PREQUALIFIED", approvalCeilingCents: DIGNIFI_APPROVAL_CENTS, downPaymentRequiredCents: 0 },
+        response: { event: "checkout.approved", checkoutId: "chk_9f21ab", checkoutStatus: "PREQUALIFIED", approvalCeilingCents: DIGNIFI_APPROVAL_CENTS, downPaymentRequiredCents: 0, aprRange: DIGNIFI_APR },
       },
       {
         type: "webhook",
         cls: "sunbit",
         event: "application.approved",
         delay: "~95 seconds later",
-        desc: "Sunbit's own hosted flow finished separately and texted its own approval link. Note the required down payment — DigniFi's offer doesn't have one.",
+        desc: "Sunbit's own hosted flow finished separately and texted its own approval link. Note the required down payment and the higher APR range — DigniFi's offer has neither.",
         request: null,
-        response: { event: "application.approved", applicationId: "snb_2b88f1", status_detail: "PREQUALIFIED", approvalCeilingCents: SUNBIT_APPROVAL_CENTS, downPaymentRequiredCents: SUNBIT_DOWN_CENTS },
+        response: { event: "application.approved", applicationId: "snb_2b88f1", status_detail: "PREQUALIFIED", approvalCeilingCents: SUNBIT_APPROVAL_CENTS, downPaymentRequiredCents: SUNBIT_DOWN_CENTS, aprRange: SUNBIT_APR },
       },
       {
         type: "note",
@@ -678,7 +531,7 @@ const TOUCHPOINTS = [
       : "The consumer didn't request Pay Over Time at scheduling, so the confirmation message is what invites them to check their options for the first time.",
     consoleTitle: (pq) => pq ? "financing-hub-api · GET /offers" : "financing-hub-api · GET → broadcast",
     session: (pq) => pq
-      ? "2 offers active — DigniFi up to $5,600 ($0 down) · Sunbit up to $1,500 (~$450 down, doesn't fully cover the repair)"
+      ? "2 offers active — DigniFi up to $5,600 (9.99–29.99% APR, $0 down) · Sunbit up to $1,500 (19.99–29.99% APR, ~$450 down, doesn't fully cover the repair)"
       : "No active offers for this consumer",
     device: (pq) => pq ? `
       <div class="device-phone">
@@ -687,7 +540,7 @@ const TOUCHPOINTS = [
           <div class="screenpad" style="flex:1;">
             <div class="bubble in">You're confirmed for Tue 9/8 at 9:00 AM.</div>
             <div class="bubble in">Estimated cost: $1,700–$1,950.</div>
-            <div class="bubble in link">✓ Good news — you have 2 payment plan offers ready. This carries through your visit, nothing more to do →</div>
+            <div class="bubble in link" onclick="openOffersModal(false)">✓ Good news — you have 2 payment plan offers ready. Tap to view →</div>
           </div>
         </div>
       </div>` : `
@@ -755,17 +608,14 @@ const TOUCHPOINTS = [
       : "The technician's inspection sets the repair total, and this consumer still hasn't requested Pay Over Time. The advisor can prompt them right from this screen.",
     consoleTitle: (pq) => pq ? "financing-hub-api · GET /offers" : "financing-hub-api · GET → broadcast",
     session: (pq) => pq
-      ? "2 offers active — DigniFi up to $5,600 ($0 down) · Sunbit up to $1,500 (~$450 down, doesn't fully cover the repair)"
+      ? "2 offers active — DigniFi up to $5,600 (9.99–29.99% APR, $0 down) · Sunbit up to $1,500 (19.99–29.99% APR, ~$450 down, doesn't fully cover the repair)"
       : "No active offers for this consumer",
     device: (pq) => pq ? `
       <div class="device-phone">
         <div class="screen">
           <div class="phonehead"><span>☰ &nbsp;Multi Point Inspection</span><span>$1,850.00</span></div>
           <div class="screenpad" style="padding-top:12px;">
-            <div class="offer-summary ready" style="margin-bottom:10px;">
-              <div class="ostitle">✓ 2 payment plan offers ready</div>
-              <div class="osub">At least one offer covers today's $1,850.00 in full.</div>
-            </div>
+            ${offerSummaryReady(true)}
             <div style="font-weight:700;font-size:12px;margin-bottom:8px;">City Auto Group</div>
             <div style="background:#2C5F82;color:#fff;font-size:11px;padding:7px 10px;margin-bottom:0;">🚗 Your 2024 Explorer: (4 items)</div>
             <div class="concern-label">Your Concern</div>
@@ -814,14 +664,14 @@ const TOUCHPOINTS = [
         desc: "Same session, same lookup pattern as Confirmation. The advisor's screen and the consumer's screen both read from this one call.",
         request: { referenceId: "RO-88213" },
         response: { status: 200, offers: [
-          { provider: "dignifi", approvalCeilingCents: DIGNIFI_APPROVAL_CENTS, downPaymentRequiredCents: 0 },
-          { provider: "sunbit", approvalCeilingCents: SUNBIT_APPROVAL_CENTS, downPaymentRequiredCents: SUNBIT_DOWN_CENTS },
+          { provider: "dignifi", approvalCeilingCents: DIGNIFI_APPROVAL_CENTS, downPaymentRequiredCents: 0, aprRange: DIGNIFI_APR },
+          { provider: "sunbit", approvalCeilingCents: SUNBIT_APPROVAL_CENTS, downPaymentRequiredCents: SUNBIT_DOWN_CENTS, aprRange: SUNBIT_APR },
         ] },
       },
       {
         type: "note",
         label: "Worth flagging to the advisor",
-        desc: "$1,850.00 in recommended work is fully covered by DigniFi's $5,600 approval with $0 down. Sunbit's $1,500 approval alone falls $350 short of the repair — before its ~$450 down payment is even collected.",
+        desc: "$1,850.00 in recommended work is fully covered by DigniFi's $5,600 approval with $0 down (9.99–29.99% APR). Sunbit's $1,500 approval (19.99–29.99% APR) alone falls $350 short of the repair — before its ~$450 down payment is even collected.",
       },
     ] : [
       {
@@ -859,7 +709,7 @@ const TOUCHPOINTS = [
       : "Not every consumer requests Pay Over Time on their own. When they didn't, the advisor triggers the broadcast manually — and from that point on, it behaves exactly like a session created at scheduling.",
     consoleTitle: (pq) => pq ? "financing-hub-api · GET /offers" : "financing-hub-api · GET → broadcast",
     session: (pq) => pq
-      ? "2 offers active — DigniFi up to $5,600 ($0 down) · Sunbit up to $1,500 (~$450 down, doesn't fully cover the repair)"
+      ? "2 offers active — DigniFi up to $5,600 (9.99–29.99% APR, $0 down) · Sunbit up to $1,500 (19.99–29.99% APR, ~$450 down, doesn't fully cover the repair)"
       : "No active offers for this consumer",
     device: (pq) => pq ? `
       <div class="device-phone">
@@ -867,7 +717,7 @@ const TOUCHPOINTS = [
           <div class="phonehead">Service Advisor</div>
           <div class="screenpad" style="flex:1;">
             <div class="bubble out">Hey! Following up on the brakes, total came to $1,850.</div>
-            <div class="bubble out link">Just a reminder — your Pay Over Time offers are still active, ready whenever you'd like to use them →</div>
+            <div class="bubble out link" onclick="openOffersModal(true)">Just a reminder — your Pay Over Time offers are still active, ready whenever you'd like to use them →</div>
             <div class="bubble in">Perfect, let's do it</div>
           </div>
         </div>
@@ -927,16 +777,16 @@ const TOUCHPOINTS = [
         delay: "~3 minutes later",
         desc: "The consumer finishes DigniFi's hosted flow on their own phone, away from the shop. DigniFi texts them directly when it's done.",
         request: null,
-        response: { event: "checkout.approved", checkoutId: "chk_7cd310", checkoutStatus: "PREQUALIFIED", approvalCeilingCents: DIGNIFI_APPROVAL_CENTS },
+        response: { event: "checkout.approved", checkoutId: "chk_7cd310", checkoutStatus: "PREQUALIFIED", approvalCeilingCents: DIGNIFI_APPROVAL_CENTS, aprRange: DIGNIFI_APR },
       },
       {
         type: "webhook",
         cls: "sunbit",
         event: "application.approved",
         delay: "~4 minutes later",
-        desc: "Sunbit's flow finishes separately, moments later, and texts its own approval — including the down payment amount.",
+        desc: "Sunbit's flow finishes separately, moments later, and texts its own approval — including the down payment amount and its APR.",
         request: null,
-        response: { event: "application.approved", applicationId: "snb_e88a10", status_detail: "PREQUALIFIED", approvalCeilingCents: SUNBIT_APPROVAL_CENTS, downPaymentRequiredCents: SUNBIT_DOWN_CENTS },
+        response: { event: "application.approved", applicationId: "snb_e88a10", status_detail: "PREQUALIFIED", approvalCeilingCents: SUNBIT_APPROVAL_CENTS, downPaymentRequiredCents: SUNBIT_DOWN_CENTS, aprRange: SUNBIT_APR },
       },
       {
         type: "note",
@@ -951,35 +801,20 @@ const TOUCHPOINTS = [
     title: "Payment & Checkout",
     stage: "final",
     desc: (pq) => pq
-      ? "The repair is complete and the invoice is locked. This is the one moment providers finally get named — the consumer has to actually choose which offer to use."
+      ? "The repair is complete and the invoice is locked. Tapping into the offers here is where the consumer actually has to choose one before continuing."
       : "The repair is complete and the invoice is locked, but this consumer still hasn't requested Pay Over Time anywhere upstream — so checkout has to do both jobs at once.",
     consoleTitle: (pq) => pq ? "financing-hub-api · GET → provider finalize" : "financing-hub-api · GET → broadcast → finalize",
     session: (pq) => pq
-      ? "2 offers active — DigniFi up to $5,600 ($0 down) · Sunbit up to $1,500 (~$450 down, doesn't fully cover the repair)"
+      ? "2 offers active — DigniFi up to $5,600 (9.99–29.99% APR, $0 down) · Sunbit up to $1,500 (19.99–29.99% APR, ~$450 down, doesn't fully cover the repair)"
       : "No active offers for this consumer",
     device: (pq) => pq ? `
       <div class="device-phone">
         <div class="screen">
           <div class="phonehead"><span>‹ Back</span><span>Checkout</span><span>🛒 Review</span></div>
           <div class="screenpad">
-            <div style="font-weight:800;font-size:14px;margin-bottom:10px;">Choose how to pay</div>
+            <div style="font-weight:800;font-size:14px;margin-bottom:10px;">Payment Options</div>
             <div class="rowline"><span>Pay with Card</span><span class="muted">$1,850.00</span></div>
-
-            <div class="provider-mini dignifi" style="margin-top:10px;">
-              <div class="pm-top"><span class="pm-name">DigniFi</span><span class="pm-flag ok">Approved</span></div>
-              <div class="pm-amt">$5,600.00</div>
-              <div class="pm-line">Covers the full $1,850.00 invoice</div>
-              <span class="pm-flag ok">$0 down</span>
-              <div class="pm-btn">Continue with DigniFi</div>
-            </div>
-
-            <div class="provider-mini sunbit">
-              <div class="pm-top"><span class="pm-name">Sunbit</span><span class="pm-flag ok">Approved</span></div>
-              <div class="pm-amt">$1,500.00</div>
-              <div class="pm-line">$1,050.00 financed after down payment</div>
-              <span class="pm-flag warn">$450 down today</span><span class="pm-flag gap">$350 short of invoice</span>
-              <div class="pm-btn">Continue with Sunbit</div>
-            </div>
+            ${offerSummaryReady(true)}
           </div>
         </div>
       </div>` : `
@@ -1006,9 +841,14 @@ const TOUCHPOINTS = [
         desc: "One last lookup before locking the invoice, confirming both offers are still active and reading their terms.",
         request: { referenceId: "RO-88213" },
         response: { status: 200, offers: [
-          { provider: "dignifi", checkoutId: "chk_9f21ab", approvalCeilingCents: DIGNIFI_APPROVAL_CENTS, downPaymentRequiredCents: 0 },
-          { provider: "sunbit", applicationId: "snb_2b88f1", approvalCeilingCents: SUNBIT_APPROVAL_CENTS, downPaymentRequiredCents: SUNBIT_DOWN_CENTS },
+          { provider: "dignifi", checkoutId: "chk_9f21ab", approvalCeilingCents: DIGNIFI_APPROVAL_CENTS, downPaymentRequiredCents: 0, aprRange: DIGNIFI_APR },
+          { provider: "sunbit", applicationId: "snb_2b88f1", approvalCeilingCents: SUNBIT_APPROVAL_CENTS, downPaymentRequiredCents: SUNBIT_DOWN_CENTS, aprRange: SUNBIT_APR },
         ] },
+      },
+      {
+        type: "note",
+        label: "The consumer chooses here",
+        desc: "Tap “View my offers” in the preview to open the same side‑by‑side comparison the consumer sees — they have to select DigniFi or Sunbit before checkout can proceed.",
       },
       {
         type: "api",
@@ -1016,7 +856,7 @@ const TOUCHPOINTS = [
         method: "POST",
         endpoint: "/api/v1/checkouts/{id}/finalize",
         name: "DigniFi · Finalize Checkout Transaction Amount",
-        desc: "The consumer selects DigniFi. The invoice is locked at $1,850.00 — comfortably inside the $5,600 approval, $0 down.",
+        desc: "Example path: the consumer selects DigniFi. The invoice is locked at $1,850.00 — comfortably inside the $5,600 approval, $0 down.",
         request: { checkoutId: "chk_9f21ab", finalAmountCents: RO_TOTAL_CENTS },
         response: { status: 200, checkoutId: "chk_9f21ab", checkoutStatus: "FINALIZED", checkoutUrl: "https://pay.dignifi.com/c/9f21ab" },
       },
@@ -1032,7 +872,7 @@ const TOUCHPOINTS = [
       {
         type: "note",
         label: "If Sunbit had been chosen instead",
-        desc: "Finalize would lock at Sunbit's $1,500.00 approval, financedAmountCents 105000 after the $450.00 down payment — leaving a $350.00 balance the consumer would need to cover separately, since Sunbit's offer doesn't fully reach the $1,850.00 invoice.",
+        desc: "Finalize would lock at Sunbit's $1,500.00 approval, financedAmountCents 105000 after the $450.00 down payment — leaving a $350.00 balance the consumer would need to cover separately. Sunbit's APR on that balance would also run roughly double DigniFi's (19.99–29.99% vs. 9.99–29.99%), both capped at the state maximum.",
       },
     ] : [
       {
@@ -1060,7 +900,7 @@ const TOUCHPOINTS = [
         delay: "moments later",
         desc: "The consumer completes DigniFi's hosted flow at the point of sale and is approved for the full invoice.",
         request: null,
-        response: { event: "checkout.approved", checkoutId: "chk_k3c024", checkoutStatus: "PREQUALIFIED", approvalCeilingCents: DIGNIFI_APPROVAL_CENTS },
+        response: { event: "checkout.approved", checkoutId: "chk_k3c024", checkoutStatus: "PREQUALIFIED", approvalCeilingCents: DIGNIFI_APPROVAL_CENTS, aprRange: DIGNIFI_APR },
       },
       {
         type: "api",
@@ -1081,17 +921,17 @@ const TOUCHPOINTS = [
   },
   {
     id: "handoff",
-    label: "Inside a Provider's Experience",
-    title: "Inside a Provider's Experience",
+    label: "Inside DigniFi's Experience",
+    title: "Inside DigniFi's Experience",
     stage: "handoff",
-    desc: () => "The moment a consumer taps a provider's link — from Scheduling, Confirmation, or a Manual Invite — they leave your site entirely and land inside that provider's own hosted flow. Each provider's experience is separate; compare DigniFi's and Sunbit's below.",
+    desc: () => "The moment a consumer taps a DigniFi link — from Scheduling, Confirmation, or a Manual Invite — they leave your site entirely. These are the actual screens they walk through before they're handed back.",
     session: () => null,
     isVisualJourney: true,
   },
 ];
 
 // ---------------------------------------------------------------------
-// Provider-specific hosted journeys (Tab 6)
+// DigniFi's hosted journey (Tab 6)
 // ---------------------------------------------------------------------
 function dignifiJourney(){
   return `
@@ -1134,7 +974,7 @@ function dignifiJourney(){
       <div class="mini-step-n">3</div>
       <div class="mini-header"><span class="mini-logo">Digni<span>Fi</span></span></div>
       <div class="mini-title">Home Address & Personal Details</div>
-      <div class="mini-sub">Street, city, state, ZIP — then SSN/ITIN, date of birth, and monthly income.</div>
+      <div class="mini-sub">Street, city, state, ZIP — then SSN/ITIN, date of birth, and monthly income. “Safe, secure, and won't impact your credit score.”</div>
       <div class="mini-fieldrow"><div class="mini-field">Street Address</div><div class="mini-field">City</div></div>
       <div class="mini-fieldrow"><div class="mini-field">SSN / ITIN</div><div class="mini-field">Date of Birth</div></div>
       <div class="mini-field">Monthly Income</div>
@@ -1142,14 +982,47 @@ function dignifiJourney(){
     </div>
 
     <div class="jconnector"></div>
-    <div class="mini-screen" style="max-width:260px;">
+    <div class="mini-screen" style="max-width:300px;">
       <div class="mini-step-n">4</div>
+      <div class="mini-header"><span class="mini-logo">Digni<span>Fi</span></span></div>
+      <div class="mini-title">Vehicle Information</div>
+      <div class="mini-sub">Select the type of vehicle you're seeking financing for.</div>
+      <div class="mini-radio-row">
+        <div class="mini-radio sel"><span class="dot"></span>Automobile</div>
+        <div class="mini-radio"><span class="dot"></span>Motorcycle</div>
+        <div class="mini-radio"><span class="dot"></span>RV</div>
+      </div>
+      <div class="mini-fieldrow"><div class="mini-field">Year</div><div class="mini-field">Make</div><div class="mini-field">Model</div></div>
+      <div class="mini-btn">🔒 Continue</div>
+    </div>
+
+    <div class="jconnector"></div>
+    <div class="mini-screen" style="max-width:260px;">
+      <div class="mini-step-n">5</div>
       <div class="mini-processing">
         <div class="mini-spinner"></div>
         <div class="mini-title" style="margin-bottom:0;">Reviewing your information</div>
         <div class="mini-sub" style="margin-bottom:0;">Soft credit pull via Equifax. Do not close the browser.</div>
       </div>
     </div>
+
+    <div class="jconnector"></div>
+    <div class="decision-block">
+      <div class="decision-badge-wrap"><span class="decision-badge">◆ Decision: Soft Credit Pull</span></div>
+      <div class="decision-branches">
+        <div class="branch declined">
+          <div class="branch-label">✕ Unsuccessful</div>
+          Consumer is routed to a paused-application screen and asked to verify details or try again later.
+        </div>
+        <div class="branch go">
+          <div class="branch-label">✓ Valid — continues</div>
+          Moves on to full underwriting. No credit impact yet.
+        </div>
+      </div>
+    </div>
+
+    <div class="jconnector"></div>
+    <div class="purple-note">DigniFi underwrites the applicant</div>
 
     <div class="jconnector"></div>
     <div class="decision-block">
@@ -1168,12 +1041,12 @@ function dignifiJourney(){
 
     <div class="jconnector"></div>
     <div class="mini-screen" style="max-width:320px; text-align:center;">
-      <div class="mini-step-n">5</div>
+      <div class="mini-step-n">6</div>
       <div class="mini-header" style="justify-content:center;"><span class="mini-logo">Digni<span>Fi</span></span></div>
       <div class="mini-title">Congratulations!</div>
       <div class="mini-sub">You've prequalified for a RoadWay Installment Loan, issued by WebBank, for up to</div>
       <div class="mini-approved-amt">$5,600.00</div>
-      <div class="mini-note">$0 down payment required — the full approval is available whenever it's needed.</div>
+      <div class="mini-note">$0 down payment required — APR as low as 9.99%, up to your state's maximum. Consumers may instead qualify for ExpressWay, a revolving line of credit, depending on underwriting.</div>
       <div class="event-tag"><span class="ping"></span>checkout.approved fires to partner here</div>
     </div>
 
@@ -1185,10 +1058,15 @@ function dignifiJourney(){
         <div class="rurl">preliminaryRedirectUri from the original broadcast<br>https://partner.example.com/schedule<span class="q">?checkoutId=chk_9f21ab&status=prequalified</span></div>
       </div>
     </div>
+    <p style="text-align:center; font-size:11px; color:var(--gray); max-width:440px; margin:8px auto 0; line-height:1.6;">
+      This only happens if a <b>preliminaryRedirectUri</b> was supplied on the original broadcast. If it wasn't, the consumer just continues straight into Act 2 below without ever leaving DigniFi.
+    </p>
 
-    <div class="act-divider"><div class="act-divider-label">Meanwhile, back with the partner</div></div>
-    <p style="text-align:center; font-size:11.5px; color:var(--gray); max-width:460px; margin:0 auto 4px; line-height:1.6;">
-      The consumer is back on your site with a $5,600.00 approval attached to chk_9f21ab — and, independently, whatever Sunbit approved. Every touchpoint in between just calls <b>GET /offers</b> to read both, exactly like the Confirmation and MPI tabs show.
+    <div class="act-divider">
+      <div class="act-divider-label">Meanwhile, back with the partner</div>
+    </div>
+    <p style="text-align:center; font-size:11.5px; color:var(--gray); max-width:440px; margin:0 auto 4px; line-height:1.6;">
+      The consumer is back on your site with a $5,600.00 approval attached to chk_9f21ab — and, independently, whatever Sunbit approved. This could be minutes or days later — they finish the MPI, the repair happens, the invoice gets finalized. Every touchpoint in between just calls <b>GET /offers</b> to read this same approval, exactly like the Confirmation and MPI tabs show.
     </p>
 
     <div class="act-header act-header-final">
@@ -1204,21 +1082,21 @@ function dignifiJourney(){
 
     <div class="jconnector"></div>
     <div class="mini-screen" style="max-width:340px;">
-      <div class="mini-step-n">6</div>
+      <div class="mini-step-n">7</div>
       <div class="mini-header"><span class="mini-logo">Digni<span>Fi</span></span></div>
       <div class="mini-title">Select Your Loan Package</div>
       <div class="mini-sub">Based on your finalized $1,850.00 invoice.</div>
       <table class="mini-table">
-        <tr><th></th><th>Monthly</th><th>Term</th></tr>
-        <tr><td>◉ Option A</td><td>$77.00</td><td>24 mo</td></tr>
-        <tr><td>○ Option B</td><td>$51.39</td><td>36 mo</td></tr>
+        <tr><th></th><th>Monthly</th><th>Term</th><th>APR</th></tr>
+        <tr><td>◉ Option A</td><td>$77.00</td><td>24 mo</td><td>9.99%</td></tr>
+        <tr><td>○ Option B</td><td>$51.39</td><td>36 mo</td><td>11.99%</td></tr>
       </table>
       <div class="mini-btn">🔒 Save Terms & Continue</div>
     </div>
 
     <div class="jconnector"></div>
     <div class="mini-screen" style="max-width:340px;">
-      <div class="mini-step-n">7</div>
+      <div class="mini-step-n">8</div>
       <div class="mini-header"><span class="mini-logo">Digni<span>Fi</span></span></div>
       <div class="mini-title">Finalize Your Loan Agreement</div>
       <div class="mini-sub">Unsecured Loan Agreement (Fixed Rate) — review and agree to terms.</div>
@@ -1229,7 +1107,7 @@ function dignifiJourney(){
 
     <div class="jconnector"></div>
     <div class="mini-screen" style="max-width:300px; text-align:center;">
-      <div class="mini-step-n">8</div>
+      <div class="mini-step-n">9</div>
       <div class="mini-header" style="justify-content:center;"><span class="mini-logo">Digni<span>Fi</span></span></div>
       <div class="mini-title">You've successfully signed your loan documents.</div>
       <div class="mini-sub">Check your email for a copy of your signed documents.</div>
@@ -1245,168 +1123,110 @@ function dignifiJourney(){
         <div class="rurl">redirectUri from the original broadcast<br>https://partner.example.com/checkout<span class="q">?checkoutId=chk_9f21ab&status=completed</span></div>
       </div>
     </div>
+
     <p style="text-align:center; font-size:11.5px; color:var(--gray); max-width:480px; margin:18px auto 0; line-height:1.6;">
-      The redirect just returns the consumer to the page they were already on in your existing flow. If the consumer is declined instead, the same pattern applies with <code>checkout.declined</code>.
+      The redirect just returns the consumer to the page they were already on in your existing flow — it's not a new page you have to build. The actual status update comes from the webhook firing separately, in the background. If the consumer is declined instead, the same pattern applies with <code>checkout.declined</code>.
     </p>`;
 }
 
-function sunbitJourney(){
+// ---------------------------------------------------------------------
+// Offers comparison modal
+// ---------------------------------------------------------------------
+let modalSelected = null;
+let modalEstimateKnown = false;
+
+function offerPickMarkup(provider, estimateKnown){
+  if(provider === "dignifi"){
+    return `
+      <div class="offer-pick dignifi" data-provider="dignifi" onclick="selectOffer('dignifi')">
+        <div class="op-top">
+          <img class="op-logo" src="${DIGNIFI_LOGO}" alt="DigniFi">
+          <div class="op-radio"></div>
+        </div>
+        <div class="op-amt">$5,600.00</div>
+        <div class="op-amtlabel">approved</div>
+        <div class="op-rows">
+          <div><span class="k">APR</span><span class="v">${DIGNIFI_APR}</span></div>
+          <div><span class="k">Down payment</span><span class="v">$0.00</span></div>
+          ${estimateKnown ? `<div><span class="k">Financing today's repair</span><span class="v">$1,850.00</span></div><div><span class="k">Est. payment</span><span class="v">$77/mo · 24 mo</span></div>` : `<div><span class="k">Financing today's repair</span><span class="v">Shown once your estimate is ready</span></div>`}
+        </div>
+        <div class="op-flags">
+          <span class="op-flag ok">$0 down</span>
+          ${estimateKnown ? `<span class="op-flag ok">Covers full repair</span>` : ""}
+        </div>
+      </div>`;
+  }
   return `
-    <div class="act-header act-header-mid">
-      <span class="sw"></span>Act 1 · Prequalification — begins at Scheduling, Confirmation, or Manual Invite
-    </div>
-    <div class="redirect-banner">
-      <span class="arrow">→</span>
-      <div class="rtext">
-        <div class="rtitle">Redirect In</div>
-        <div class="rurl">applicationUrl from the broadcast<br>https://pay.sunbit.com<span class="q">/a/2b88f1</span></div>
+    <div class="offer-pick sunbit" data-provider="sunbit" onclick="selectOffer('sunbit')">
+      <div class="op-top">
+        <img class="op-logo" src="${SUNBIT_LOGO}" alt="Sunbit">
+        <div class="op-radio"></div>
       </div>
-    </div>
-
-    <div class="jconnector"></div>
-    <div class="mini-screen" style="max-width:340px;">
-      <div class="mini-step-n amber">1</div>
-      <div class="mini-header"><span class="mini-logo amber">Sunbit</span></div>
-      <div class="mini-title">Create Account</div>
-      <div class="mini-sub">“City Auto Group has partnered with Sunbit to provide access to financing. It only takes a minute and won't impact your credit score.”</div>
-      <div class="mini-fieldrow"><div class="mini-field">First Name</div><div class="mini-field">Last Name</div></div>
-      <div class="mini-field">Mobile Number</div>
-      <div class="mini-field">Email Address</div>
-      <div class="mini-btn amber">🔒 Create Account</div>
-    </div>
-
-    <div class="jconnector"></div>
-    <div class="mini-screen" style="max-width:300px;">
-      <div class="mini-step-n amber">2</div>
-      <div class="mini-header"><span class="mini-logo amber">Sunbit</span></div>
-      <div class="mini-title">Verify Your Mobile Number</div>
-      <div class="mini-sub">Enter the six-digit code sent to (•••) •••-4471.</div>
-      <div class="mini-field">Verification Code</div>
-      <div class="mini-btn amber">🔒 Verify</div>
-    </div>
-
-    <div class="jconnector"></div>
-    <div class="mini-screen" style="max-width:340px;">
-      <div class="mini-step-n amber">3</div>
-      <div class="mini-header"><span class="mini-logo amber">Sunbit</span></div>
-      <div class="mini-title">Personal Details</div>
-      <div class="mini-sub">Address, SSN/ITIN, date of birth, and income — used for a soft eligibility check.</div>
-      <div class="mini-fieldrow"><div class="mini-field">Street Address</div><div class="mini-field">City</div></div>
-      <div class="mini-fieldrow"><div class="mini-field">SSN / ITIN</div><div class="mini-field">Date of Birth</div></div>
-      <div class="mini-field">Monthly Income</div>
-      <div class="mini-btn amber">🔒 Continue</div>
-    </div>
-
-    <div class="jconnector"></div>
-    <div class="mini-screen" style="max-width:260px;">
-      <div class="mini-step-n amber">4</div>
-      <div class="mini-processing">
-        <div class="mini-spinner" style="border-top-color:var(--pending);"></div>
-        <div class="mini-title" style="margin-bottom:0;">Checking your eligibility</div>
-        <div class="mini-sub" style="margin-bottom:0;">Soft credit pull. Do not close the browser.</div>
+      <div class="op-amt">$1,500.00</div>
+      <div class="op-amtlabel">approved</div>
+      <div class="op-rows">
+        <div><span class="k">APR</span><span class="v">${SUNBIT_APR}</span></div>
+        <div><span class="k">Down payment</span><span class="v">${estimateKnown ? "$450.00 (30%)" : "~30% — exact amount once your invoice is final"}</span></div>
+        ${estimateKnown ? `<div><span class="k">Financed after down payment</span><span class="v">$1,050.00</span></div><div><span class="k">Est. payment</span><span class="v">$44/mo · 24 mo</span></div>` : `<div><span class="k">Financing today's repair</span><span class="v">Shown once your estimate is ready</span></div>`}
       </div>
-    </div>
-
-    <div class="jconnector"></div>
-    <div class="decision-block">
-      <div class="decision-badge-wrap"><span class="decision-badge">◆ Decision: Eligibility Check</span></div>
-      <div class="decision-branches">
-        <div class="branch declined">
-          <div class="branch-label">✕ Declined</div>
-          “We're not able to approve this application right now.” Credit score is unaffected.
-        </div>
-        <div class="branch go">
-          <div class="branch-label">✓ Approved — continues</div>
-          Approved with a down payment requirement, based on Sunbit's underwriting.
-        </div>
+      <div class="op-flags">
+        <span class="op-flag warn">${estimateKnown ? "$450 down today" : "~30% down"}</span>
+        ${estimateKnown ? `<span class="op-flag gap">$350 short of repair</span>` : ""}
       </div>
-    </div>
-
-    <div class="jconnector"></div>
-    <div class="mini-screen" style="max-width:320px; text-align:center;">
-      <div class="mini-step-n amber">5</div>
-      <div class="mini-header" style="justify-content:center;"><span class="mini-logo amber">Sunbit</span></div>
-      <div class="mini-title">You're approved!</div>
-      <div class="mini-sub">You've prequalified for financing up to</div>
-      <div class="mini-approved-amt">$1,500.00</div>
-      <div class="down-highlight">
-        <div class="dh-title">Down payment required</div>
-        <div class="dh-amt">$450.00 <span style="font-size:11px;font-weight:600;">(30%)</span></div>
-        <div class="dh-sub">Amount financed after down payment: $1,050.00</div>
-      </div>
-      <div class="gap-note">Today's repair is $1,850.00 — after this $450.00 down payment and $1,050.00 financed, there's still a <b>$350.00</b> balance this offer doesn't cover.</div>
-      <div class="event-tag"><span class="ping" style="background:var(--pending);"></span>application.approved fires to partner here</div>
-    </div>
-
-    <div class="jconnector"></div>
-    <div class="redirect-banner">
-      <span class="arrow">←</span>
-      <div class="rtext">
-        <div class="rtitle">Redirect Out — End of Act 1</div>
-        <div class="rurl">preliminaryRedirectUri from the original broadcast<br>https://partner.example.com/schedule<span class="q">?applicationId=snb_2b88f1&status=prequalified</span></div>
-      </div>
-    </div>
-
-    <div class="act-divider"><div class="act-divider-label">Meanwhile, back with the partner</div></div>
-    <p style="text-align:center; font-size:11.5px; color:var(--gray); max-width:460px; margin:0 auto 4px; line-height:1.6;">
-      The consumer is back on your site with a $1,500.00 approval — and a down payment obligation — attached to snb_2b88f1, alongside whatever DigniFi approved independently.
-    </p>
-
-    <div class="act-header act-header-final">
-      <span class="sw"></span>Act 2 · Collect Down Payment &amp; Sign — begins at Checkout
-    </div>
-    <div class="redirect-banner">
-      <span class="arrow">→</span>
-      <div class="rtext">
-        <div class="rtitle">Redirect In — from Payment &amp; Checkout</div>
-        <div class="rurl">applicationUrl, resumed with the finalized amount<br>https://pay.sunbit.com<span class="q">/a/2b88f1</span></div>
-      </div>
-    </div>
-
-    <div class="jconnector"></div>
-    <div class="mini-screen" style="max-width:320px;">
-      <div class="mini-step-n amber">6</div>
-      <div class="mini-header"><span class="mini-logo amber">Sunbit</span></div>
-      <div class="mini-title">Pay Your Down Payment</div>
-      <div class="mini-sub">$450.00 due today before financing the remaining $1,050.00.</div>
-      <div class="mini-field">Card Number</div>
-      <div class="mini-fieldrow"><div class="mini-field">Exp. Date</div><div class="mini-field">CVC</div></div>
-      <div class="mini-btn amber">🔒 Pay $450.00 & Continue</div>
-    </div>
-
-    <div class="jconnector"></div>
-    <div class="mini-screen" style="max-width:340px;">
-      <div class="mini-step-n amber">7</div>
-      <div class="mini-header"><span class="mini-logo amber">Sunbit</span></div>
-      <div class="mini-title">Finalize Your Agreement</div>
-      <div class="mini-sub">Retail Installment Contract for $1,050.00 — review and agree to terms.</div>
-      <div class="mini-field">✓ Fully Viewed</div>
-      <div class="mini-btn amber">🔒 Accept Offer</div>
-      <div class="mini-note">Accepting authorizes a <b>hard credit inquiry</b> — the only one in this journey, and it only happens here at Act 2.</div>
-    </div>
-
-    <div class="jconnector"></div>
-    <div class="mini-screen" style="max-width:300px; text-align:center;">
-      <div class="mini-step-n amber">8</div>
-      <div class="mini-header" style="justify-content:center;"><span class="mini-logo amber">Sunbit</span></div>
-      <div class="mini-title">You've paid your down payment and signed.</div>
-      <div class="mini-sub">Check your email for a copy of your signed agreement.</div>
-      <div class="mini-btn dark">Continue</div>
-      <div class="event-tag signed"><span class="ping" style="background:#8FB8DB;"></span>application.completed fires to partner here</div>
-    </div>
-
-    <div class="jconnector"></div>
-    <div class="redirect-banner">
-      <span class="arrow">←</span>
-      <div class="rtext">
-        <div class="rtitle">Redirect Out — End of Act 2</div>
-        <div class="rurl">redirectUri from the original broadcast<br>https://partner.example.com/checkout<span class="q">?applicationId=snb_2b88f1&status=completed</span></div>
-      </div>
-    </div>
-    <p style="text-align:center; font-size:11.5px; color:var(--gray); max-width:480px; margin:18px auto 0; line-height:1.6;">
-      The $350.00 gap between the $1,850.00 invoice and what Sunbit covers still needs to be settled through another payment method — Sunbit's redirect doesn't resolve that on its own.
-    </p>`;
+    </div>`;
 }
+
+function renderOffersModal(){
+  const card = document.getElementById("offersModalCard");
+  const note = modalEstimateKnown
+    ? "Terms below reflect today's finalized $1,850.00 repair total."
+    : "Your shop hasn't finalized your invoice yet — approval amounts and APR are ready to compare now. Exact down payment and monthly payment will show once your estimate is ready.";
+  card.innerHTML = `
+    <button class="modal-close-x" onclick="closeOffersModal()">✕</button>
+    <div class="modal-title">Your payment plan offers</div>
+    <div class="modal-sub">Compare terms, then choose which one to move forward with.</div>
+    <div class="modal-note">${note}</div>
+    ${offerPickMarkup("dignifi", modalEstimateKnown)}
+    ${offerPickMarkup("sunbit", modalEstimateKnown)}
+    <button class="modal-continue" id="modalContinueBtn" disabled onclick="confirmOffer()">Select an offer to continue</button>
+  `;
+}
+
+function openOffersModal(estimateKnown){
+  modalEstimateKnown = !!estimateKnown;
+  modalSelected = null;
+  renderOffersModal();
+  document.getElementById("offersModal").classList.add("open");
+}
+function closeOffersModal(){
+  document.getElementById("offersModal").classList.remove("open");
+}
+function selectOffer(provider){
+  modalSelected = provider;
+  document.querySelectorAll(".offer-pick").forEach(el => el.classList.toggle("selected", el.dataset.provider === provider));
+  const btn = document.getElementById("modalContinueBtn");
+  btn.disabled = false;
+  btn.textContent = "Continue with " + (provider === "dignifi" ? "DigniFi" : "Sunbit");
+}
+function confirmOffer(){
+  const card = document.getElementById("offersModalCard");
+  const name = modalSelected === "dignifi" ? "DigniFi" : "Sunbit";
+  const msg = modalEstimateKnown
+    ? "This offer is ready to finalize — completing checkout hands the consumer into this provider's own hosted flow to sign."
+    : "We'll hold this as the consumer's preference until the final invoice is ready — down payment and monthly payment will be confirmed then.";
+  card.innerHTML = `
+    <button class="modal-close-x" onclick="closeOffersModal()">✕</button>
+    <div class="modal-confirm">
+      <div class="mc-icon">✓</div>
+      <div class="mc-title">Continuing with ${name}</div>
+      <div class="mc-sub">${msg}</div>
+      <button class="modal-continue" style="margin-top:18px;" onclick="closeOffersModal()">Done</button>
+    </div>`;
+}
+
+document.getElementById("offersModal").addEventListener("click", (e) => {
+  if(e.target.id === "offersModal") closeOffersModal();
+});
 
 // ---------------------------------------------------------------------
 // Render
@@ -1424,7 +1244,6 @@ const segYes = document.getElementById("segYes");
 let activeIndex = 0;
 let running = false;
 let consumerPrequalified = false;
-let handoffProvider = "dignifi";
 
 function syntaxHighlight(obj) {
   const json = JSON.stringify(obj, null, 2);
@@ -1465,18 +1284,6 @@ function resolve(val, arg) {
   return typeof val === "function" ? val(arg) : val;
 }
 
-function renderHandoffJourney(){
-  const journeyFull = document.getElementById("journeyFull");
-  const toggle = `
-    <div class="provider-toggle">
-      <button class="pseg ${handoffProvider === "dignifi" ? "on" : ""}" id="provDignifi"><span class="sw" style="background:var(--success)"></span>DigniFi</button>
-      <button class="pseg ${handoffProvider === "sunbit" ? "on" : ""}" id="provSunbit"><span class="sw" style="background:var(--pending)"></span>Sunbit</button>
-    </div>`;
-  journeyFull.innerHTML = toggle + (handoffProvider === "dignifi" ? dignifiJourney() : sunbitJourney());
-  document.getElementById("provDignifi").addEventListener("click", () => { handoffProvider = "dignifi"; renderHandoffJourney(); });
-  document.getElementById("provSunbit").addEventListener("click", () => { handoffProvider = "sunbit"; renderHandoffJourney(); });
-}
-
 function selectTab(i) {
   activeIndex = i;
   running = false;
@@ -1502,7 +1309,7 @@ function selectTab(i) {
   if (t.isVisualJourney) {
     panelgrid.classList.add("hidden");
     journeyFull.classList.add("active");
-    renderHandoffJourney();
+    journeyFull.innerHTML = dignifiJourney();
     return;
   }
   panelgrid.classList.remove("hidden");
