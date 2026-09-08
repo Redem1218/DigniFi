@@ -131,6 +131,11 @@
   .modal-confirm .mc-icon{font-size:32px;margin-bottom:8px;color:#1F8A55;}
   .modal-confirm .mc-title{font-weight:800;font-size:15.5px;margin-bottom:6px;}
   .modal-confirm .mc-sub{font-size:12.5px;color:var(--gray);line-height:1.5;}
+  .payout-breakdown{border:1px solid var(--pending);border-radius:10px;padding:12px 14px;margin-top:16px;background:#FCF6EC;text-align:left;}
+  .payout-breakdown .pb-heading{font-size:10.5px;font-weight:700;color:#8A5D0E;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:8px;}
+  .payout-breakdown .pb-row{display:flex;justify-content:space-between;font-size:12.5px;padding:5px 0;color:var(--ink);}
+  .payout-breakdown .pb-row .pb-label-sub{display:block;font-size:10px;color:var(--gray);font-weight:400;}
+  .payout-breakdown .pb-row.total{border-top:1px solid #E3C98A;margin-top:4px;padding-top:9px;font-weight:800;font-size:14px;color:#8A5D0E;}
 
   /* ---------- Handoff journey (Inside DigniFi's Experience) ---------- */
   .redirect-banner{ display:flex; align-items:center; gap:12px; background:var(--ink); color:#fff; border-radius:10px; padding:14px 18px; margin-bottom:18px; }
@@ -378,11 +383,13 @@ let selectedProvider = null;
 
 function offerStatusText(estimateKnown){
   if(selectedProvider === "dignifi"){
-    return { title: "✓ Approved for $5,600.00 with DigniFi", sub: "$0 down · 9.99–29.99% APR", linkText: "Change offer" };
+    return { title: "✓ Approved for $5,600.00 with DigniFi", sub: "$0 down · 9.99–29.99% APR · up to 36 mo", linkText: "Change offer" };
   }
   if(selectedProvider === "sunbit"){
-    const downText = estimateKnown ? "$450.00 down" : "~30% down";
-    return { title: "✓ Approved for $1,500.00 with Sunbit", sub: `${downText} · 19.99–29.99% APR`, linkText: "Change offer" };
+    const sub = estimateKnown
+      ? "$450.00 down + $350.00 balance = $800.00 due today · 19.99–29.99% APR · up to 18 mo"
+      : "~30% down · 19.99–29.99% APR · up to 18 mo";
+    return { title: "✓ Approved for $1,500.00 with Sunbit", sub: sub, linkText: "Change offer" };
   }
   return {
     title: "✓ You have 2 payment plan offers",
@@ -1109,7 +1116,7 @@ function dignifiJourney(){
       <div class="mini-step-n">7</div>
       <div class="mini-header"><span class="mini-logo">Digni<span>Fi</span></span></div>
       <div class="mini-title">Select Your Loan Package</div>
-      <div class="mini-sub">Based on your finalized $1,850.00 invoice.</div>
+      <div class="mini-sub">Based on your finalized $1,850.00 invoice. Terms available up to 36 months.</div>
       <table class="mini-table">
         <tr><th></th><th>Monthly</th><th>Term</th><th>APR</th></tr>
         <tr><td>◉ Option A</td><td>$77.00</td><td>24 mo</td><td>9.99%</td></tr>
@@ -1171,8 +1178,9 @@ function offerPickMarkup(provider, estimateKnown){
         <div class="op-amtlabel">approved</div>
         <div class="op-rows">
           <div><span class="k">APR</span><span class="v">${DIGNIFI_APR}</span></div>
+          <div><span class="k">Repayment term</span><span class="v">Up to 36 months</span></div>
           <div><span class="k">Down payment</span><span class="v">$0.00</span></div>
-          ${estimateKnown ? `<div><span class="k">Financing today's repair</span><span class="v">$1,850.00</span></div><div><span class="k">Est. payment</span><span class="v">$77/mo · 24 mo</span></div>` : `<div><span class="k">Financing today's repair</span><span class="v">Shown once your estimate is ready</span></div>`}
+          ${estimateKnown ? `<div><span class="k">Financing today's repair</span><span class="v">$1,850.00</span></div><div><span class="k">Est. payment</span><span class="v">$51.39/mo · 36 mo</span></div>` : `<div><span class="k">Financing today's repair</span><span class="v">Shown once your estimate is ready</span></div>`}
         </div>
         <div class="op-flags">
           <span class="op-flag ok">$0 down</span>
@@ -1190,8 +1198,9 @@ function offerPickMarkup(provider, estimateKnown){
       <div class="op-amtlabel">approved</div>
       <div class="op-rows">
         <div><span class="k">APR</span><span class="v">${SUNBIT_APR}</span></div>
+        <div><span class="k">Repayment term</span><span class="v">Up to 18 months</span></div>
         <div><span class="k">Down payment</span><span class="v">${estimateKnown ? "$450.00 (30%)" : "~30% — exact amount once your invoice is final"}</span></div>
-        ${estimateKnown ? `<div><span class="k">Financed after down payment</span><span class="v">$1,050.00</span></div><div><span class="k">Est. payment</span><span class="v">$44/mo · 24 mo</span></div>` : `<div><span class="k">Financing today's repair</span><span class="v">Shown once your estimate is ready</span></div>`}
+        ${estimateKnown ? `<div><span class="k">Financed after down payment</span><span class="v">$1,050.00</span></div><div><span class="k">Est. payment</span><span class="v">$58/mo · 18 mo</span></div>` : `<div><span class="k">Financing today's repair</span><span class="v">Shown once your estimate is ready</span></div>`}
       </div>
       <div class="op-flags">
         <span class="op-flag warn">${estimateKnown ? "$450 down today" : "~30% down"}</span>
@@ -1240,12 +1249,21 @@ function confirmOffer(){
   const msg = modalEstimateKnown
     ? "This offer is ready to finalize — completing checkout hands the consumer into this provider's own hosted flow to sign."
     : "We'll hold this as the consumer's preference until the final invoice is ready — down payment and monthly payment will be confirmed then.";
+  const showGapBreakdown = modalSelected === "sunbit" && modalEstimateKnown;
+  const gapBreakdown = showGapBreakdown ? `
+    <div class="payout-breakdown">
+      <div class="pb-heading">Due today — Sunbit doesn't cover the full repair</div>
+      <div class="pb-row"><span>Down payment<span class="pb-label-sub">30% of the $1,500.00 approval</span></span><span>$450.00</span></div>
+      <div class="pb-row"><span>Additional balance due<span class="pb-label-sub">Not covered by Sunbit's approval</span></span><span>$350.00</span></div>
+      <div class="pb-row total"><span>Total out of pocket today</span><span>$800.00</span></div>
+    </div>` : "";
   card.innerHTML = `
     <button class="modal-close-x" onclick="closeOffersModal()">✕</button>
     <div class="modal-confirm">
       <div class="mc-icon">✓</div>
       <div class="mc-title">Continuing with ${name}</div>
       <div class="mc-sub">${msg}</div>
+      ${gapBreakdown}
       <button class="modal-continue" style="margin-top:18px;" onclick="closeOffersModal()">Done</button>
     </div>`;
 }
