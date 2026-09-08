@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pay Over Time — Integration Reference (Multi‑Provider)</title>
+<style>
+  :root{
+    --bg:#F6F7F9; --panel:#FFFFFF; --ink:#161A22; --ink-soft:#5C6474; --line:#E4E7EC;
+    --dark:#12151C; --dark-line:rgba(255,255,255,0.08);
+    --accent:#2F5FED; --accent-soft:#EAF0FE;
+    --dignifi:#1A8F5E; --dignifi-soft:#E7F5EE;
+    --sunbit:#C87A17; --sunbit-soft:#FBF0E1;
+    --good:#1A8F5E; --warn:#C87A17;
+    --mono: "SFMono-Regular", ui-monospace, Menlo, Consolas, monospace;
+    font-family:-apple-system,"Segoe UI","Inter",Helvetica,Arial,sans-serif;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;background:var(--bg);color:var(--ink);}
+  body{font-size:14px;line-height:1.5;}
+
+  .topbar{background:var(--dark);color:#fff;padding:14px 34px;display:flex;align-items:center;justify-content:space-between;}
+  .topbar .brand{display:flex;align-items:center;gap:9px;font-weight:600;font-size:14px;}
+  .topbar .brand .mark{width:22px;height:22px;border-radius:6px;background:var(--accent);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;}
+  .topbar .tag{font-size:11.5px;color:#9aa2b1;}
+
+  .wrap{max-width:1180px;margin:0 auto;padding:36px 34px 70px;}
+  h1{font-size:25px;margin:0 0 10px;letter-spacing:-.3px;max-width:780px;}
+  .intro{color:var(--ink-soft);font-size:14px;max-width:760px;margin:0 0 26px;}
+  .intro b{color:var(--ink);}
+
+  /* Simulate toggle */
+  .sim-row{display:flex;align-items:center;gap:12px;flex-wrap:wrap;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px 16px;margin-bottom:26px;box-shadow:0 1px 2px rgba(23,30,43,.05);}
+  .sim-row .sim-label{font-size:12.5px;color:var(--ink-soft);}
+  .sim-toggle{display:inline-flex;background:var(--bg);border:1px solid var(--line);border-radius:999px;padding:3px;}
+  .sim-toggle button{border:0;background:transparent;padding:6px 14px;border-radius:999px;font-size:12.5px;font-weight:600;color:var(--ink-soft);cursor:pointer;font-family:inherit;}
+  .sim-toggle button.active{background:var(--ink);color:#fff;}
+
+  /* Tabs */
+  .tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:22px;border-bottom:1px solid var(--line);padding-bottom:0;}
+  .tab{border:0;background:transparent;padding:10px 4px;margin-right:18px;font-size:13.5px;font-weight:600;color:var(--ink-soft);cursor:pointer;font-family:inherit;border-bottom:2px solid transparent;}
+  .tab.active{color:var(--ink);border-bottom-color:var(--accent);}
+
+  /* Two column panel */
+  .panels{display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:start;}
+  @media (max-width:900px){.panels{grid-template-columns:1fr;}}
+
+  .panel{background:var(--panel);border:1px solid var(--line);border-radius:12px;box-shadow:0 1px 2px rgba(23,30,43,.05);overflow:hidden;}
+  .panel-head{padding:13px 18px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;}
+  .panel-head .t{font-size:12px;font-weight:700;color:var(--ink-soft);letter-spacing:.2px;}
+  .panel-body{padding:20px;}
+
+  /* Consumer experience mock */
+  .device-chrome{display:flex;align-items:center;gap:7px;background:#EEF0F4;border-radius:8px 8px 0 0;padding:8px 12px;font-size:11px;color:var(--ink-soft);margin:-20px -20px 16px;}
+  .device-chrome .dots span{display:inline-block;width:7px;height:7px;border-radius:50%;background:#CBD1DB;margin-right:4px;}
+
+  .ctx-line{font-size:12px;color:var(--ink-soft);margin-bottom:14px;}
+  .ro-amt{font-size:22px;font-weight:700;margin-bottom:2px;}
+  .ro-label{font-size:12px;color:var(--ink-soft);margin-bottom:18px;}
+
+  .pot-box{border:1px solid var(--line);border-radius:10px;padding:16px;background:var(--bg);}
+  .pot-box .pot-title{font-size:13.5px;font-weight:700;margin-bottom:4px;}
+  .pot-box .pot-sub{font-size:12px;color:var(--ink-soft);margin-bottom:14px;}
+  .pot-cta{width:100%;border:0;border-radius:9px;padding:13px;font-weight:700;font-size:13.5px;font-family:inherit;cursor:pointer;background:var(--ink);color:#fff;}
+  .pot-cta.prequal{background:var(--good);}
+  .pot-fine{font-size:10.5px;color:var(--ink-soft);margin-top:8px;}
+
+  .state-note{margin-top:14px;font-size:12px;padding:10px 12px;border-radius:8px;background:var(--accent-soft);color:var(--accent);display:none;}
+  .state-note.show{display:block;}
+
+  /* API log panel */
+  .run-btn{border:0;background:var(--ink);color:#fff;border-radius:8px;padding:7px 14px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;}
+  .run-btn:disabled{opacity:.5;cursor:default;}
+  .log{font-family:var(--mono);font-size:11.5px;line-height:1.7;min-height:220px;color:var(--ink-soft);}
+  .log .placeholder{color:#9aa2b1;font-style:italic;}
+  .log-line{opacity:0;animation:fadein .25s ease forwards;padding:3px 0;border-bottom:1px dashed #EEF0F4;}
+  @keyframes fadein{to{opacity:1;}}
+  .log-line .src{color:var(--accent);font-weight:700;}
+  .log-line .src.dignifi{color:var(--dignifi);}
+  .log-line .src.sunbit{color:var(--sunbit);}
+  .log-line .arrow{color:#B7BEC9;margin:0 6px;}
+  .log-line .note{display:block;color:#9aa2b1;margin:2px 0 0 0;font-family:-apple-system,sans-serif;font-size:11px;}
+
+  .footer-legal{margin-top:40px;font-size:11px;color:#9aa2b1;border-top:1px solid var(--line);padding-top:16px;max-width:900px;}
+
+  /* Hosted comparison (tab 6) */
+  .hosted-wrap{display:flex;gap:24px;flex-wrap:wrap;align-items:flex-start;}
+  .hosted-copy{flex:1;min-width:260px;}
+  .hosted-copy h2{font-size:17px;margin:0 0 8px;}
+  .hosted-copy p{color:var(--ink-soft);font-size:13px;max-width:420px;}
+  .hosted-copy .step{display:flex;gap:10px;margin-top:16px;font-size:12.5px;}
+  .hosted-copy .step .n{flex:none;width:20px;height:20px;border-radius:50%;background:var(--accent-soft);color:var(--accent);font-weight:700;font-size:11px;display:flex;align-items:center;justify-content:center;}
+  .hosted-copy .step .tx{color:var(--ink-soft);}
+
+  .phone{width:320px;background:#0B0F17;border-radius:30px;padding:11px;box-shadow:0 20px 50px rgba(23,30,43,.22);flex:none;}
+  .phone-screen{background:#fff;border-radius:20px;overflow:hidden;min-height:520px;display:flex;flex-direction:column;}
+  .phone-status{height:24px;display:flex;align-items:center;justify-content:center;font-size:10.5px;color:#9aa2b1;}
+  .phone-head{padding:2px 18px 12px;text-align:center;}
+  .phone-head .shop{font-size:11px;color:var(--ink-soft);}
+  .phone-head h3{font-size:15.5px;margin:2px 0 0;}
+  .phone-head .amt{font-size:11.5px;color:var(--ink-soft);margin-top:3px;}
+  .phone-cards{padding:2px 14px 14px;display:flex;flex-direction:column;gap:10px;flex:1;}
+  .pcard{border:1.5px solid var(--line);border-radius:12px;padding:13px;}
+  .pcard .prow{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;}
+  .pcard .pname{font-weight:700;font-size:13.5px;display:flex;align-items:center;gap:6px;}
+  .pcard .pname .sw{width:7px;height:7px;border-radius:50%;}
+  .pcard .pbadge{font-size:9.5px;font-weight:700;padding:2px 7px;border-radius:999px;}
+  .pcard .pamt{font-size:19px;font-weight:700;margin-bottom:6px;}
+  .pcard .pline{font-size:11.5px;color:var(--ink-soft);}
+  .pcard .pline .v{color:var(--ink);font-weight:600;}
+  .pcard .callout{margin-top:8px;font-size:10.5px;border-radius:7px;padding:6px 9px;}
+  .callout.ok{background:var(--dignifi-soft);color:var(--dignifi);}
+  .callout.warn{background:var(--sunbit-soft);color:var(--sunbit);}
+  .callout.gap{background:#FDEEEE;color:#C0392B;margin-top:6px;}
+
+  .hidden{display:none !important;}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="brand"><span class="mark">P</span> Pay Over Time Network</div>
+  <div class="tag">Integration Reference · Internal / Partner Use</div>
+</div>
+
+<div class="wrap">
+  <h1>How each Pay Over Time touchpoint works, end to end — with multiple providers</h1>
+  <p class="intro">A consumer can request <b>Pay Over Time</b> as early as scheduling — no provider name shown, just one neutral CTA. The moment they tap it, the partner platform pings <b>every enrolled financing provider at once</b>. Each provider decisions independently, and if approved, <b>sends its own pre‑qualification invite by text directly to the consumer</b> — not through the partner's own messaging rails. That approval then follows the consumer through every touchpoint after, not just once at checkout. Pick a touchpoint below, then run the flow to see exactly what fires and when. The last tab shows what the consumer sees after tapping into their offers.</p>
+
+  <div class="sim-row">
+    <span class="sim-label">Simulate: consumer already has active Pay Over Time offers heading into this touchpoint?</span>
+    <div class="sim-toggle">
+      <button id="simNot" class="active">Not yet</button>
+      <button id="simYes">Already has offers</button>
+    </div>
+  </div>
+
+  <div class="tabs" id="tabs">
+    <button class="tab active" data-tab="scheduling">Service Scheduling</button>
+    <button class="tab" data-tab="mpi">Digital Inspection (MPI)</button>
+    <button class="tab" data-tab="estimate">Estimate Approval</button>
+    <button class="tab" data-tab="checkout">Checkout</button>
+    <button class="tab" data-tab="followup">Post‑Visit Follow‑Up</button>
+    <button class="tab" data-tab="hosted">Hosted Comparison</button>
+  </div>
+
+  <!-- ===== Standard touchpoint panels (1-5) ===== -->
+  <div id="touchpointView">
+    <div class="panels">
+      <div class="panel">
+        <div class="panel-head"><span class="t">CONSUMER EXPERIENCE</span></div>
+        <div class="panel-body">
+          <div class="device-chrome"><span class="dots"><span></span><span></span><span></span></span><span id="ctxDevice">shophub.com/schedule</span></div>
+          <div class="ctx-line" id="ctxLine">Online booking widget · consumer scheduling a brake service appointment</div>
+          <div class="ro-amt" id="roAmt">$1,850</div>
+          <div class="ro-label" id="roLabel">Estimated service total</div>
+
+          <div class="pot-box">
+            <div class="pot-title" id="potTitle">Pay Over Time</div>
+            <div class="pot-sub" id="potSub">As low as $62/mo for qualified buyers — no provider name shown yet.</div>
+            <button class="pot-cta" id="potCta">See if I qualify</button>
+            <div class="pot-fine">Tapping this checks every enrolled provider at once. No impact to credit score to check.</div>
+          </div>
+          <div class="state-note" id="stateNote"></div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head">
+          <span class="t" id="apiTitle">scheduling-api · live log</span>
+          <button class="run-btn" id="runBtn">Run this flow</button>
+        </div>
+        <div class="panel-body">
+          <div class="log" id="log"><span class="placeholder">Press "Run this flow" to see the exact request, response, and text‑invite sequence behind this touchpoint.</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== Hosted comparison (tab 6) ===== -->
+  <div id="hostedView" class="hidden">
+    <div class="hosted-wrap">
+      <div class="hosted-copy">
+        <h2>What the consumer sees after tapping a provider's text</h2>
+        <p>Each provider sends its own invite text with its own link. Whichever link the consumer opens first — or a partner‑hosted summary page, if the integration includes one — brings together every offer that's come back so far into one side‑by‑side view.</p>
+        <div class="step"><span class="n">1</span><span class="tx">Consumer receives 1–2 separate texts, one per approving provider, each from that provider's own number.</span></div>
+        <div class="step"><span class="n">2</span><span class="tx">Opening either link resolves to the same shared view — every live offer tied to this repair order.</span></div>
+        <div class="step"><span class="n">3</span><span class="tx">Down payment is shown up front for every offer, since it changes what's actually due today.</span></div>
+        <div class="step"><span class="n">4</span><span class="tx">Selecting an offer routes the consumer into that provider's own checkout/signing flow.</span></div>
+      </div>
+
+      <div class="phone">
+        <div class="phone-screen">
+          <div class="phone-status">9:41</div>
+          <div class="phone-head">
+            <div class="shop">Maple Street Auto · Brake service</div>
+            <h3>Choose how to pay</h3>
+            <div class="amt">Total due: $1,850</div>
+          </div>
+          <div class="phone-cards">
+            <div class="pcard">
+              <div class="prow">
+                <div class="pname"><span class="sw" style="background:var(--dignifi)"></span>DigniFi</div>
+                <span class="pbadge" style="background:var(--dignifi-soft);color:var(--dignifi)">Approved</span>
+              </div>
+              <div class="pamt">$5,600 <span style="font-size:11px;font-weight:500;color:var(--ink-soft)">approved</span></div>
+              <div class="pline">Financing today's $1,850 in full · <span class="v">$0 down</span></div>
+              <div class="callout ok">Covers the full repair, $0 due today</div>
+            </div>
+            <div class="pcard">
+              <div class="prow">
+                <div class="pname"><span class="sw" style="background:var(--sunbit)"></span>Sunbit</div>
+                <span class="pbadge" style="background:var(--sunbit-soft);color:var(--sunbit)">Approved</span>
+              </div>
+              <div class="pamt">$1,500 <span style="font-size:11px;font-weight:500;color:var(--ink-soft)">approved</span></div>
+              <div class="pline">~30% down required · <span class="v">$450 due today</span></div>
+              <div class="callout warn">$1,050 financed after down payment</div>
+              <div class="callout gap">Doesn't fully cover the $1,850 repair — $350 short, due separately</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer-legal">This demo application illustrates a multi‑provider Pay Over Time integration and is provided for planning purposes only. Amounts, approvals, and messaging shown are illustrative. Each financing provider issues and services its own offers under its own terms; providers deliver their own pre‑qualification communications directly to the consumer. DigniFi's credit products are issued by WebBank.</div>
+</div>
+
+<script>
+  const touchpoints = {
+    scheduling: {
+      device:"shophub.com/schedule",
+      ctx:"Online booking widget · consumer scheduling a brake service appointment",
+      apiPrefix:"scheduling-api",
+      ctaLabel:"See if I qualify",
+    },
+    mpi: {
+      device:"ShopHub Tech Tablet · Inspection",
+      ctx:"Digital multi‑point inspection results sent to the consumer, brakes flagged",
+      apiPrefix:"mpi-api",
+      ctaLabel:"See if I qualify",
+    },
+    estimate: {
+      device:"ShopHub · Estimate e‑sign",
+      ctx:"Service advisor sends the final estimate for e‑signature approval",
+      apiPrefix:"estimate-api",
+      ctaLabel:"Approve & see if I qualify",
+    },
+    checkout: {
+      device:"ShopHub POS · Checkout",
+      ctx:"Invoice and payment screen at pickup",
+      apiPrefix:"checkout-api",
+      ctaLabel:"Pay Over Time",
+    },
+    followup: {
+      device:"SMS · Post‑visit follow‑up",
+      ctx:"Reminder text sent after the visit about a declined repair",
+      apiPrefix:"followup-api",
+      ctaLabel:"See if I qualify",
+    }
+  };
+
+  let simPrequalified = false;
+  let currentTab = "scheduling";
+
+  const ctxDevice = document.getElementById('ctxDevice');
+  const ctxLine = document.getElementById('ctxLine');
+  const potTitle = document.getElementById('potTitle');
+  const potSub = document.getElementById('potSub');
+  const potCta = document.getElementById('potCta');
+  const stateNote = document.getElementById('stateNote');
+  const apiTitle = document.getElementById('apiTitle');
+  const logEl = document.getElementById('log');
+  const runBtn = document.getElementById('runBtn');
+  const touchpointView = document.getElementById('touchpointView');
+  const hostedView = document.getElementById('hostedView');
+
+  function renderTouchpoint(key){
+    const tp = touchpoints[key];
+    ctxDevice.textContent = tp.device;
+    ctxLine.textContent = tp.ctx;
+    apiTitle.textContent = tp.apiPrefix + " · live log";
+    logEl.innerHTML = '<span class="placeholder">Press "Run this flow" to see the exact request, response, and text‑invite sequence behind this touchpoint.</span>';
+    runBtn.disabled = false;
+    runBtn.textContent = "Run this flow";
+
+    if(simPrequalified){
+      potTitle.textContent = "You're pre‑qualified for Pay Over Time";
+      potSub.textContent = "Offers from 2 providers are already active for this repair order.";
+      potCta.textContent = "Continue with Pay Over Time";
+      potCta.classList.add('prequal');
+      stateNote.classList.remove('show');
+    } else {
+      potTitle.textContent = "Pay Over Time";
+      potSub.textContent = "As low as $62/mo for qualified buyers — no provider name shown yet.";
+      potCta.textContent = tp.ctaLabel;
+      potCta.classList.remove('prequal');
+      stateNote.classList.remove('show');
+    }
+  }
+
+  function addLogLine(html, delay, cls){
+    setTimeout(() => {
+      const div = document.createElement('div');
+      div.className = 'log-line';
+      div.innerHTML = html;
+      if(logEl.querySelector('.placeholder')) logEl.innerHTML = '';
+      logEl.appendChild(div);
+      logEl.scrollTop = logEl.scrollHeight;
+    }, delay);
+  }
+
+  function runFlow(){
+    logEl.innerHTML = '';
+    runBtn.disabled = true;
+    const tp = touchpoints[currentTab];
+    const prefix = tp.apiPrefix;
+
+    if(!simPrequalified){
+      addLogLine(`<span class="src">POST</span> ${prefix}/financing/initiate <span class="arrow">→</span> { ro:"RO‑48291", amount:1850 }`, 150);
+      addLogLine(`<span class="src">partner-api</span> <span class="arrow">→</span> broadcasting to 2 enrolled providers`, 550);
+      addLogLine(`<span class="src dignifi">dignifi-api</span> <span class="arrow">←</span> 200 approved <b>$5,600</b>, $0 down<span class="note">soft pull only, no credit impact</span>`, 1050);
+      addLogLine(`<span class="src sunbit">sunbit-api</span> <span class="arrow">←</span> 200 approved <b>$1,500</b>, ~30% down required<span class="note">soft pull only, no credit impact</span>`, 1500);
+      addLogLine(`<span class="src dignifi">dignifi-notify</span> <span class="arrow">→</span> SMS sent to consumer directly<span class="note">from DigniFi's own number — not sent via ${prefix.split('-')[0]}'s messaging rails</span>`, 2050);
+      addLogLine(`<span class="src sunbit">sunbit-notify</span> <span class="arrow">→</span> SMS sent to consumer directly<span class="note">from Sunbit's own number — not sent via ${prefix.split('-')[0]}'s messaging rails</span>`, 2500);
+      addLogLine(`<span class="src">partner-api</span> <span class="arrow">←</span> webhook: prequal_status = "offers_available" (2 offers linked to RO‑48291)`, 3050);
+      addLogLine(`Consumer state updated: <b>pre‑qualified = true</b> for all remaining touchpoints on this visit`, 3450, );
+      setTimeout(() => {
+        simPrequalified = true;
+        document.getElementById('simYes').classList.add('active');
+        document.getElementById('simNot').classList.remove('active');
+        renderTouchpointCtaOnly();
+        runBtn.disabled = false;
+      }, 3700);
+    } else {
+      addLogLine(`<span class="src">GET</span> ${prefix}/financing/status <span class="arrow">→</span> { ro:"RO‑48291" }`, 150);
+      addLogLine(`<span class="src">partner-api</span> <span class="arrow">←</span> 200 { offers: [dignifi:$5600, sunbit:$1500], status:"active" }`, 650);
+      addLogLine(`No new provider contact made — existing offers are simply surfaced at this touchpoint.`, 1150);
+      setTimeout(() => { runBtn.disabled = false; }, 1350);
+    }
+  }
+
+  // update just the CTA copy without wiping the log, used right after first flow completes
+  function renderTouchpointCtaOnly(){
+    potTitle.textContent = "You're pre‑qualified for Pay Over Time";
+    potSub.textContent = "Offers from 2 providers are already active for this repair order.";
+    potCta.textContent = "Continue with Pay Over Time";
+    potCta.classList.add('prequal');
+  }
+
+  document.querySelectorAll('.tab').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.tab').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      currentTab = btn.dataset.tab;
+      if(currentTab === 'hosted'){
+        touchpointView.classList.add('hidden');
+        hostedView.classList.remove('hidden');
+      } else {
+        hostedView.classList.add('hidden');
+        touchpointView.classList.remove('hidden');
+        renderTouchpoint(currentTab);
+      }
+    });
+  });
+
+  document.getElementById('simNot').addEventListener('click', () => {
+    simPrequalified = false;
+    document.getElementById('simNot').classList.add('active');
+    document.getElementById('simYes').classList.remove('active');
+    if(currentTab !== 'hosted') renderTouchpoint(currentTab);
+  });
+  document.getElementById('simYes').addEventListener('click', () => {
+    simPrequalified = true;
+    document.getElementById('simYes').classList.add('active');
+    document.getElementById('simNot').classList.remove('active');
+    if(currentTab !== 'hosted') renderTouchpoint(currentTab);
+  });
+
+  runBtn.addEventListener('click', runFlow);
+  potCta.addEventListener('click', runFlow);
+
+  renderTouchpoint(currentTab);
+</script>
+
+</body>
+</html>
