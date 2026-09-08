@@ -374,13 +374,37 @@ const STAGES = {
   handoff: { label: "DigniFi‑Hosted", color: "#AB2328" },
 };
 
+let selectedProvider = null;
+
+function offerStatusText(estimateKnown){
+  if(selectedProvider === "dignifi"){
+    return { title: "✓ Approved for $5,600.00 with DigniFi", sub: "$0 down · 9.99–29.99% APR", linkText: "Change offer" };
+  }
+  if(selectedProvider === "sunbit"){
+    const downText = estimateKnown ? "$450.00 down" : "~30% down";
+    return { title: "✓ Approved for $1,500.00 with Sunbit", sub: `${downText} · 19.99–29.99% APR`, linkText: "Change offer" };
+  }
+  return {
+    title: "✓ You have 2 payment plan offers",
+    sub: estimateKnown ? "See exact terms for today's $1,850.00 repair." : "Your final invoice isn't ready yet — approval amounts are ready to view now.",
+    linkText: "View my offers",
+  };
+}
+
 function offerSummaryReady(estimateKnown){
+  const s = offerStatusText(estimateKnown);
   return `
     <div class="offer-summary ready">
-      <div class="ostitle">✓ You have 2 payment plan offers</div>
-      <div class="osub">${estimateKnown ? "See exact terms for today's $1,850.00 repair." : "Your final invoice isn't ready yet — approval amounts are ready to view now."}</div>
-      <span class="oslink" onclick="openOffersModal(${estimateKnown})">View my offers →</span>
+      <div class="ostitle">${s.title}</div>
+      <div class="osub">${s.sub}</div>
+      <span class="oslink" onclick="openOffersModal(${estimateKnown})">${s.linkText} →</span>
     </div>`;
+}
+
+function offerBubbleMarkup(estimateKnown, variant){
+  const s = offerStatusText(estimateKnown);
+  const cls = variant === "out" ? "bubble out link" : "bubble in link";
+  return `<div class="${cls}" onclick="openOffersModal(${estimateKnown})">${s.title} · ${s.linkText} →</div>`;
 }
 
 function offerSummaryNone(onclickAttr){
@@ -540,7 +564,7 @@ const TOUCHPOINTS = [
           <div class="screenpad" style="flex:1;">
             <div class="bubble in">You're confirmed for Tue 9/8 at 9:00 AM.</div>
             <div class="bubble in">Estimated cost: $1,700–$1,950.</div>
-            <div class="bubble in link" onclick="openOffersModal(false)">✓ Good news — you have 2 payment plan offers ready. Tap to view →</div>
+            ${offerBubbleMarkup(false)}
           </div>
         </div>
       </div>` : `
@@ -717,7 +741,7 @@ const TOUCHPOINTS = [
           <div class="phonehead">Service Advisor</div>
           <div class="screenpad" style="flex:1;">
             <div class="bubble out">Hey! Following up on the brakes, total came to $1,850.</div>
-            <div class="bubble out link" onclick="openOffersModal(true)">Just a reminder — your Pay Over Time offers are still active, ready whenever you'd like to use them →</div>
+            ${offerBubbleMarkup(true, "out")}
             <div class="bubble in">Perfect, let's do it</div>
           </div>
         </div>
@@ -1211,6 +1235,8 @@ function selectOffer(provider){
 function confirmOffer(){
   const card = document.getElementById("offersModalCard");
   const name = modalSelected === "dignifi" ? "DigniFi" : "Sunbit";
+  selectedProvider = modalSelected;
+  refreshDeviceHost();
   const msg = modalEstimateKnown
     ? "This offer is ready to finalize — completing checkout hands the consumer into this provider's own hosted flow to sign."
     : "We'll hold this as the consumer's preference until the final invoice is ready — down payment and monthly payment will be confirmed then.";
@@ -1271,8 +1297,15 @@ function renderScenarioToggle() {
 
 function setPrequalified(val) {
   consumerPrequalified = val;
+  if (!val) { selectedProvider = null; }
   renderScenarioToggle();
   selectTab(activeIndex);
+}
+
+function refreshDeviceHost() {
+  const t = TOUCHPOINTS[activeIndex];
+  if (t.isVisualJourney) return;
+  deviceHost.innerHTML = resolve(t.device, consumerPrequalified);
 }
 
 function prequalifyNow() {
