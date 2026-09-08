@@ -1,387 +1,1616 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Pay Over Time — Integration Reference (Multi‑Provider)</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Pay Over Time Integration Reference — Multi‑Provider</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
   :root{
-    --bg:#F6F7F9; --panel:#FFFFFF; --ink:#161A22; --ink-soft:#5C6474; --line:#E4E7EC;
-    --dark:#12151C; --dark-line:rgba(255,255,255,0.08);
-    --accent:#2F5FED; --accent-soft:#EAF0FE;
-    --dignifi:#1A8F5E; --dignifi-soft:#E7F5EE;
-    --sunbit:#C87A17; --sunbit-soft:#FBF0E1;
-    --good:#1A8F5E; --warn:#C87A17;
-    --mono: "SFMono-Regular", ui-monospace, Menlo, Consolas, monospace;
-    font-family:-apple-system,"Segoe UI","Inter",Helvetica,Arial,sans-serif;
+    --crimson:#AB2328;
+    --blaze:#EE2737;
+    --ink:#1B1918;
+    --panel:#211F1F;
+    --panel-2:#2A2726;
+    --silver:#A7A8A9;
+    --gray:#787878;
+    --line:#E7E5E3;
+    --paper:#FFFFFF;
+    --wash:#F5F4F3;
+    --success:#1F8A55;   /* also used as DigniFi's provider accent */
+    --pending:#C98A1B;   /* also used as Sunbit's provider accent */
+    --info:#2C5F82;
+    --mono: 'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+    --sans: 'Montserrat', -apple-system, sans-serif;
   }
   *{box-sizing:border-box;}
-  html,body{margin:0;background:var(--bg);color:var(--ink);}
-  body{font-size:14px;line-height:1.5;}
+  html,body{margin:0;padding:0;}
+  body{
+    font-family:var(--sans);
+    background:var(--paper);
+    color:var(--ink);
+    -webkit-font-smoothing:antialiased;
+  }
+  @media (prefers-reduced-motion: reduce){
+    *{animation-duration:0.001ms !important; transition-duration:0.001ms !important;}
+  }
 
-  .topbar{background:var(--dark);color:#fff;padding:14px 34px;display:flex;align-items:center;justify-content:space-between;}
-  .topbar .brand{display:flex;align-items:center;gap:9px;font-weight:600;font-size:14px;}
-  .topbar .brand .mark{width:22px;height:22px;border-radius:6px;background:var(--accent);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;}
-  .topbar .tag{font-size:11.5px;color:#9aa2b1;}
+  /* ---------- Header ---------- */
+  .topbar{
+    background:var(--ink);
+    color:#fff;
+    padding:28px 5vw 26px;
+  }
+  .brandrow{
+    display:flex; align-items:baseline; justify-content:space-between; flex-wrap:wrap; gap:14px;
+    max-width:1280px; margin:0 auto;
+  }
+  .brand{
+    font-weight:800; font-size:22px; letter-spacing:-0.02em;
+  }
+  .brand span{color:var(--blaze);}
+  .kicker{
+    font-family:var(--mono); font-size:11px; letter-spacing:0.14em; text-transform:uppercase;
+    color:var(--silver); margin-top:2px;
+  }
+  h1.pagetitle{
+    max-width:1280px; margin:18px auto 6px; font-size:clamp(28px,3.4vw,42px); font-weight:800;
+    letter-spacing:-0.02em; line-height:1.08;
+  }
+  p.pagesub{
+    max-width:1280px; margin:0 auto; color:var(--silver); font-size:15px; max-width:680px; line-height:1.5;
+  }
+  p.pagesub b{color:#fff;}
 
-  .wrap{max-width:1180px;margin:0 auto;padding:36px 34px 70px;}
-  h1{font-size:25px;margin:0 0 10px;letter-spacing:-.3px;max-width:780px;}
-  .intro{color:var(--ink-soft);font-size:14px;max-width:760px;margin:0 0 26px;}
-  .intro b{color:var(--ink);}
+  /* ---------- Tabs ---------- */
+  .tabbar-wrap{
+    background:var(--ink); border-top:1px solid #3a3736; position:sticky; top:0; z-index:20;
+  }
+  .tabbar{
+    max-width:1280px; margin:0 auto; display:flex; gap:4px; padding:0 5vw; overflow-x:auto;
+    scrollbar-width:none;
+  }
+  .tabbar::-webkit-scrollbar{display:none;}
+  .tab{
+    font-family:var(--mono); font-size:12.5px; color:var(--silver); background:transparent; border:none;
+    padding:16px 16px 14px; cursor:pointer; white-space:nowrap; position:relative; letter-spacing:0.02em;
+    display:flex; align-items:center; gap:8px;
+  }
+  .tab .n{
+    width:18px; height:18px; border-radius:50%; border:1px solid #55504e; display:inline-flex;
+    align-items:center; justify-content:center; font-size:10px; flex:none;
+  }
+  .tab.active{color:#fff;}
+  .tab.active .n{background:var(--crimson); border-color:var(--crimson); color:#fff;}
+  .tab.active::after{
+    content:""; position:absolute; left:16px; right:16px; bottom:0; height:2px; background:var(--crimson);
+  }
+  .tab:hover:not(.active){color:#fff;}
 
-  /* Simulate toggle */
-  .sim-row{display:flex;align-items:center;gap:12px;flex-wrap:wrap;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px 16px;margin-bottom:26px;box-shadow:0 1px 2px rgba(23,30,43,.05);}
-  .sim-row .sim-label{font-size:12.5px;color:var(--ink-soft);}
-  .sim-toggle{display:inline-flex;background:var(--bg);border:1px solid var(--line);border-radius:999px;padding:3px;}
-  .sim-toggle button{border:0;background:transparent;padding:6px 14px;border-radius:999px;font-size:12.5px;font-weight:600;color:var(--ink-soft);cursor:pointer;font-family:inherit;}
-  .sim-toggle button.active{background:var(--ink);color:#fff;}
+  /* ---------- Main layout ---------- */
+  main{max-width:1280px; margin:0 auto; padding:36px 5vw 80px;}
+  .panelgrid{
+    display:grid; grid-template-columns: minmax(300px,380px) 1fr; gap:34px; align-items:start;
+  }
+  @media (max-width: 880px){ .panelgrid{grid-template-columns:1fr;} }
 
-  /* Tabs */
-  .tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:22px;border-bottom:1px solid var(--line);padding-bottom:0;}
-  .tab{border:0;background:transparent;padding:10px 4px;margin-right:18px;font-size:13.5px;font-weight:600;color:var(--ink-soft);cursor:pointer;font-family:inherit;border-bottom:2px solid transparent;}
-  .tab.active{color:var(--ink);border-bottom-color:var(--accent);}
+  .colhead{
+    display:flex; align-items:center; gap:10px; margin-bottom:14px;
+  }
+  .colhead .dot{width:8px;height:8px;border-radius:50%;}
+  .colhead .dot.blue{background:var(--info);}
+  .colhead .dot.red{background:var(--crimson);}
+  .colhead h2{font-size:12px; text-transform:uppercase; letter-spacing:0.12em; font-weight:700; margin:0; color:var(--gray);}
 
-  /* Two column panel */
-  .panels{display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:start;}
-  @media (max-width:900px){.panels{grid-template-columns:1fr;}}
+  .touchtitle{font-size:26px; font-weight:800; letter-spacing:-0.01em; margin:0 0 6px; display:inline-block;}
+  .touchdesc{color:var(--gray); font-size:14.5px; line-height:1.55; max-width:640px; margin:0 0 30px;}
+  .stagebadge{
+    display:inline-flex; align-items:center; gap:6px; font-family:var(--mono); font-size:11px; font-weight:600;
+    letter-spacing:0.06em; text-transform:uppercase; padding:4px 10px; border-radius:20px; margin-bottom:12px;
+  }
+  .stagebadge .sw{width:7px;height:7px;border-radius:50%;}
+  .tab .stagedot{width:6px;height:6px;border-radius:50%; flex:none;}
+  .sessionpill{
+    display:inline-flex; align-items:center; gap:8px; font-family:var(--mono); font-size:11.5px;
+    padding:8px 14px; border-radius:8px; margin-bottom:26px; line-height:1.5; max-width:100%;
+  }
+  .sessionpill .sw{width:7px;height:7px;border-radius:50%; flex:none; margin-top:5px;}
+  .sessionpill.has{background:#EAF6EF; color:#166B41;}
+  .sessionpill.none{background:#FBEFEF; color:#8A2226;}
+  .sessionpill.none .sw{background:var(--crimson);}
 
-  .panel{background:var(--panel);border:1px solid var(--line);border-radius:12px;box-shadow:0 1px 2px rgba(23,30,43,.05);overflow:hidden;}
-  .panel-head{padding:13px 18px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;}
-  .panel-head .t{font-size:12px;font-weight:700;color:var(--ink-soft);letter-spacing:.2px;}
-  .panel-body{padding:20px;}
+  /* ---------- Provider-neutral offer widgets (consumer-facing) ---------- */
+  .offer-summary{border:1px solid var(--line); border-radius:9px; padding:12px 14px; margin-bottom:10px; background:#fff;}
+  .offer-summary.ready{border-color:#1F8A55; background:#EAF6EF;}
+  .offer-summary .ostitle{font-weight:700; font-size:12.5px; margin-bottom:3px;}
+  .offer-summary .osub{font-size:11px; color:var(--gray); line-height:1.4;}
+  .offer-summary .oslink{font-size:11px; color:var(--crimson); text-decoration:underline; margin-top:6px; display:inline-block; font-weight:600;}
 
-  /* Consumer experience mock */
-  .device-chrome{display:flex;align-items:center;gap:7px;background:#EEF0F4;border-radius:8px 8px 0 0;padding:8px 12px;font-size:11px;color:var(--ink-soft);margin:-20px -20px 16px;}
-  .device-chrome .dots span{display:inline-block;width:7px;height:7px;border-radius:50%;background:#CBD1DB;margin-right:4px;}
+  /* ---------- Named provider cards (only shown at the actual decision point) ---------- */
+  .provider-mini{border:1px solid var(--line); border-left:4px solid var(--line); border-radius:9px; padding:10px 12px; margin-bottom:8px;}
+  .provider-mini.dignifi{border-left-color:var(--success); background:#F5FBF7;}
+  .provider-mini.sunbit{border-left-color:var(--pending); background:#FCF6EC;}
+  .provider-mini .pm-top{display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;}
+  .provider-mini .pm-name{font-weight:700; font-size:12px;}
+  .provider-mini .pm-amt{font-weight:800; font-size:15px;}
+  .provider-mini .pm-line{font-size:10.5px; color:var(--gray); margin-top:1px;}
+  .provider-mini .pm-flag{font-size:9.5px; font-weight:700; padding:2px 7px; border-radius:20px; display:inline-block; margin-top:5px;}
+  .provider-mini .pm-flag.ok{background:#EAF6EF; color:#166B41;}
+  .provider-mini .pm-flag.warn{background:#FBF3E4; color:#8A5D0E;}
+  .provider-mini .pm-flag.gap{background:#FBEFEF; color:#8A2226; margin-left:5px;}
+  .provider-mini .pm-btn{margin-top:8px; text-align:center; font-size:10.5px; font-weight:700; padding:7px; border-radius:6px; letter-spacing:0.03em;}
+  .provider-mini.dignifi .pm-btn{background:var(--success); color:#fff;}
+  .provider-mini.sunbit .pm-btn{background:var(--pending); color:#fff;}
 
-  .ctx-line{font-size:12px;color:var(--ink-soft);margin-bottom:14px;}
-  .ro-amt{font-size:22px;font-weight:700;margin-bottom:2px;}
-  .ro-label{font-size:12px;color:var(--ink-soft);margin-bottom:18px;}
+  .scenario-bar{background:var(--wash); border-bottom:1px solid var(--line);}
+  .scenario-inner{
+    max-width:1280px; margin:0 auto; padding:12px 5vw; display:flex; align-items:center; justify-content:space-between;
+    gap:14px; flex-wrap:wrap;
+  }
+  .scenario-label{font-size:12.5px; color:var(--gray); font-weight:500;}
+  .scenario-toggle{
+    display:inline-flex; background:#fff; border:1px solid var(--line); border-radius:8px; padding:3px; gap:2px;
+  }
+  .scenario-toggle .seg{
+    font-family:var(--sans); font-size:12px; font-weight:600; border:none; background:transparent; color:var(--gray);
+    padding:7px 14px; border-radius:6px; cursor:pointer; transition:all 0.15s;
+  }
+  .scenario-toggle .seg.on{background:var(--ink); color:#fff;}
+  .scenario-toggle .seg:not(.on):hover{background:var(--line);}
 
-  .pot-box{border:1px solid var(--line);border-radius:10px;padding:16px;background:var(--bg);}
-  .pot-box .pot-title{font-size:13.5px;font-weight:700;margin-bottom:4px;}
-  .pot-box .pot-sub{font-size:12px;color:var(--ink-soft);margin-bottom:14px;}
-  .pot-cta{width:100%;border:0;border-radius:9px;padding:13px;font-weight:700;font-size:13.5px;font-family:inherit;cursor:pointer;background:var(--ink);color:#fff;}
-  .pot-cta.prequal{background:var(--good);}
-  .pot-fine{font-size:10.5px;color:var(--ink-soft);margin-top:8px;}
+  /* provider toggle (handoff tab) */
+  .provider-toggle{display:inline-flex; background:#fff; border:1px solid var(--line); border-radius:8px; padding:3px; gap:2px; margin-bottom:22px;}
+  .provider-toggle .pseg{
+    font-family:var(--sans); font-size:12.5px; font-weight:700; border:none; background:transparent; padding:8px 18px;
+    border-radius:6px; cursor:pointer; color:var(--gray); display:inline-flex; align-items:center; gap:7px;
+  }
+  .provider-toggle .pseg .sw{width:8px; height:8px; border-radius:50%;}
+  .provider-toggle .pseg.on{background:var(--ink); color:#fff;}
 
-  .state-note{margin-top:14px;font-size:12px;padding:10px 12px;border-radius:8px;background:var(--accent-soft);color:var(--accent);display:none;}
-  .state-note.show{display:block;}
+  /* down payment highlight, used inside Sunbit's hosted journey */
+  .down-highlight{background:#FBF3E4; border:1px solid var(--pending); border-radius:8px; padding:10px 12px; margin-top:10px;}
+  .down-highlight .dh-title{font-weight:700; font-size:11px; color:#8A5D0E; text-transform:uppercase; letter-spacing:0.04em; margin-bottom:5px;}
+  .down-highlight .dh-amt{font-size:19px; font-weight:800; color:#8A5D0E;}
+  .down-highlight .dh-sub{font-size:10.5px; color:#8A5D0E; margin-top:5px; line-height:1.4;}
+  .gap-note{background:#FBEFEF; border:1px solid #D89A9C; border-radius:8px; padding:9px 12px; margin-top:8px; font-size:10.5px; color:#8A2226; line-height:1.45;}
 
-  /* API log panel */
-  .run-btn{border:0;background:var(--ink);color:#fff;border-radius:8px;padding:7px 14px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;}
-  .run-btn:disabled{opacity:.5;cursor:default;}
-  .log{font-family:var(--mono);font-size:11.5px;line-height:1.7;min-height:220px;color:var(--ink-soft);}
-  .log .placeholder{color:#9aa2b1;font-style:italic;}
-  .log-line{opacity:0;animation:fadein .25s ease forwards;padding:3px 0;border-bottom:1px dashed #EEF0F4;}
-  @keyframes fadein{to{opacity:1;}}
-  .log-line .src{color:var(--accent);font-weight:700;}
-  .log-line .src.dignifi{color:var(--dignifi);}
-  .log-line .src.sunbit{color:var(--sunbit);}
-  .log-line .arrow{color:#B7BEC9;margin:0 6px;}
-  .log-line .note{display:block;color:#9aa2b1;margin:2px 0 0 0;font-family:-apple-system,sans-serif;font-size:11px;}
+  /* ---------- Handoff journey (Inside a Provider's Experience) ---------- */
+  .redirect-banner{
+    display:flex; align-items:center; gap:12px; background:var(--ink); color:#fff; border-radius:10px;
+    padding:14px 18px; margin-bottom:18px;
+  }
+  .redirect-banner .arrow{font-size:18px; color:var(--blaze); flex:none;}
+  .redirect-banner .rtext{flex:1; min-width:0;}
+  .redirect-banner .rtitle{font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; color:var(--silver); margin-bottom:3px;}
+  .redirect-banner .rurl{font-family:var(--mono); font-size:11.5px; color:#fff; word-break:break-all;}
+  .redirect-banner .rurl .q{color:#E3A94C;}
 
-  .footer-legal{margin-top:40px;font-size:11px;color:#9aa2b1;border-top:1px solid var(--line);padding-top:16px;max-width:900px;}
+  .journey-full{max-width:620px; margin:0 auto; display:none;}
+  .journey-full.active{display:block;}
+  .panelgrid.hidden{display:none;}
 
-  /* Hosted comparison (tab 6) */
-  .hosted-wrap{display:flex;gap:24px;flex-wrap:wrap;align-items:flex-start;}
-  .hosted-copy{flex:1;min-width:260px;}
-  .hosted-copy h2{font-size:17px;margin:0 0 8px;}
-  .hosted-copy p{color:var(--ink-soft);font-size:13px;max-width:420px;}
-  .hosted-copy .step{display:flex;gap:10px;margin-top:16px;font-size:12.5px;}
-  .hosted-copy .step .n{flex:none;width:20px;height:20px;border-radius:50%;background:var(--accent-soft);color:var(--accent);font-weight:700;font-size:11px;display:flex;align-items:center;justify-content:center;}
-  .hosted-copy .step .tx{color:var(--ink-soft);}
+  .jconnector{
+    width:2px; height:26px; background:var(--line); margin:0 auto;
+  }
 
-  .phone{width:320px;background:#0B0F17;border-radius:30px;padding:11px;box-shadow:0 20px 50px rgba(23,30,43,.22);flex:none;}
-  .phone-screen{background:#fff;border-radius:20px;overflow:hidden;min-height:520px;display:flex;flex-direction:column;}
-  .phone-status{height:24px;display:flex;align-items:center;justify-content:center;font-size:10.5px;color:#9aa2b1;}
-  .phone-head{padding:2px 18px 12px;text-align:center;}
-  .phone-head .shop{font-size:11px;color:var(--ink-soft);}
-  .phone-head h3{font-size:15.5px;margin:2px 0 0;}
-  .phone-head .amt{font-size:11.5px;color:var(--ink-soft);margin-top:3px;}
-  .phone-cards{padding:2px 14px 14px;display:flex;flex-direction:column;gap:10px;flex:1;}
-  .pcard{border:1.5px solid var(--line);border-radius:12px;padding:13px;}
-  .pcard .prow{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;}
-  .pcard .pname{font-weight:700;font-size:13.5px;display:flex;align-items:center;gap:6px;}
-  .pcard .pname .sw{width:7px;height:7px;border-radius:50%;}
-  .pcard .pbadge{font-size:9.5px;font-weight:700;padding:2px 7px;border-radius:999px;}
-  .pcard .pamt{font-size:19px;font-weight:700;margin-bottom:6px;}
-  .pcard .pline{font-size:11.5px;color:var(--ink-soft);}
-  .pcard .pline .v{color:var(--ink);font-weight:600;}
-  .pcard .callout{margin-top:8px;font-size:10.5px;border-radius:7px;padding:6px 9px;}
-  .callout.ok{background:var(--dignifi-soft);color:var(--dignifi);}
-  .callout.warn{background:var(--sunbit-soft);color:var(--sunbit);}
-  .callout.gap{background:#FDEEEE;color:#C0392B;margin-top:6px;}
+  .mini-screen{
+    background:#fff; border:1px solid var(--line); border-radius:12px; padding:18px 20px; margin:0 auto;
+    box-shadow:0 10px 26px -16px rgba(0,0,0,0.25); position:relative;
+  }
+  .mini-header{
+    display:flex; align-items:center; gap:8px; margin-bottom:12px;
+  }
+  .mini-logo{font-family:var(--sans); font-weight:800; font-size:15px; color:var(--ink);}
+  .mini-logo span{color:var(--crimson);}
+  .mini-logo.amber{color:var(--pending);}
+  .mini-step-n{
+    position:absolute; top:-11px; left:20px; width:24px; height:24px; border-radius:50%; background:var(--crimson);
+    color:#fff; font-size:11px; font-weight:700; display:flex; align-items:center; justify-content:center;
+    box-shadow:0 2px 6px rgba(171,35,40,0.4);
+  }
+  .mini-step-n.amber{background:var(--pending); box-shadow:0 2px 6px rgba(201,138,27,0.4);}
+  .mini-title{font-size:13.5px; font-weight:700; color:var(--ink); margin-bottom:4px;}
+  .mini-sub{font-size:11px; color:var(--gray); margin-bottom:12px; line-height:1.4;}
+  .mini-field{
+    background:var(--wash); border:1px solid var(--line); border-radius:6px; padding:8px 10px; font-size:10.5px;
+    color:#9a9793; margin-bottom:7px;
+  }
+  .mini-fieldrow{display:flex; gap:7px;}
+  .mini-fieldrow .mini-field{flex:1;}
+  .mini-btn{
+    background:var(--crimson); color:#fff; text-align:center; font-size:11px; font-weight:700; letter-spacing:0.03em;
+    padding:9px; border-radius:6px; margin-top:10px;
+  }
+  .mini-btn.dark{background:var(--ink);}
+  .mini-btn.amber{background:var(--pending);}
+  .mini-radio-row{display:flex; gap:14px; margin-bottom:10px;}
+  .mini-radio{display:flex; align-items:center; gap:5px; font-size:10.5px; color:var(--ink);}
+  .mini-radio .dot{width:10px;height:10px;border-radius:50%;border:1.5px solid var(--crimson);}
+  .mini-radio.sel .dot{background:var(--crimson);}
+  .mini-table{width:100%; border-collapse:collapse; font-size:10px; margin-bottom:8px;}
+  .mini-table th{text-align:left; color:var(--gray); font-weight:600; padding:4px 6px; border-bottom:1px solid var(--line);}
+  .mini-table td{padding:5px 6px; border-bottom:1px solid #F3F2F1;}
+  .mini-processing{
+    display:flex; flex-direction:column; align-items:center; gap:10px; padding:8px 0;
+  }
+  .mini-spinner{
+    width:28px; height:28px; border-radius:50%; border:3px solid #E7E5E3; border-top-color:var(--info);
+  }
+  .mini-approved-amt{
+    font-size:22px; font-weight:800; color:#1F8A55; margin:4px 0 2px;
+  }
+  .mini-note{
+    background:var(--wash); border-radius:6px; padding:8px 10px; font-size:10px; color:var(--gray); margin-top:10px; line-height:1.4;
+  }
+  .event-tag{
+    display:inline-flex; align-items:center; gap:6px; font-family:var(--mono); font-size:10px; font-weight:600;
+    background:var(--ink); color:#fff; padding:5px 10px; border-radius:20px; margin-top:12px;
+  }
+  .event-tag .ping{width:6px;height:6px;border-radius:50%; background:#5CC98E;}
+  .event-tag.signed .ping{background:#8FB8DB;}
+  .purple-note{
+    background:#F3EBFB; border:1px solid #C9A6E8; color:#5A3A78; font-size:11px; font-weight:600; text-align:center;
+    padding:10px 14px; border-radius:9px; max-width:340px; margin:0 auto;
+  }
 
-  .hidden{display:none !important;}
+  .decision-block{max-width:520px; margin:6px auto;}
+  .decision-badge{
+    display:inline-flex; align-items:center; gap:6px; background:#EFEDEC; color:var(--ink); font-size:11px; font-weight:700;
+    padding:6px 14px; border-radius:20px; margin:0 auto 12px; text-align:center;
+  }
+  .decision-badge-wrap{text-align:center;}
+  .decision-branches{display:grid; grid-template-columns:1fr 1fr; gap:14px;}
+  .branch{border-radius:10px; padding:12px 14px; font-size:11px; line-height:1.45;}
+  .branch.declined{background:#FBEFEF; border:1px dashed #D89A9C; color:#8A2226;}
+  .branch.go{background:#EAF6EF; border:1px solid #1F8A55; color:#166B41;}
+  .branch-label{font-weight:700; font-size:11px; margin-bottom:5px; display:flex; align-items:center; gap:5px;}
+
+  .act-header{
+    display:flex; align-items:center; gap:8px; justify-content:center; font-family:var(--mono); font-size:11.5px;
+    font-weight:700; letter-spacing:0.03em; padding:9px 16px; border-radius:8px; margin:26px auto 18px; max-width:520px;
+    text-align:center;
+  }
+  .act-header .sw{width:7px;height:7px;border-radius:50%; flex:none;}
+  .act-header-mid{background:#FBF3E4; color:#8A5D0E;}
+  .act-header-mid .sw{background:#C98A1B;}
+  .act-header-final{background:#EAF6EF; color:#166B41;}
+  .act-header-final .sw{background:#1F8A55;}
+
+  .act-divider{
+    display:flex; align-items:center; gap:12px; max-width:520px; margin:24px auto 8px;
+  }
+  .act-divider::before, .act-divider::after{content:""; flex:1; height:1px; background:var(--line);}
+  .act-divider-label{
+    font-family:var(--mono); font-size:10.5px; color:var(--gray); text-transform:uppercase; letter-spacing:0.06em;
+    white-space:nowrap;
+  }
+
+  @media (max-width:680px){
+    .decision-branches{grid-template-columns:1fr;}
+    .mini-fieldrow{flex-direction:column;}
+  }
+
+  /* ---------- Device mockups ---------- */
+  .device-phone{
+    width:100%; max-width:340px; margin:0 auto;
+    background:var(--ink); border-radius:34px; padding:10px; box-shadow:0 18px 40px -12px rgba(0,0,0,0.35);
+  }
+  .device-phone .screen{
+    background:#fff; border-radius:24px; overflow:hidden; min-height:520px; position:relative;
+    display:flex; flex-direction:column;
+  }
+  .device-browser{
+    width:100%; background:#fff; border-radius:10px; overflow:hidden; border:1px solid var(--line);
+    box-shadow:0 18px 40px -18px rgba(0,0,0,0.28);
+  }
+  .browserbar{
+    background:#F0F0F0; padding:8px 12px; display:flex; align-items:center; gap:6px;
+  }
+  .browserbar .dot{width:9px;height:9px;border-radius:50%;}
+  .browserbar .url{
+    flex:1; background:#fff; border:1px solid #DCDCDC; border-radius:5px; font-size:10.5px; color:var(--gray);
+    padding:3px 10px; margin-left:8px; font-family:var(--mono);
+  }
+  .screenpad{padding:16px;}
+  .phonehead{
+    display:flex; align-items:center; justify-content:space-between; padding:10px 14px; border-bottom:1px solid #EFEFEF;
+    font-size:12px; font-weight:700;
+  }
+  .card{
+    border:1px solid var(--line); border-radius:9px; padding:12px 14px; margin-bottom:10px; background:#fff;
+  }
+  .card.clickable{
+    width:100%; text-align:left; cursor:pointer; font-family:var(--sans); transition:transform 0.12s, box-shadow 0.12s;
+    box-shadow:0 0 0 0 rgba(171,35,40,0);
+  }
+  .card.clickable:hover{
+    transform:translateY(-1px); box-shadow:0 6px 16px -6px rgba(171,35,40,0.35); border-color:var(--crimson);
+  }
+  .card.clickable:active{transform:translateY(0px);}
+  .cta-amount{font-size:12.5px; font-weight:700; margin-top:3px;}
+  .fineprint{font-size:9.5px; color:var(--gray); margin-top:4px; line-height:1.35;}
+  .btn-dark{
+    background:var(--ink); color:#fff; text-align:center; padding:11px; border-radius:7px; font-size:11px;
+    font-weight:700; letter-spacing:0.06em; text-transform:uppercase;
+  }
+  .btn-navy{
+    background:#1F3B57; color:#fff; text-align:center; padding:11px; border-radius:7px; font-size:11px;
+    font-weight:700; letter-spacing:0.06em; text-transform:uppercase;
+  }
+  .rowline{display:flex; justify-content:space-between; align-items:center; font-size:12px; padding:8px 0; border-bottom:1px solid #F0F0F0;}
+  .muted{color:var(--gray);}
+  .concern-label{
+    background:#2C5F82; color:#fff; font-size:7.5px; font-weight:700; letter-spacing:0.06em; text-transform:uppercase;
+    padding:3px 8px;
+  }
+  .concern-body{display:flex; justify-content:space-between; padding:7px 8px; font-size:11px; border:1px solid #EDEDED; border-top:none;}
+
+  /* text bubble */
+  .bubble{max-width:82%; padding:9px 11px; border-radius:12px; font-size:11.5px; line-height:1.4; margin-bottom:8px;}
+  .bubble.in{background:#EDEDED; color:var(--ink);}
+  .bubble.out{background:var(--crimson); color:#fff; margin-left:auto;}
+  .bubble a, .bubble.link{text-decoration:underline;}
+
+  /* ---------- API console ---------- */
+  .console-wrap{
+    background:var(--panel); border-radius:12px; overflow:hidden; border:1px solid #3a3736;
+    box-shadow:0 24px 50px -20px rgba(0,0,0,0.4);
+  }
+  .console-head{
+    display:flex; align-items:center; justify-content:space-between; padding:14px 18px;
+    border-bottom:1px solid #3a3736; background:var(--panel-2);
+  }
+  .console-head-left{display:flex; align-items:center; gap:10px;}
+  .dots{display:flex; gap:6px;}
+  .dots span{width:9px;height:9px;border-radius:50%;}
+  .console-title{font-family:var(--mono); font-size:12px; color:var(--silver); letter-spacing:0.03em;}
+  .runbtn{
+    font-family:var(--mono); font-size:11.5px; font-weight:600; background:var(--crimson); color:#fff;
+    border:none; padding:8px 16px; border-radius:6px; cursor:pointer; letter-spacing:0.03em;
+    display:inline-flex; align-items:center; gap:8px; transition:background 0.15s;
+  }
+  .runbtn:hover{background:var(--blaze);}
+  .runbtn:disabled{background:#4a4645; cursor:default;}
+  .runbtn .spin{
+    width:11px;height:11px;border-radius:50%;border:2px solid rgba(255,255,255,0.35);
+    border-top-color:#fff; display:none; animation:spin 0.7s linear infinite;
+  }
+  .runbtn.running .spin{display:inline-block;}
+  @keyframes spin{to{transform:rotate(360deg);}}
+
+  .console-body{
+    padding:18px; font-family:var(--mono); font-size:12.5px; min-height:420px; max-height:560px; overflow-y:auto;
+  }
+  .console-empty{color:#6b6866; font-size:12.5px; padding:30px 6px; line-height:1.7;}
+  .console-empty b{color:var(--silver);}
+
+  .evt{
+    border-left:2px solid #3a3736; padding-left:16px; margin-left:6px; padding-bottom:20px; position:relative;
+    opacity:0; transform:translateY(4px); animation:fadein 0.35s ease forwards;
+  }
+  .evt:last-child{padding-bottom:2px;}
+  @keyframes fadein{ to{opacity:1; transform:translateY(0);} }
+  .evt::before{
+    content:""; position:absolute; left:-5px; top:2px; width:8px; height:8px; border-radius:50%;
+    background:var(--gray); border:2px solid var(--panel);
+  }
+  .evt.api::before{background:var(--info);}
+  .evt.webhook::before{background:var(--pending);}
+  .evt.note::before{background:#5a5654;}
+  .evt.api.dignifi::before{background:var(--success);}
+  .evt.api.sunbit::before{background:var(--pending);}
+  .evt.webhook.dignifi::before{background:var(--success);}
+  .evt.webhook.sunbit::before{background:var(--pending);}
+
+  .evt-top{display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:4px;}
+  .method{
+    font-weight:700; font-size:11px; padding:2px 7px; border-radius:4px; background:#2C5F82; color:#fff;
+  }
+  .method.post{background:#2C5F82;}
+  .method.get{background:#5A5654;}
+  .badge-webhook{
+    font-weight:700; font-size:10px; padding:2px 8px; border-radius:20px; background:rgba(201,138,27,0.18); color:#E3A94C;
+    letter-spacing:0.05em; text-transform:uppercase;
+  }
+  .badge-provider{
+    font-weight:700; font-size:9.5px; padding:2px 8px; border-radius:20px; letter-spacing:0.05em; text-transform:uppercase;
+  }
+  .badge-provider.dignifi{background:rgba(31,138,85,0.16); color:#1F8A55;}
+  .badge-provider.sunbit{background:rgba(201,138,27,0.16); color:#C98A1B;}
+  .endpoint{color:#EDEBE9; font-size:12.5px;}
+  .status{font-size:11px; font-weight:700; margin-left:auto;}
+  .status.ok{color:#5CC98E;}
+  .status.notfound{color:#E27878;}
+  .evt-desc{color:var(--silver); font-size:11.8px; line-height:1.5; margin:4px 0 8px; font-family:var(--sans);}
+
+  .jsonrow{display:flex; gap:18px; margin-top:6px;}
+  .jsonblock{flex:1; min-width:0;}
+  .jsonlabel{font-size:9.5px; text-transform:uppercase; letter-spacing:0.08em; color:#6b6866; margin-bottom:4px;}
+  pre.json{
+    background:#171514; border:1px solid #3a3736; border-radius:6px; padding:10px 12px; margin:0;
+    font-size:11px; line-height:1.55; color:#D8D5D2; overflow-x:auto;
+  }
+  .k{color:#8FB8DB;} .s{color:#B7D6A8;} .num{color:#E3A94C;}
+
+  .note-box{
+    color:#c9c6c3; font-size:12px; line-height:1.55; font-family:var(--sans); background:#171514;
+    border:1px solid #3a3736; border-radius:6px; padding:10px 12px;
+  }
+  .note-box b{color:#fff;}
+
+  .timestamp{font-size:10.5px; color:#57534f; margin-left:8px;}
+
+  /* footer */
+  .refnote{
+    max-width:1280px; margin:44px auto 0; padding:18px 5vw 0; border-top:1px solid var(--line);
+  }
+  .refnote p{font-size:12px; color:var(--gray); line-height:1.6; max-width:900px; margin:0 0 6px;}
+  .refnote .disclaimer{font-size:11.5px; color:var(--gray); margin-top:14px;}
 </style>
 </head>
 <body>
 
 <div class="topbar">
-  <div class="brand"><span class="mark">P</span> Pay Over Time Network</div>
-  <div class="tag">Integration Reference · Internal / Partner Use</div>
+  <div class="brandrow">
+    <div>
+      <div class="brand">Digni<span>Fi</span></div>
+      <div class="kicker">Integration Reference · Multi‑Provider · Internal / Partner Use</div>
+    </div>
+  </div>
+  <h1 class="pagetitle">How each touchpoint works, end to end — with more than one provider in play</h1>
+  <p class="pagesub">A consumer can request <b>Pay Over Time</b> as early as scheduling — one neutral button, no provider names shown yet. The moment they tap it, the partner platform pings every enrolled provider at once. Each one decisions independently and, if approved, <b>texts its own invite straight to the consumer</b> — not through the partner's messaging rails. That gives the consumer 2 live offers, side by side, before they've even reached checkout. Tab 6 goes inside each provider's own hosted experience, the part that happens after the handoff.</p>
 </div>
 
-<div class="wrap">
-  <h1>How each Pay Over Time touchpoint works, end to end — with multiple providers</h1>
-  <p class="intro">A consumer can request <b>Pay Over Time</b> as early as scheduling — no provider name shown, just one neutral CTA. The moment they tap it, the partner platform pings <b>every enrolled financing provider at once</b>. Each provider decisions independently, and if approved, <b>sends its own pre‑qualification invite by text directly to the consumer</b> — not through the partner's own messaging rails. That approval then follows the consumer through every touchpoint after, not just once at checkout. Pick a touchpoint below, then run the flow to see exactly what fires and when. The last tab shows what the consumer sees after tapping into their offers.</p>
+<div class="tabbar-wrap">
+  <div class="tabbar" id="tabbar"></div>
+</div>
 
-  <div class="sim-row">
-    <span class="sim-label">Simulate: consumer already has active Pay Over Time offers heading into this touchpoint?</span>
-    <div class="sim-toggle">
-      <button id="simNot" class="active">Not yet</button>
-      <button id="simYes">Already has offers</button>
+<div class="scenario-bar">
+  <div class="scenario-inner">
+    <span class="scenario-label">Simulate: does the consumer already have offers heading into this touchpoint?</span>
+    <div class="scenario-toggle" id="scenarioToggle">
+      <button class="seg" data-val="false" id="segNo">Not yet</button>
+      <button class="seg" data-val="true" id="segYes">Has offers</button>
     </div>
   </div>
+</div>
 
-  <div class="tabs" id="tabs">
-    <button class="tab active" data-tab="scheduling">Service Scheduling</button>
-    <button class="tab" data-tab="mpi">Digital Inspection (MPI)</button>
-    <button class="tab" data-tab="estimate">Estimate Approval</button>
-    <button class="tab" data-tab="checkout">Checkout</button>
-    <button class="tab" data-tab="followup">Post‑Visit Follow‑Up</button>
-    <button class="tab" data-tab="hosted">Hosted Comparison</button>
-  </div>
-
-  <!-- ===== Standard touchpoint panels (1-5) ===== -->
-  <div id="touchpointView">
-    <div class="panels">
-      <div class="panel">
-        <div class="panel-head"><span class="t">CONSUMER EXPERIENCE</span></div>
-        <div class="panel-body">
-          <div class="device-chrome"><span class="dots"><span></span><span></span><span></span></span><span id="ctxDevice">shophub.com/schedule</span></div>
-          <div class="ctx-line" id="ctxLine">Online booking widget · consumer scheduling a brake service appointment</div>
-          <div class="ro-amt" id="roAmt">$1,850</div>
-          <div class="ro-label" id="roLabel">Estimated service total</div>
-
-          <div class="pot-box">
-            <div class="pot-title" id="potTitle">Pay Over Time</div>
-            <div class="pot-sub" id="potSub">As low as $62/mo for qualified buyers — no provider name shown yet.</div>
-            <button class="pot-cta" id="potCta">See if I qualify</button>
-            <div class="pot-fine">Tapping this checks every enrolled provider at once. No impact to credit score to check.</div>
+<main>
+  <div id="touchtext"></div>
+  <div class="panelgrid" id="panelgrid">
+    <div>
+      <div class="colhead"><span class="dot blue"></span><h2>Consumer Experience</h2></div>
+      <div id="deviceHost"></div>
+    </div>
+    <div>
+      <div class="colhead"><span class="dot red"></span><h2>API Activity</h2></div>
+      <div class="console-wrap">
+        <div class="console-head">
+          <div class="console-head-left">
+            <div class="dots"><span style="background:#EA6A5B"></span><span style="background:#E3B341"></span><span style="background:#57C270"></span></div>
+            <span class="console-title" id="consoleTitle">financing-hub-api · live log</span>
           </div>
-          <div class="state-note" id="stateNote"></div>
+          <button class="runbtn" id="runBtn"><span class="spin"></span><span id="runLabel">Run this flow</span></button>
         </div>
-      </div>
-
-      <div class="panel">
-        <div class="panel-head">
-          <span class="t" id="apiTitle">scheduling-api · live log</span>
-          <button class="run-btn" id="runBtn">Run this flow</button>
-        </div>
-        <div class="panel-body">
-          <div class="log" id="log"><span class="placeholder">Press "Run this flow" to see the exact request, response, and text‑invite sequence behind this touchpoint.</span></div>
+        <div class="console-body" id="consoleBody">
+          <div class="console-empty">Press <b>Run this flow</b> to see the exact request, response, and text‑invite sequence behind this touchpoint.</div>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- ===== Hosted comparison (tab 6) ===== -->
-  <div id="hostedView" class="hidden">
-    <div class="hosted-wrap">
-      <div class="hosted-copy">
-        <h2>What the consumer sees after tapping a provider's text</h2>
-        <p>Each provider sends its own invite text with its own link. Whichever link the consumer opens first — or a partner‑hosted summary page, if the integration includes one — brings together every offer that's come back so far into one side‑by‑side view.</p>
-        <div class="step"><span class="n">1</span><span class="tx">Consumer receives 1–2 separate texts, one per approving provider, each from that provider's own number.</span></div>
-        <div class="step"><span class="n">2</span><span class="tx">Opening either link resolves to the same shared view — every live offer tied to this repair order.</span></div>
-        <div class="step"><span class="n">3</span><span class="tx">Down payment is shown up front for every offer, since it changes what's actually due today.</span></div>
-        <div class="step"><span class="n">4</span><span class="tx">Selecting an offer routes the consumer into that provider's own checkout/signing flow.</span></div>
-      </div>
+  <div class="journey-full" id="journeyFull"></div>
+</main>
 
-      <div class="phone">
-        <div class="phone-screen">
-          <div class="phone-status">9:41</div>
-          <div class="phone-head">
-            <div class="shop">Maple Street Auto · Brake service</div>
-            <h3>Choose how to pay</h3>
-            <div class="amt">Total due: $1,850</div>
-          </div>
-          <div class="phone-cards">
-            <div class="pcard">
-              <div class="prow">
-                <div class="pname"><span class="sw" style="background:var(--dignifi)"></span>DigniFi</div>
-                <span class="pbadge" style="background:var(--dignifi-soft);color:var(--dignifi)">Approved</span>
-              </div>
-              <div class="pamt">$5,600 <span style="font-size:11px;font-weight:500;color:var(--ink-soft)">approved</span></div>
-              <div class="pline">Financing today's $1,850 in full · <span class="v">$0 down</span></div>
-              <div class="callout ok">Covers the full repair, $0 due today</div>
-            </div>
-            <div class="pcard">
-              <div class="prow">
-                <div class="pname"><span class="sw" style="background:var(--sunbit)"></span>Sunbit</div>
-                <span class="pbadge" style="background:var(--sunbit-soft);color:var(--sunbit)">Approved</span>
-              </div>
-              <div class="pamt">$1,500 <span style="font-size:11px;font-weight:500;color:var(--ink-soft)">approved</span></div>
-              <div class="pline">~30% down required · <span class="v">$450 due today</span></div>
-              <div class="callout warn">$1,050 financed after down payment</div>
-              <div class="callout gap">Doesn't fully cover the $1,850 repair — $350 short, due separately</div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="footer-legal">This demo application illustrates a multi‑provider Pay Over Time integration and is provided for planning purposes only. Amounts, approvals, and messaging shown are illustrative. Each financing provider issues and services its own offers under its own terms; providers deliver their own pre‑qualification communications directly to the consumer. DigniFi's credit products are issued by WebBank.</div>
+<div class="refnote">
+  <p>© DigniFi, Inc. | This demo application is the property of DigniFi, Inc. and is provided for demonstration purposes only, illustrating how DigniFi's integration behaves alongside other enrolled financing providers. The functionality, features, and behavior shown in this demo are not guaranteed and may not reflect actual product performance, capabilities, or future updates. This demo is intended for evaluation and educational purposes only and should not be relied upon as a representation of final product functionality. DigniFi makes no warranties, express or implied, regarding this demonstration software. Use of this demo is at your own risk.</p>
+  <p class="disclaimer">DigniFi's credit products are issued by WebBank. Other enrolled providers issue and service their own financing products under their own terms.</p>
 </div>
 
 <script>
-  const touchpoints = {
-    scheduling: {
-      device:"shophub.com/schedule",
-      ctx:"Online booking widget · consumer scheduling a brake service appointment",
-      apiPrefix:"scheduling-api",
-      ctaLabel:"See if I qualify",
-    },
-    mpi: {
-      device:"ShopHub Tech Tablet · Inspection",
-      ctx:"Digital multi‑point inspection results sent to the consumer, brakes flagged",
-      apiPrefix:"mpi-api",
-      ctaLabel:"See if I qualify",
-    },
-    estimate: {
-      device:"ShopHub · Estimate e‑sign",
-      ctx:"Service advisor sends the final estimate for e‑signature approval",
-      apiPrefix:"estimate-api",
-      ctaLabel:"Approve & see if I qualify",
-    },
-    checkout: {
-      device:"ShopHub POS · Checkout",
-      ctx:"Invoice and payment screen at pickup",
-      apiPrefix:"checkout-api",
-      ctaLabel:"Pay Over Time",
-    },
-    followup: {
-      device:"SMS · Post‑visit follow‑up",
-      ctx:"Reminder text sent after the visit about a declined repair",
-      apiPrefix:"followup-api",
-      ctaLabel:"See if I qualify",
-    }
-  };
+// ---------------------------------------------------------------------
+// Content model: one entry per touchpoint
+// ---------------------------------------------------------------------
+const STAGES = {
+  early: { label: "Early Stage", color: "#2C5F82" },
+  mid: { label: "Mid Stage", color: "#C98A1B" },
+  final: { label: "Final Stage", color: "#1F8A55" },
+  handoff: { label: "Provider‑Hosted", color: "#AB2328" },
+};
 
-  let simPrequalified = false;
-  let currentTab = "scheduling";
+// Shared figures used across every touchpoint for this scenario
+const RO_TOTAL_CENTS = 185000;          // $1,850.00 repair order
+const DIGNIFI_APPROVAL_CENTS = 560000;  // $5,600.00
+const SUNBIT_APPROVAL_CENTS = 150000;   // $1,500.00
+const SUNBIT_DOWN_CENTS = 45000;        // $450.00 (~30% of Sunbit's approval)
+const SUNBIT_FINANCED_CENTS = SUNBIT_APPROVAL_CENTS - SUNBIT_DOWN_CENTS; // $1,050.00
+const SUNBIT_GAP_CENTS = RO_TOTAL_CENTS - SUNBIT_APPROVAL_CENTS;         // $350.00 short of the repair
 
-  const ctxDevice = document.getElementById('ctxDevice');
-  const ctxLine = document.getElementById('ctxLine');
-  const potTitle = document.getElementById('potTitle');
-  const potSub = document.getElementById('potSub');
-  const potCta = document.getElementById('potCta');
-  const stateNote = document.getElementById('stateNote');
-  const apiTitle = document.getElementById('apiTitle');
-  const logEl = document.getElementById('log');
-  const runBtn = document.getElementById('runBtn');
-  const touchpointView = document.getElementById('touchpointView');
-  const hostedView = document.getElementById('hostedView');
+const OFFER_SUMMARY_READY = `
+  <div class="offer-summary ready">
+    <div class="ostitle">✓ You have 2 payment plan offers</div>
+    <div class="osub">As low as $77/mo. These follow you through your visit — no need to check again.</div>
+    <span class="oslink">View my offers →</span>
+  </div>`;
 
-  function renderTouchpoint(key){
-    const tp = touchpoints[key];
-    ctxDevice.textContent = tp.device;
-    ctxLine.textContent = tp.ctx;
-    apiTitle.textContent = tp.apiPrefix + " · live log";
-    logEl.innerHTML = '<span class="placeholder">Press "Run this flow" to see the exact request, response, and text‑invite sequence behind this touchpoint.</span>';
-    runBtn.disabled = false;
-    runBtn.textContent = "Run this flow";
+const OFFER_SUMMARY_NONE = (onclickAttr) => `
+  <button class="card clickable" style="width:100%;text-align:left;border:0;padding:0;background:none;" ${onclickAttr}>
+    <div class="card">
+      <div style="font-weight:700;font-size:12.5px;margin-bottom:6px;">Want to spread out the cost?</div>
+      <div class="cta-amount">Pay Over Time — as low as $77/mo</div>
+      <div class="fineprint">Tap to check every enrolled provider at once — won't affect your credit score.</div>
+    </div>
+  </button>`;
 
-    if(simPrequalified){
-      potTitle.textContent = "You're pre‑qualified for Pay Over Time";
-      potSub.textContent = "Offers from 2 providers are already active for this repair order.";
-      potCta.textContent = "Continue with Pay Over Time";
-      potCta.classList.add('prequal');
-      stateNote.classList.remove('show');
-    } else {
-      potTitle.textContent = "Pay Over Time";
-      potSub.textContent = "As low as $62/mo for qualified buyers — no provider name shown yet.";
-      potCta.textContent = tp.ctaLabel;
-      potCta.classList.remove('prequal');
-      stateNote.classList.remove('show');
-    }
-  }
+const TOUCHPOINTS = [
+  {
+    id: "scheduling",
+    label: "Service Scheduling",
+    title: "Service Scheduling",
+    stage: "early",
+    desc: (pq) => pq
+      ? "The consumer tapped in and now has offers from every provider that approved them. Those offers follow them through every touchpoint that comes after."
+      : "The consumer can request Pay Over Time right here, before they ever set foot in the shop. Tap the card in the preview to see every enrolled provider get pinged at once.",
+    consoleTitle: (pq) => pq ? "financing-hub-api · GET /offers" : "financing-hub-api · broadcast → provider APIs",
+    session: (pq) => pq
+      ? "2 offers active — DigniFi up to $5,600 ($0 down) · Sunbit up to $1,500 (~$450 down, doesn't fully cover the repair)"
+      : "No active offers for this consumer",
+    device: (pq) => pq ? `
+      <div class="device-browser">
+        <div class="browserbar">
+          <span class="dot" style="background:#E5493F"></span><span class="dot" style="background:#E8B93F"></span><span class="dot" style="background:#3FB950"></span>
+          <div class="url">service.example.com/schedule</div>
+        </div>
+        <div class="screenpad">
+          <div style="font-weight:800;font-size:15px;margin-bottom:10px;">Confirm Your Appointment</div>
+          <div class="card">
+            <div style="font-weight:700;font-size:12.5px;">Tue, Sept 8 · 9:00 AM</div>
+            <div class="muted" style="font-size:11.5px;margin-top:4px;">Brake service + multi-point inspection</div>
+            <div class="muted" style="font-size:11.5px;margin-top:4px;">Estimated cost: $1,700 – $1,950</div>
+          </div>
+          ${OFFER_SUMMARY_READY}
+          <div class="btn-dark">Confirm Appointment</div>
+        </div>
+      </div>` : `
+      <div class="device-browser">
+        <div class="browserbar">
+          <span class="dot" style="background:#E5493F"></span><span class="dot" style="background:#E8B93F"></span><span class="dot" style="background:#3FB950"></span>
+          <div class="url">service.example.com/schedule</div>
+        </div>
+        <div class="screenpad">
+          <div style="font-weight:800;font-size:15px;margin-bottom:10px;">Confirm Your Appointment</div>
+          <div class="card">
+            <div style="font-weight:700;font-size:12.5px;">Tue, Sept 8 · 9:00 AM</div>
+            <div class="muted" style="font-size:11.5px;margin-top:4px;">Brake service + multi-point inspection</div>
+            <div class="muted" style="font-size:11.5px;margin-top:4px;">Estimated cost: $1,700 – $1,950</div>
+          </div>
+          ${OFFER_SUMMARY_NONE('onclick="prequalifyNow()" id="prequalCta"')}
+          <div class="btn-dark">Confirm Appointment</div>
+        </div>
+      </div>`,
+    steps: (pq) => pq ? [
+      {
+        type: "api",
+        method: "GET",
+        endpoint: "/api/v1/offers?referenceId=RO-88213",
+        name: "Fetch Active Offers",
+        desc: "Before rendering the scheduling page, your system checks whether this consumer already has any live offers on file.",
+        request: { referenceId: "RO-88213" },
+        response: { status: 200, offers: [
+          { provider: "dignifi", checkoutId: "chk_9f21ab", status: "PREQUALIFIED", approvalCeilingCents: DIGNIFI_APPROVAL_CENTS, downPaymentRequiredCents: 0 },
+          { provider: "sunbit", applicationId: "snb_2b88f1", status: "PREQUALIFIED", approvalCeilingCents: SUNBIT_APPROVAL_CENTS, downPaymentRequiredCents: SUNBIT_DOWN_CENTS },
+        ] },
+      },
+      {
+        type: "note",
+        label: "Reuse, don't rebroadcast",
+        desc: "Because active offers already exist for this reference id, financing-hub-api/broadcast is never called again here — the scheduling page just renders from this lookup.",
+      },
+    ] : [
+      {
+        type: "api",
+        method: "POST",
+        endpoint: "/api/v1/financing/broadcast",
+        name: "Broadcast to Provider Network",
+        desc: "The moment the scheduling page loads with a rough repair amount, this call fans out to every enrolled provider at once — no single provider is invited directly.",
+        request: {
+          referenceId: "RO-88213", transactionAmountCents: RO_TOTAL_CENTS,
+          merchantId: "mer_city_auto_group",
+          customer: { firstName: "Jordan", lastName: "M.", mobile: "+1••••••4471" },
+          preliminaryRedirectUri: "https://partner.example.com/schedule",
+        },
+        response: { status: 202, broadcastId: "bc_44f091", providersContacted: ["dignifi", "sunbit"], status_detail: "PENDING" },
+      },
+      {
+        type: "api",
+        cls: "dignifi",
+        method: "POST",
+        endpoint: "/api/v1/checkouts/initiate",
+        name: "DigniFi · Invite to Checkout API",
+        desc: "DigniFi's own API receives the broadcast and opens a checkout session behind the scenes.",
+        request: { referenceId: "RO-88213", transactionAmountCents: RO_TOTAL_CENTS },
+        response: { status: 201, checkoutId: "chk_9f21ab", checkoutStatus: "CREATED", checkoutUrl: "https://pay.dignifi.com/c/9f21ab" },
+      },
+      {
+        type: "api",
+        cls: "sunbit",
+        method: "POST",
+        endpoint: "/v2/applications",
+        name: "Sunbit · Create Application",
+        desc: "Sunbit's API does the same, independently and in parallel — its own session id, its own status model.",
+        request: { referenceId: "RO-88213", transactionAmountCents: RO_TOTAL_CENTS },
+        response: { status: 201, applicationId: "snb_2b88f1", status_detail: "CREATED", applicationUrl: "https://pay.sunbit.com/a/2b88f1" },
+      },
+      {
+        type: "webhook",
+        cls: "dignifi",
+        event: "checkout.approved",
+        delay: "~70 seconds later",
+        desc: "The consumer completed DigniFi's hosted signup and soft credit pull. DigniFi texts the approval link directly to the consumer — see “Inside a Provider's Experience” for what that looked like.",
+        request: null,
+        response: { event: "checkout.approved", checkoutId: "chk_9f21ab", checkoutStatus: "PREQUALIFIED", approvalCeilingCents: DIGNIFI_APPROVAL_CENTS, downPaymentRequiredCents: 0 },
+      },
+      {
+        type: "webhook",
+        cls: "sunbit",
+        event: "application.approved",
+        delay: "~95 seconds later",
+        desc: "Sunbit's own hosted flow finished separately and texted its own approval link. Note the required down payment — DigniFi's offer doesn't have one.",
+        request: null,
+        response: { event: "application.approved", applicationId: "snb_2b88f1", status_detail: "PREQUALIFIED", approvalCeilingCents: SUNBIT_APPROVAL_CENTS, downPaymentRequiredCents: SUNBIT_DOWN_CENTS },
+      },
+      {
+        type: "note",
+        label: "This is the key moment",
+        desc: "Both chk_9f21ab and snb_2b88f1 now carry real approvals. Switch the scenario toggle to “Has offers” and every other tab will pick both sessions up automatically — via a lookup, not a rebroadcast.",
+      },
+    ],
+  },
+  {
+    id: "confirmation",
+    label: "Service Confirmation",
+    title: "Service Confirmation",
+    stage: "early",
+    desc: (pq) => pq
+      ? "Rather than re-prompting the consumer to check their options, the confirmation message looks up their existing offers and reminds them — without naming providers."
+      : "The consumer didn't request Pay Over Time at scheduling, so the confirmation message is what invites them to check their options for the first time.",
+    consoleTitle: (pq) => pq ? "financing-hub-api · GET /offers" : "financing-hub-api · GET → broadcast",
+    session: (pq) => pq
+      ? "2 offers active — DigniFi up to $5,600 ($0 down) · Sunbit up to $1,500 (~$450 down, doesn't fully cover the repair)"
+      : "No active offers for this consumer",
+    device: (pq) => pq ? `
+      <div class="device-phone">
+        <div class="screen">
+          <div class="phonehead">Service Center</div>
+          <div class="screenpad" style="flex:1;">
+            <div class="bubble in">You're confirmed for Tue 9/8 at 9:00 AM.</div>
+            <div class="bubble in">Estimated cost: $1,700–$1,950.</div>
+            <div class="bubble in link">✓ Good news — you have 2 payment plan offers ready. This carries through your visit, nothing more to do →</div>
+          </div>
+        </div>
+      </div>` : `
+      <div class="device-phone">
+        <div class="screen">
+          <div class="phonehead">Service Center</div>
+          <div class="screenpad" style="flex:1;">
+            <div class="bubble in">You're confirmed for Tue 9/8 at 9:00 AM.</div>
+            <div class="bubble in">Estimated cost: $1,700–$1,950.</div>
+            <div class="bubble in link">Want to pay over time? See if you're pre‑qualified, no credit impact to check →</div>
+          </div>
+        </div>
+      </div>`,
+    steps: (pq) => pq ? [
+      {
+        type: "api",
+        method: "GET",
+        endpoint: "/api/v1/offers?referenceId=RO-88213",
+        name: "Fetch Active Offers",
+        desc: "Before drafting the confirmation message, your system checks whether this consumer already has offers on file.",
+        request: { referenceId: "RO-88213" },
+        response: { status: 200, offers: [
+          { provider: "dignifi", checkoutId: "chk_9f21ab", status: "PREQUALIFIED" },
+          { provider: "sunbit", applicationId: "snb_2b88f1", status: "PREQUALIFIED" },
+        ] },
+      },
+      {
+        type: "note",
+        label: "Reuse, don't rebroadcast",
+        desc: "Because active offers already exist, /financing/broadcast is never called here — the confirmation template just renders a generic “you have offers” line from the lookup.",
+      },
+    ] : [
+      {
+        type: "api",
+        method: "GET",
+        endpoint: "/api/v1/offers?referenceId=RO-88213",
+        name: "Fetch Active Offers",
+        desc: "Your system checks first, same as every touchpoint. This consumer skipped requesting Pay Over Time at scheduling, so there's nothing to find yet.",
+        request: { referenceId: "RO-88213" },
+        response: { status: 404, error: "no_active_offers" },
+      },
+      {
+        type: "api",
+        method: "POST",
+        endpoint: "/api/v1/financing/broadcast",
+        name: "Broadcast to Provider Network",
+        desc: "Because nothing existed, the confirmation template includes a fresh, provider‑neutral invite link instead of a reassurance message.",
+        request: { referenceId: "RO-88213", transactionAmountCents: RO_TOTAL_CENTS, inviteType: "text" },
+        response: { status: 202, broadcastId: "bc_c1a002", providersContacted: ["dignifi", "sunbit"], status_detail: "PENDING" },
+      },
+      {
+        type: "note",
+        label: "This session now follows them",
+        desc: "Whichever providers approve from this broadcast become the offers every later touchpoint looks up — same as if the consumer had requested Pay Over Time at scheduling.",
+      },
+    ],
+  },
+  {
+    id: "mpi",
+    label: "MPI & Estimate",
+    title: "MPI & Estimated Repairs",
+    stage: "early",
+    desc: (pq) => pq
+      ? "The technician's inspection confirms the repair total. The consumer's existing offers are checked against it — worth flagging to the advisor when one offer alone wouldn't cover it."
+      : "The technician's inspection sets the repair total, and this consumer still hasn't requested Pay Over Time. The advisor can prompt them right from this screen.",
+    consoleTitle: (pq) => pq ? "financing-hub-api · GET /offers" : "financing-hub-api · GET → broadcast",
+    session: (pq) => pq
+      ? "2 offers active — DigniFi up to $5,600 ($0 down) · Sunbit up to $1,500 (~$450 down, doesn't fully cover the repair)"
+      : "No active offers for this consumer",
+    device: (pq) => pq ? `
+      <div class="device-phone">
+        <div class="screen">
+          <div class="phonehead"><span>☰ &nbsp;Multi Point Inspection</span><span>$1,850.00</span></div>
+          <div class="screenpad" style="padding-top:12px;">
+            <div class="offer-summary ready" style="margin-bottom:10px;">
+              <div class="ostitle">✓ 2 payment plan offers ready</div>
+              <div class="osub">At least one offer covers today's $1,850.00 in full.</div>
+            </div>
+            <div style="font-weight:700;font-size:12px;margin-bottom:8px;">City Auto Group</div>
+            <div style="background:#2C5F82;color:#fff;font-size:11px;padding:7px 10px;margin-bottom:0;">🚗 Your 2024 Explorer: (4 items)</div>
+            <div class="concern-label">Your Concern</div>
+            <div class="concern-body"><span>Front brake pads & rotors</span><b>$1,240</b></div>
+            <div class="concern-label">Your Concern</div>
+            <div class="concern-body"><span>Serpentine belt replacement</span><b>$335</b></div>
+            <div class="concern-label">Your Concern</div>
+            <div class="concern-body"><span>Battery replacement</span><b>$210</b></div>
+            <div class="concern-label">Your Concern</div>
+            <div class="concern-body"><span>Cabin air filter replacement</span><b>$65</b></div>
+            <div class="card" style="margin-top:12px;">
+              <div style="font-weight:700;font-size:12px;">Estimated Total: $1,850.00</div>
+            </div>
+          </div>
+        </div>
+      </div>` : `
+      <div class="device-phone">
+        <div class="screen">
+          <div class="phonehead"><span>☰ &nbsp;Multi Point Inspection</span><span>$1,850.00</span></div>
+          <div class="screenpad" style="padding-top:12px;">
+            <div class="cta-amount" style="margin-bottom:2px;">Pay Over Time — as low as $77/mo</div>
+            <div style="font-size:10.5px;color:#2C5F82;text-decoration:underline;margin:2px 0 12px;">See if I qualify</div>
+            <div style="font-weight:700;font-size:12px;margin-bottom:8px;">City Auto Group</div>
+            <div style="background:#2C5F82;color:#fff;font-size:11px;padding:7px 10px;margin-bottom:0;">🚗 Your 2024 Explorer: (4 items)</div>
+            <div class="concern-label">Your Concern</div>
+            <div class="concern-body"><span>Front brake pads & rotors</span><b>$1,240</b></div>
+            <div class="concern-label">Your Concern</div>
+            <div class="concern-body"><span>Serpentine belt replacement</span><b>$335</b></div>
+            <div class="concern-label">Your Concern</div>
+            <div class="concern-body"><span>Battery replacement</span><b>$210</b></div>
+            <div class="concern-label">Your Concern</div>
+            <div class="concern-body"><span>Cabin air filter replacement</span><b>$65</b></div>
+            <div class="card" style="margin-top:12px;">
+              <div style="font-weight:700;font-size:12px;">Estimated Total: $1,850.00</div>
+              <div class="cta-amount" style="color:var(--crimson);">Finance for as low as $77/mo</div>
+            </div>
+          </div>
+        </div>
+      </div>`,
+    steps: (pq) => pq ? [
+      {
+        type: "api",
+        method: "GET",
+        endpoint: "/api/v1/offers?referenceId=RO-88213",
+        name: "Fetch Active Offers",
+        desc: "Same session, same lookup pattern as Confirmation. The advisor's screen and the consumer's screen both read from this one call.",
+        request: { referenceId: "RO-88213" },
+        response: { status: 200, offers: [
+          { provider: "dignifi", approvalCeilingCents: DIGNIFI_APPROVAL_CENTS, downPaymentRequiredCents: 0 },
+          { provider: "sunbit", approvalCeilingCents: SUNBIT_APPROVAL_CENTS, downPaymentRequiredCents: SUNBIT_DOWN_CENTS },
+        ] },
+      },
+      {
+        type: "note",
+        label: "Worth flagging to the advisor",
+        desc: "$1,850.00 in recommended work is fully covered by DigniFi's $5,600 approval with $0 down. Sunbit's $1,500 approval alone falls $350 short of the repair — before its ~$450 down payment is even collected.",
+      },
+    ] : [
+      {
+        type: "api",
+        method: "GET",
+        endpoint: "/api/v1/offers?referenceId=RO-88213",
+        name: "Fetch Active Offers",
+        desc: "The advisor's screen checks first. This consumer still hasn't requested Pay Over Time at any earlier touchpoint.",
+        request: { referenceId: "RO-88213" },
+        response: { status: 404, error: "no_active_offers" },
+      },
+      {
+        type: "api",
+        method: "POST",
+        endpoint: "/api/v1/financing/broadcast",
+        name: "Broadcast to Provider Network",
+        desc: "With nothing on file, one goes out here — using the technician's updated repair total — so both providers can decision against the real number.",
+        request: { referenceId: "RO-88213", transactionAmountCents: RO_TOTAL_CENTS },
+        response: { status: 202, broadcastId: "bc_5f19ad", providersContacted: ["dignifi", "sunbit"], status_detail: "PENDING" },
+      },
+      {
+        type: "note",
+        label: "Advisor's opening",
+        desc: "This is a natural moment for the advisor to prompt Pay Over Time directly — see the Manual Text Invite tab for what that looks like.",
+      },
+    ],
+  },
+  {
+    id: "invite",
+    label: "Manual Text Invite",
+    title: "Manual Text Invite",
+    stage: "mid",
+    desc: (pq) => pq
+      ? "This consumer already has offers upstream, so there's nothing new to invite them into — the advisor just reminds them their offers are ready to use."
+      : "Not every consumer requests Pay Over Time on their own. When they didn't, the advisor triggers the broadcast manually — and from that point on, it behaves exactly like a session created at scheduling.",
+    consoleTitle: (pq) => pq ? "financing-hub-api · GET /offers" : "financing-hub-api · GET → broadcast",
+    session: (pq) => pq
+      ? "2 offers active — DigniFi up to $5,600 ($0 down) · Sunbit up to $1,500 (~$450 down, doesn't fully cover the repair)"
+      : "No active offers for this consumer",
+    device: (pq) => pq ? `
+      <div class="device-phone">
+        <div class="screen">
+          <div class="phonehead">Service Advisor</div>
+          <div class="screenpad" style="flex:1;">
+            <div class="bubble out">Hey! Following up on the brakes, total came to $1,850.</div>
+            <div class="bubble out link">Just a reminder — your Pay Over Time offers are still active, ready whenever you'd like to use them →</div>
+            <div class="bubble in">Perfect, let's do it</div>
+          </div>
+        </div>
+      </div>` : `
+      <div class="device-phone">
+        <div class="screen">
+          <div class="phonehead">Service Advisor</div>
+          <div class="screenpad" style="flex:1;">
+            <div class="bubble out">Hey! Following up on the brakes, total came to $1,850. Looks like you didn't get a chance to check Pay Over Time yet.</div>
+            <div class="bubble in">Oh that's more than I expected right now</div>
+            <div class="bubble out link">No problem, here's a link to see if you qualify, takes under a minute →</div>
+            <div class="bubble in">Just got a couple offers, thank you!</div>
+          </div>
+        </div>
+      </div>`,
+    steps: (pq) => pq ? [
+      {
+        type: "api",
+        method: "GET",
+        endpoint: "/api/v1/offers?referenceId=RO-88213",
+        name: "Fetch Active Offers",
+        desc: "The advisor's system checks first, same as every touchpoint, and finds the offers created back at scheduling.",
+        request: { referenceId: "RO-88213" },
+        response: { status: 200, offers: [
+          { provider: "dignifi", checkoutId: "chk_9f21ab", status: "PREQUALIFIED" },
+          { provider: "sunbit", applicationId: "snb_2b88f1", status: "PREQUALIFIED" },
+        ] },
+      },
+      {
+        type: "note",
+        label: "No new invite needed",
+        desc: "/financing/broadcast is never called here — the text is just a reminder pulled from the existing offers, not a new outreach.",
+      },
+    ] : [
+      {
+        type: "api",
+        method: "GET",
+        endpoint: "/api/v1/offers?referenceId=RO-88213",
+        name: "Fetch Active Offers",
+        desc: "The advisor's system checks first, same as every other touchpoint. This consumer never requested Pay Over Time anywhere upstream, so there's nothing to find.",
+        request: { referenceId: "RO-88213" },
+        response: { status: 404, error: "no_active_offers" },
+      },
+      {
+        type: "api",
+        method: "POST",
+        endpoint: "/api/v1/financing/broadcast",
+        name: "Broadcast to Provider Network",
+        desc: "Only because nothing existed does the advisor's system fall back to broadcasting — triggered manually, from the service drive.",
+        request: { referenceId: "RO-88213", transactionAmountCents: RO_TOTAL_CENTS, initiatedBy: "advisor" },
+        response: { status: 202, broadcastId: "bc_7cd310", providersContacted: ["dignifi", "sunbit"], status_detail: "PENDING" },
+      },
+      {
+        type: "webhook",
+        cls: "dignifi",
+        event: "checkout.approved",
+        delay: "~3 minutes later",
+        desc: "The consumer finishes DigniFi's hosted flow on their own phone, away from the shop. DigniFi texts them directly when it's done.",
+        request: null,
+        response: { event: "checkout.approved", checkoutId: "chk_7cd310", checkoutStatus: "PREQUALIFIED", approvalCeilingCents: DIGNIFI_APPROVAL_CENTS },
+      },
+      {
+        type: "webhook",
+        cls: "sunbit",
+        event: "application.approved",
+        delay: "~4 minutes later",
+        desc: "Sunbit's flow finishes separately, moments later, and texts its own approval — including the down payment amount.",
+        request: null,
+        response: { event: "application.approved", applicationId: "snb_e88a10", status_detail: "PREQUALIFIED", approvalCeilingCents: SUNBIT_APPROVAL_CENTS, downPaymentRequiredCents: SUNBIT_DOWN_CENTS },
+      },
+      {
+        type: "note",
+        label: "Same rules from here on",
+        desc: "These offers now behave exactly like the ones created at scheduling — any later touchpoint for this consumer will GET them instead of broadcasting again.",
+      },
+    ],
+  },
+  {
+    id: "checkout",
+    label: "Payment & Checkout",
+    title: "Payment & Checkout",
+    stage: "final",
+    desc: (pq) => pq
+      ? "The repair is complete and the invoice is locked. This is the one moment providers finally get named — the consumer has to actually choose which offer to use."
+      : "The repair is complete and the invoice is locked, but this consumer still hasn't requested Pay Over Time anywhere upstream — so checkout has to do both jobs at once.",
+    consoleTitle: (pq) => pq ? "financing-hub-api · GET → provider finalize" : "financing-hub-api · GET → broadcast → finalize",
+    session: (pq) => pq
+      ? "2 offers active — DigniFi up to $5,600 ($0 down) · Sunbit up to $1,500 (~$450 down, doesn't fully cover the repair)"
+      : "No active offers for this consumer",
+    device: (pq) => pq ? `
+      <div class="device-phone">
+        <div class="screen">
+          <div class="phonehead"><span>‹ Back</span><span>Checkout</span><span>🛒 Review</span></div>
+          <div class="screenpad">
+            <div style="font-weight:800;font-size:14px;margin-bottom:10px;">Choose how to pay</div>
+            <div class="rowline"><span>Pay with Card</span><span class="muted">$1,850.00</span></div>
 
-  function addLogLine(html, delay, cls){
-    setTimeout(() => {
-      const div = document.createElement('div');
-      div.className = 'log-line';
-      div.innerHTML = html;
-      if(logEl.querySelector('.placeholder')) logEl.innerHTML = '';
-      logEl.appendChild(div);
-      logEl.scrollTop = logEl.scrollHeight;
-    }, delay);
-  }
+            <div class="provider-mini dignifi" style="margin-top:10px;">
+              <div class="pm-top"><span class="pm-name">DigniFi</span><span class="pm-flag ok">Approved</span></div>
+              <div class="pm-amt">$5,600.00</div>
+              <div class="pm-line">Covers the full $1,850.00 invoice</div>
+              <span class="pm-flag ok">$0 down</span>
+              <div class="pm-btn">Continue with DigniFi</div>
+            </div>
 
-  function runFlow(){
-    logEl.innerHTML = '';
-    runBtn.disabled = true;
-    const tp = touchpoints[currentTab];
-    const prefix = tp.apiPrefix;
+            <div class="provider-mini sunbit">
+              <div class="pm-top"><span class="pm-name">Sunbit</span><span class="pm-flag ok">Approved</span></div>
+              <div class="pm-amt">$1,500.00</div>
+              <div class="pm-line">$1,050.00 financed after down payment</div>
+              <span class="pm-flag warn">$450 down today</span><span class="pm-flag gap">$350 short of invoice</span>
+              <div class="pm-btn">Continue with Sunbit</div>
+            </div>
+          </div>
+        </div>
+      </div>` : `
+      <div class="device-phone">
+        <div class="screen">
+          <div class="phonehead"><span>‹ Back</span><span>Checkout</span><span>🛒 Review</span></div>
+          <div class="screenpad">
+            <div style="font-weight:800;font-size:14px;margin-bottom:10px;">Payment Options</div>
+            <div class="rowline"><span>Pay with Card</span><span class="muted">$1,850.00</span></div>
+            <div class="card" style="margin-top:10px;">
+              <div class="cta-amount">Pay Over Time — as low as $77/mo</div>
+              <div class="fineprint">Tap to check your approval amount — takes under a minute.</div>
+            </div>
+            <div class="btn-navy" style="margin-top:14px;">Continue</div>
+          </div>
+        </div>
+      </div>`,
+    steps: (pq) => pq ? [
+      {
+        type: "api",
+        method: "GET",
+        endpoint: "/api/v1/offers?referenceId=RO-88213",
+        name: "Fetch Active Offers",
+        desc: "One last lookup before locking the invoice, confirming both offers are still active and reading their terms.",
+        request: { referenceId: "RO-88213" },
+        response: { status: 200, offers: [
+          { provider: "dignifi", checkoutId: "chk_9f21ab", approvalCeilingCents: DIGNIFI_APPROVAL_CENTS, downPaymentRequiredCents: 0 },
+          { provider: "sunbit", applicationId: "snb_2b88f1", approvalCeilingCents: SUNBIT_APPROVAL_CENTS, downPaymentRequiredCents: SUNBIT_DOWN_CENTS },
+        ] },
+      },
+      {
+        type: "api",
+        cls: "dignifi",
+        method: "POST",
+        endpoint: "/api/v1/checkouts/{id}/finalize",
+        name: "DigniFi · Finalize Checkout Transaction Amount",
+        desc: "The consumer selects DigniFi. The invoice is locked at $1,850.00 — comfortably inside the $5,600 approval, $0 down.",
+        request: { checkoutId: "chk_9f21ab", finalAmountCents: RO_TOTAL_CENTS },
+        response: { status: 200, checkoutId: "chk_9f21ab", checkoutStatus: "FINALIZED", checkoutUrl: "https://pay.dignifi.com/c/9f21ab" },
+      },
+      {
+        type: "webhook",
+        cls: "dignifi",
+        event: "checkout.completed",
+        delay: "moments later",
+        desc: "The consumer signs their loan agreement inside DigniFi's hosted flow. Completion fires this webhook back to your system.",
+        request: null,
+        response: { event: "checkout.completed", checkoutId: "chk_9f21ab", checkoutStatus: "COMPLETED", financedAmountCents: RO_TOTAL_CENTS },
+      },
+      {
+        type: "note",
+        label: "If Sunbit had been chosen instead",
+        desc: "Finalize would lock at Sunbit's $1,500.00 approval, financedAmountCents 105000 after the $450.00 down payment — leaving a $350.00 balance the consumer would need to cover separately, since Sunbit's offer doesn't fully reach the $1,850.00 invoice.",
+      },
+    ] : [
+      {
+        type: "api",
+        method: "GET",
+        endpoint: "/api/v1/offers?referenceId=RO-88213",
+        name: "Fetch Active Offers",
+        desc: "Checkout always checks first. This consumer skipped every earlier chance to request Pay Over Time, so there's still nothing on file.",
+        request: { referenceId: "RO-88213" },
+        response: { status: 404, error: "no_active_offers" },
+      },
+      {
+        type: "api",
+        method: "POST",
+        endpoint: "/api/v1/financing/broadcast",
+        name: "Broadcast to Provider Network",
+        desc: "Since the invoice is already final, this broadcast can include the real amount right away rather than a rough one.",
+        request: { referenceId: "RO-88213", transactionAmountCents: RO_TOTAL_CENTS },
+        response: { status: 202, broadcastId: "bc_k3c024", providersContacted: ["dignifi", "sunbit"], status_detail: "PENDING" },
+      },
+      {
+        type: "webhook",
+        cls: "dignifi",
+        event: "checkout.approved",
+        delay: "moments later",
+        desc: "The consumer completes DigniFi's hosted flow at the point of sale and is approved for the full invoice.",
+        request: null,
+        response: { event: "checkout.approved", checkoutId: "chk_k3c024", checkoutStatus: "PREQUALIFIED", approvalCeilingCents: DIGNIFI_APPROVAL_CENTS },
+      },
+      {
+        type: "api",
+        cls: "dignifi",
+        method: "POST",
+        endpoint: "/api/v1/checkouts/{id}/finalize",
+        name: "DigniFi · Finalize Checkout Transaction Amount",
+        desc: "Immediately after approval, the amount is finalized in the same visit — the consumer qualifies and completes financing back to back.",
+        request: { checkoutId: "chk_k3c024", finalAmountCents: RO_TOTAL_CENTS },
+        response: { status: 200, checkoutId: "chk_k3c024", checkoutStatus: "FINALIZED" },
+      },
+      {
+        type: "note",
+        label: "The cost of waiting",
+        desc: "This works, but it's the slowest path — a broadcast, an approval, and a finalize call back to back at the exact moment the consumer is ready to leave, instead of a single lookup against offers that already existed.",
+      },
+    ],
+  },
+  {
+    id: "handoff",
+    label: "Inside a Provider's Experience",
+    title: "Inside a Provider's Experience",
+    stage: "handoff",
+    desc: () => "The moment a consumer taps a provider's link — from Scheduling, Confirmation, or a Manual Invite — they leave your site entirely and land inside that provider's own hosted flow. Each provider's experience is separate; compare DigniFi's and Sunbit's below.",
+    session: () => null,
+    isVisualJourney: true,
+  },
+];
 
-    if(!simPrequalified){
-      addLogLine(`<span class="src">POST</span> ${prefix}/financing/initiate <span class="arrow">→</span> { ro:"RO‑48291", amount:1850 }`, 150);
-      addLogLine(`<span class="src">partner-api</span> <span class="arrow">→</span> broadcasting to 2 enrolled providers`, 550);
-      addLogLine(`<span class="src dignifi">dignifi-api</span> <span class="arrow">←</span> 200 approved <b>$5,600</b>, $0 down<span class="note">soft pull only, no credit impact</span>`, 1050);
-      addLogLine(`<span class="src sunbit">sunbit-api</span> <span class="arrow">←</span> 200 approved <b>$1,500</b>, ~30% down required<span class="note">soft pull only, no credit impact</span>`, 1500);
-      addLogLine(`<span class="src dignifi">dignifi-notify</span> <span class="arrow">→</span> SMS sent to consumer directly<span class="note">from DigniFi's own number — not sent via ${prefix.split('-')[0]}'s messaging rails</span>`, 2050);
-      addLogLine(`<span class="src sunbit">sunbit-notify</span> <span class="arrow">→</span> SMS sent to consumer directly<span class="note">from Sunbit's own number — not sent via ${prefix.split('-')[0]}'s messaging rails</span>`, 2500);
-      addLogLine(`<span class="src">partner-api</span> <span class="arrow">←</span> webhook: prequal_status = "offers_available" (2 offers linked to RO‑48291)`, 3050);
-      addLogLine(`Consumer state updated: <b>pre‑qualified = true</b> for all remaining touchpoints on this visit`, 3450, );
-      setTimeout(() => {
-        simPrequalified = true;
-        document.getElementById('simYes').classList.add('active');
-        document.getElementById('simNot').classList.remove('active');
-        renderTouchpointCtaOnly();
-        runBtn.disabled = false;
-      }, 3700);
-    } else {
-      addLogLine(`<span class="src">GET</span> ${prefix}/financing/status <span class="arrow">→</span> { ro:"RO‑48291" }`, 150);
-      addLogLine(`<span class="src">partner-api</span> <span class="arrow">←</span> 200 { offers: [dignifi:$5600, sunbit:$1500], status:"active" }`, 650);
-      addLogLine(`No new provider contact made — existing offers are simply surfaced at this touchpoint.`, 1150);
-      setTimeout(() => { runBtn.disabled = false; }, 1350);
-    }
-  }
+// ---------------------------------------------------------------------
+// Provider-specific hosted journeys (Tab 6)
+// ---------------------------------------------------------------------
+function dignifiJourney(){
+  return `
+    <div class="act-header act-header-mid">
+      <span class="sw"></span>Act 1 · Prequalification — begins at Scheduling, Confirmation, or Manual Invite
+    </div>
+    <div class="redirect-banner">
+      <span class="arrow">→</span>
+      <div class="rtext">
+        <div class="rtitle">Redirect In</div>
+        <div class="rurl">checkoutUrl from the broadcast<br>https://pay.dignifi.com<span class="q">/c/9f21ab</span></div>
+      </div>
+    </div>
 
-  // update just the CTA copy without wiping the log, used right after first flow completes
-  function renderTouchpointCtaOnly(){
-    potTitle.textContent = "You're pre‑qualified for Pay Over Time";
-    potSub.textContent = "Offers from 2 providers are already active for this repair order.";
-    potCta.textContent = "Continue with Pay Over Time";
-    potCta.classList.add('prequal');
-  }
+    <div class="jconnector"></div>
+    <div class="mini-screen" style="max-width:340px;">
+      <div class="mini-step-n">1</div>
+      <div class="mini-header"><span class="mini-logo">Digni<span>Fi</span></span></div>
+      <div class="mini-title">Create Account</div>
+      <div class="mini-sub">“City Auto Group has partnered with DigniFi to provide access to financing. Prequalifying is quick, easy, and won't impact your credit score.”</div>
+      <div class="mini-fieldrow"><div class="mini-field">First Name</div><div class="mini-field">Last Name</div></div>
+      <div class="mini-field">Mobile Number</div>
+      <div class="mini-field">Email Address</div>
+      <div class="mini-field">Password</div>
+      <div class="mini-btn">🔒 Create Account</div>
+    </div>
 
-  document.querySelectorAll('.tab').forEach(btn => {
-    btn.addEventListener('click', () => {
-      document.querySelectorAll('.tab').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      currentTab = btn.dataset.tab;
-      if(currentTab === 'hosted'){
-        touchpointView.classList.add('hidden');
-        hostedView.classList.remove('hidden');
-      } else {
-        hostedView.classList.add('hidden');
-        touchpointView.classList.remove('hidden');
-        renderTouchpoint(currentTab);
-      }
-    });
+    <div class="jconnector"></div>
+    <div class="mini-screen" style="max-width:300px;">
+      <div class="mini-step-n">2</div>
+      <div class="mini-header"><span class="mini-logo">Digni<span>Fi</span></span></div>
+      <div class="mini-title">Verify Your Mobile Number</div>
+      <div class="mini-sub">Enter the six-digit code sent to (•••) •••-4471.</div>
+      <div class="mini-field">Verification Code</div>
+      <div class="mini-btn">🔒 Verify</div>
+    </div>
+
+    <div class="jconnector"></div>
+    <div class="mini-screen" style="max-width:340px;">
+      <div class="mini-step-n">3</div>
+      <div class="mini-header"><span class="mini-logo">Digni<span>Fi</span></span></div>
+      <div class="mini-title">Home Address & Personal Details</div>
+      <div class="mini-sub">Street, city, state, ZIP — then SSN/ITIN, date of birth, and monthly income.</div>
+      <div class="mini-fieldrow"><div class="mini-field">Street Address</div><div class="mini-field">City</div></div>
+      <div class="mini-fieldrow"><div class="mini-field">SSN / ITIN</div><div class="mini-field">Date of Birth</div></div>
+      <div class="mini-field">Monthly Income</div>
+      <div class="mini-btn">🔒 Continue</div>
+    </div>
+
+    <div class="jconnector"></div>
+    <div class="mini-screen" style="max-width:260px;">
+      <div class="mini-step-n">4</div>
+      <div class="mini-processing">
+        <div class="mini-spinner"></div>
+        <div class="mini-title" style="margin-bottom:0;">Reviewing your information</div>
+        <div class="mini-sub" style="margin-bottom:0;">Soft credit pull via Equifax. Do not close the browser.</div>
+      </div>
+    </div>
+
+    <div class="jconnector"></div>
+    <div class="decision-block">
+      <div class="decision-badge-wrap"><span class="decision-badge">◆ Decision: Underwriting</span></div>
+      <div class="decision-branches">
+        <div class="branch declined">
+          <div class="branch-label">✕ Declined</div>
+          “Unfortunately, your application could not be approved at this time.” Credit score is unaffected.
+        </div>
+        <div class="branch go">
+          <div class="branch-label">✓ Approved — continues</div>
+          Qualifies for either RoadWay (installment loan) or ExpressWay (revolving line of credit).
+        </div>
+      </div>
+    </div>
+
+    <div class="jconnector"></div>
+    <div class="mini-screen" style="max-width:320px; text-align:center;">
+      <div class="mini-step-n">5</div>
+      <div class="mini-header" style="justify-content:center;"><span class="mini-logo">Digni<span>Fi</span></span></div>
+      <div class="mini-title">Congratulations!</div>
+      <div class="mini-sub">You've prequalified for a RoadWay Installment Loan, issued by WebBank, for up to</div>
+      <div class="mini-approved-amt">$5,600.00</div>
+      <div class="mini-note">$0 down payment required — the full approval is available whenever it's needed.</div>
+      <div class="event-tag"><span class="ping"></span>checkout.approved fires to partner here</div>
+    </div>
+
+    <div class="jconnector"></div>
+    <div class="redirect-banner">
+      <span class="arrow">←</span>
+      <div class="rtext">
+        <div class="rtitle">Redirect Out — End of Act 1</div>
+        <div class="rurl">preliminaryRedirectUri from the original broadcast<br>https://partner.example.com/schedule<span class="q">?checkoutId=chk_9f21ab&status=prequalified</span></div>
+      </div>
+    </div>
+
+    <div class="act-divider"><div class="act-divider-label">Meanwhile, back with the partner</div></div>
+    <p style="text-align:center; font-size:11.5px; color:var(--gray); max-width:460px; margin:0 auto 4px; line-height:1.6;">
+      The consumer is back on your site with a $5,600.00 approval attached to chk_9f21ab — and, independently, whatever Sunbit approved. Every touchpoint in between just calls <b>GET /offers</b> to read both, exactly like the Confirmation and MPI tabs show.
+    </p>
+
+    <div class="act-header act-header-final">
+      <span class="sw"></span>Act 2 · Finalize &amp; Sign — begins at Checkout
+    </div>
+    <div class="redirect-banner">
+      <span class="arrow">→</span>
+      <div class="rtext">
+        <div class="rtitle">Redirect In — from Payment &amp; Checkout</div>
+        <div class="rurl">checkoutUrl, resumed with the finalized amount<br>https://pay.dignifi.com<span class="q">/c/9f21ab</span></div>
+      </div>
+    </div>
+
+    <div class="jconnector"></div>
+    <div class="mini-screen" style="max-width:340px;">
+      <div class="mini-step-n">6</div>
+      <div class="mini-header"><span class="mini-logo">Digni<span>Fi</span></span></div>
+      <div class="mini-title">Select Your Loan Package</div>
+      <div class="mini-sub">Based on your finalized $1,850.00 invoice.</div>
+      <table class="mini-table">
+        <tr><th></th><th>Monthly</th><th>Term</th></tr>
+        <tr><td>◉ Option A</td><td>$77.00</td><td>24 mo</td></tr>
+        <tr><td>○ Option B</td><td>$51.39</td><td>36 mo</td></tr>
+      </table>
+      <div class="mini-btn">🔒 Save Terms & Continue</div>
+    </div>
+
+    <div class="jconnector"></div>
+    <div class="mini-screen" style="max-width:340px;">
+      <div class="mini-step-n">7</div>
+      <div class="mini-header"><span class="mini-logo">Digni<span>Fi</span></span></div>
+      <div class="mini-title">Finalize Your Loan Agreement</div>
+      <div class="mini-sub">Unsecured Loan Agreement (Fixed Rate) — review and agree to terms.</div>
+      <div class="mini-field">✓ Fully Viewed</div>
+      <div class="mini-btn">🔒 Accept Offer</div>
+      <div class="mini-note">Accepting authorizes a <b>hard credit inquiry</b> — the only one in this entire journey, and it only happens here at Act 2.</div>
+    </div>
+
+    <div class="jconnector"></div>
+    <div class="mini-screen" style="max-width:300px; text-align:center;">
+      <div class="mini-step-n">8</div>
+      <div class="mini-header" style="justify-content:center;"><span class="mini-logo">Digni<span>Fi</span></span></div>
+      <div class="mini-title">You've successfully signed your loan documents.</div>
+      <div class="mini-sub">Check your email for a copy of your signed documents.</div>
+      <div class="mini-btn dark">Continue</div>
+      <div class="event-tag signed"><span class="ping"></span>checkout.completed fires to partner here</div>
+    </div>
+
+    <div class="jconnector"></div>
+    <div class="redirect-banner">
+      <span class="arrow">←</span>
+      <div class="rtext">
+        <div class="rtitle">Redirect Out — End of Act 2</div>
+        <div class="rurl">redirectUri from the original broadcast<br>https://partner.example.com/checkout<span class="q">?checkoutId=chk_9f21ab&status=completed</span></div>
+      </div>
+    </div>
+    <p style="text-align:center; font-size:11.5px; color:var(--gray); max-width:480px; margin:18px auto 0; line-height:1.6;">
+      The redirect just returns the consumer to the page they were already on in your existing flow. If the consumer is declined instead, the same pattern applies with <code>checkout.declined</code>.
+    </p>`;
+}
+
+function sunbitJourney(){
+  return `
+    <div class="act-header act-header-mid">
+      <span class="sw"></span>Act 1 · Prequalification — begins at Scheduling, Confirmation, or Manual Invite
+    </div>
+    <div class="redirect-banner">
+      <span class="arrow">→</span>
+      <div class="rtext">
+        <div class="rtitle">Redirect In</div>
+        <div class="rurl">applicationUrl from the broadcast<br>https://pay.sunbit.com<span class="q">/a/2b88f1</span></div>
+      </div>
+    </div>
+
+    <div class="jconnector"></div>
+    <div class="mini-screen" style="max-width:340px;">
+      <div class="mini-step-n amber">1</div>
+      <div class="mini-header"><span class="mini-logo amber">Sunbit</span></div>
+      <div class="mini-title">Create Account</div>
+      <div class="mini-sub">“City Auto Group has partnered with Sunbit to provide access to financing. It only takes a minute and won't impact your credit score.”</div>
+      <div class="mini-fieldrow"><div class="mini-field">First Name</div><div class="mini-field">Last Name</div></div>
+      <div class="mini-field">Mobile Number</div>
+      <div class="mini-field">Email Address</div>
+      <div class="mini-btn amber">🔒 Create Account</div>
+    </div>
+
+    <div class="jconnector"></div>
+    <div class="mini-screen" style="max-width:300px;">
+      <div class="mini-step-n amber">2</div>
+      <div class="mini-header"><span class="mini-logo amber">Sunbit</span></div>
+      <div class="mini-title">Verify Your Mobile Number</div>
+      <div class="mini-sub">Enter the six-digit code sent to (•••) •••-4471.</div>
+      <div class="mini-field">Verification Code</div>
+      <div class="mini-btn amber">🔒 Verify</div>
+    </div>
+
+    <div class="jconnector"></div>
+    <div class="mini-screen" style="max-width:340px;">
+      <div class="mini-step-n amber">3</div>
+      <div class="mini-header"><span class="mini-logo amber">Sunbit</span></div>
+      <div class="mini-title">Personal Details</div>
+      <div class="mini-sub">Address, SSN/ITIN, date of birth, and income — used for a soft eligibility check.</div>
+      <div class="mini-fieldrow"><div class="mini-field">Street Address</div><div class="mini-field">City</div></div>
+      <div class="mini-fieldrow"><div class="mini-field">SSN / ITIN</div><div class="mini-field">Date of Birth</div></div>
+      <div class="mini-field">Monthly Income</div>
+      <div class="mini-btn amber">🔒 Continue</div>
+    </div>
+
+    <div class="jconnector"></div>
+    <div class="mini-screen" style="max-width:260px;">
+      <div class="mini-step-n amber">4</div>
+      <div class="mini-processing">
+        <div class="mini-spinner" style="border-top-color:var(--pending);"></div>
+        <div class="mini-title" style="margin-bottom:0;">Checking your eligibility</div>
+        <div class="mini-sub" style="margin-bottom:0;">Soft credit pull. Do not close the browser.</div>
+      </div>
+    </div>
+
+    <div class="jconnector"></div>
+    <div class="decision-block">
+      <div class="decision-badge-wrap"><span class="decision-badge">◆ Decision: Eligibility Check</span></div>
+      <div class="decision-branches">
+        <div class="branch declined">
+          <div class="branch-label">✕ Declined</div>
+          “We're not able to approve this application right now.” Credit score is unaffected.
+        </div>
+        <div class="branch go">
+          <div class="branch-label">✓ Approved — continues</div>
+          Approved with a down payment requirement, based on Sunbit's underwriting.
+        </div>
+      </div>
+    </div>
+
+    <div class="jconnector"></div>
+    <div class="mini-screen" style="max-width:320px; text-align:center;">
+      <div class="mini-step-n amber">5</div>
+      <div class="mini-header" style="justify-content:center;"><span class="mini-logo amber">Sunbit</span></div>
+      <div class="mini-title">You're approved!</div>
+      <div class="mini-sub">You've prequalified for financing up to</div>
+      <div class="mini-approved-amt">$1,500.00</div>
+      <div class="down-highlight">
+        <div class="dh-title">Down payment required</div>
+        <div class="dh-amt">$450.00 <span style="font-size:11px;font-weight:600;">(30%)</span></div>
+        <div class="dh-sub">Amount financed after down payment: $1,050.00</div>
+      </div>
+      <div class="gap-note">Today's repair is $1,850.00 — after this $450.00 down payment and $1,050.00 financed, there's still a <b>$350.00</b> balance this offer doesn't cover.</div>
+      <div class="event-tag"><span class="ping" style="background:var(--pending);"></span>application.approved fires to partner here</div>
+    </div>
+
+    <div class="jconnector"></div>
+    <div class="redirect-banner">
+      <span class="arrow">←</span>
+      <div class="rtext">
+        <div class="rtitle">Redirect Out — End of Act 1</div>
+        <div class="rurl">preliminaryRedirectUri from the original broadcast<br>https://partner.example.com/schedule<span class="q">?applicationId=snb_2b88f1&status=prequalified</span></div>
+      </div>
+    </div>
+
+    <div class="act-divider"><div class="act-divider-label">Meanwhile, back with the partner</div></div>
+    <p style="text-align:center; font-size:11.5px; color:var(--gray); max-width:460px; margin:0 auto 4px; line-height:1.6;">
+      The consumer is back on your site with a $1,500.00 approval — and a down payment obligation — attached to snb_2b88f1, alongside whatever DigniFi approved independently.
+    </p>
+
+    <div class="act-header act-header-final">
+      <span class="sw"></span>Act 2 · Collect Down Payment &amp; Sign — begins at Checkout
+    </div>
+    <div class="redirect-banner">
+      <span class="arrow">→</span>
+      <div class="rtext">
+        <div class="rtitle">Redirect In — from Payment &amp; Checkout</div>
+        <div class="rurl">applicationUrl, resumed with the finalized amount<br>https://pay.sunbit.com<span class="q">/a/2b88f1</span></div>
+      </div>
+    </div>
+
+    <div class="jconnector"></div>
+    <div class="mini-screen" style="max-width:320px;">
+      <div class="mini-step-n amber">6</div>
+      <div class="mini-header"><span class="mini-logo amber">Sunbit</span></div>
+      <div class="mini-title">Pay Your Down Payment</div>
+      <div class="mini-sub">$450.00 due today before financing the remaining $1,050.00.</div>
+      <div class="mini-field">Card Number</div>
+      <div class="mini-fieldrow"><div class="mini-field">Exp. Date</div><div class="mini-field">CVC</div></div>
+      <div class="mini-btn amber">🔒 Pay $450.00 & Continue</div>
+    </div>
+
+    <div class="jconnector"></div>
+    <div class="mini-screen" style="max-width:340px;">
+      <div class="mini-step-n amber">7</div>
+      <div class="mini-header"><span class="mini-logo amber">Sunbit</span></div>
+      <div class="mini-title">Finalize Your Agreement</div>
+      <div class="mini-sub">Retail Installment Contract for $1,050.00 — review and agree to terms.</div>
+      <div class="mini-field">✓ Fully Viewed</div>
+      <div class="mini-btn amber">🔒 Accept Offer</div>
+      <div class="mini-note">Accepting authorizes a <b>hard credit inquiry</b> — the only one in this journey, and it only happens here at Act 2.</div>
+    </div>
+
+    <div class="jconnector"></div>
+    <div class="mini-screen" style="max-width:300px; text-align:center;">
+      <div class="mini-step-n amber">8</div>
+      <div class="mini-header" style="justify-content:center;"><span class="mini-logo amber">Sunbit</span></div>
+      <div class="mini-title">You've paid your down payment and signed.</div>
+      <div class="mini-sub">Check your email for a copy of your signed agreement.</div>
+      <div class="mini-btn dark">Continue</div>
+      <div class="event-tag signed"><span class="ping" style="background:#8FB8DB;"></span>application.completed fires to partner here</div>
+    </div>
+
+    <div class="jconnector"></div>
+    <div class="redirect-banner">
+      <span class="arrow">←</span>
+      <div class="rtext">
+        <div class="rtitle">Redirect Out — End of Act 2</div>
+        <div class="rurl">redirectUri from the original broadcast<br>https://partner.example.com/checkout<span class="q">?applicationId=snb_2b88f1&status=completed</span></div>
+      </div>
+    </div>
+    <p style="text-align:center; font-size:11.5px; color:var(--gray); max-width:480px; margin:18px auto 0; line-height:1.6;">
+      The $350.00 gap between the $1,850.00 invoice and what Sunbit covers still needs to be settled through another payment method — Sunbit's redirect doesn't resolve that on its own.
+    </p>`;
+}
+
+// ---------------------------------------------------------------------
+// Render
+// ---------------------------------------------------------------------
+const tabbar = document.getElementById("tabbar");
+const deviceHost = document.getElementById("deviceHost");
+const touchtext = document.getElementById("touchtext");
+const consoleBody = document.getElementById("consoleBody");
+const consoleTitle = document.getElementById("consoleTitle");
+const runBtn = document.getElementById("runBtn");
+const runLabel = document.getElementById("runLabel");
+const segNo = document.getElementById("segNo");
+const segYes = document.getElementById("segYes");
+
+let activeIndex = 0;
+let running = false;
+let consumerPrequalified = false;
+let handoffProvider = "dignifi";
+
+function syntaxHighlight(obj) {
+  const json = JSON.stringify(obj, null, 2);
+  return json
+    .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+    .replace(/"([^"]+)":/g, '<span class="k">"$1"</span>:')
+    .replace(/: "([^"]*)"/g, ': <span class="s">"$1"</span>')
+    .replace(/: (-?\d+\.?\d*)/g, ': <span class="num">$1</span>');
+}
+
+function renderTabs() {
+  tabbar.innerHTML = TOUCHPOINTS.map((t, i) => `
+    <button class="tab ${i === activeIndex ? "active" : ""}" data-i="${i}">
+      <span class="n">${i + 1}</span><span class="stagedot" style="background:${STAGES[t.stage].color}"></span>${t.label}
+    </button>`).join("");
+  tabbar.querySelectorAll(".tab").forEach(btn => {
+    btn.addEventListener("click", () => selectTab(parseInt(btn.dataset.i, 10)));
   });
+}
 
-  document.getElementById('simNot').addEventListener('click', () => {
-    simPrequalified = false;
-    document.getElementById('simNot').classList.add('active');
-    document.getElementById('simYes').classList.remove('active');
-    if(currentTab !== 'hosted') renderTouchpoint(currentTab);
-  });
-  document.getElementById('simYes').addEventListener('click', () => {
-    simPrequalified = true;
-    document.getElementById('simYes').classList.add('active');
-    document.getElementById('simNot').classList.remove('active');
-    if(currentTab !== 'hosted') renderTouchpoint(currentTab);
-  });
+function renderScenarioToggle() {
+  segNo.classList.toggle("on", !consumerPrequalified);
+  segYes.classList.toggle("on", consumerPrequalified);
+}
 
-  runBtn.addEventListener('click', runFlow);
-  potCta.addEventListener('click', runFlow);
+function setPrequalified(val) {
+  consumerPrequalified = val;
+  renderScenarioToggle();
+  selectTab(activeIndex);
+}
 
-  renderTouchpoint(currentTab);
+function prequalifyNow() {
+  setPrequalified(true);
+  setTimeout(runFlow, 200);
+}
+
+function resolve(val, arg) {
+  return typeof val === "function" ? val(arg) : val;
+}
+
+function renderHandoffJourney(){
+  const journeyFull = document.getElementById("journeyFull");
+  const toggle = `
+    <div class="provider-toggle">
+      <button class="pseg ${handoffProvider === "dignifi" ? "on" : ""}" id="provDignifi"><span class="sw" style="background:var(--success)"></span>DigniFi</button>
+      <button class="pseg ${handoffProvider === "sunbit" ? "on" : ""}" id="provSunbit"><span class="sw" style="background:var(--pending)"></span>Sunbit</button>
+    </div>`;
+  journeyFull.innerHTML = toggle + (handoffProvider === "dignifi" ? dignifiJourney() : sunbitJourney());
+  document.getElementById("provDignifi").addEventListener("click", () => { handoffProvider = "dignifi"; renderHandoffJourney(); });
+  document.getElementById("provSunbit").addEventListener("click", () => { handoffProvider = "sunbit"; renderHandoffJourney(); });
+}
+
+function selectTab(i) {
+  activeIndex = i;
+  running = false;
+  renderTabs();
+  const t = TOUCHPOINTS[i];
+  const stage = STAGES[t.stage];
+  const panelgrid = document.getElementById("panelgrid");
+  const journeyFull = document.getElementById("journeyFull");
+
+  const sessionText = resolve(t.session, consumerPrequalified);
+  const hasSession = sessionText && !sessionText.startsWith("No active");
+  const sessionPill = sessionText ? `
+    <div class="sessionpill ${hasSession ? "has" : "none"}">
+      <span class="sw"></span>${sessionText}
+    </div>` : "";
+  touchtext.innerHTML = `
+    <div style="margin-top:34px;">
+      <div class="stagebadge" style="background:${stage.color}22; color:${stage.color};"><span class="sw" style="background:${stage.color}"></span>${stage.label}</div>
+    </div>
+    <h2 class="touchtitle">${t.title}</h2><p class="touchdesc">${resolve(t.desc, consumerPrequalified)}</p>
+    ${sessionPill}`;
+
+  if (t.isVisualJourney) {
+    panelgrid.classList.add("hidden");
+    journeyFull.classList.add("active");
+    renderHandoffJourney();
+    return;
+  }
+  panelgrid.classList.remove("hidden");
+  journeyFull.classList.remove("active");
+  journeyFull.innerHTML = "";
+
+  deviceHost.innerHTML = resolve(t.device, consumerPrequalified);
+  consoleTitle.textContent = resolve(t.consoleTitle, consumerPrequalified);
+  consoleBody.innerHTML = `<div class="console-empty">Press <b>Run this flow</b> to see the exact request, response, and text‑invite sequence behind this touchpoint.</div>`;
+  runLabel.textContent = "Run this flow";
+  runBtn.disabled = false;
+  runBtn.classList.remove("running");
+}
+
+function eventMarkup(step) {
+  if (step.type === "note") {
+    return `
+      <div class="evt note">
+        <div class="evt-top"><span class="endpoint" style="color:#fff;font-weight:700;">${step.label}</span></div>
+        <div class="note-box">${step.desc}</div>
+      </div>`;
+  }
+  if (step.type === "webhook") {
+    const providerBadge = step.cls ? `<span class="badge-provider ${step.cls}">${step.cls}</span>` : "";
+    return `
+      <div class="evt webhook ${step.cls || ""}">
+        <div class="evt-top">
+          <span class="badge-webhook">Webhook</span>
+          ${providerBadge}
+          <span class="endpoint">${step.event}</span>
+          <span class="timestamp">${step.delay || ""}</span>
+        </div>
+        <div class="evt-desc">${step.desc}</div>
+        <div class="jsonrow">
+          <div class="jsonblock">
+            <div class="jsonlabel">Payload</div>
+            <pre class="json">${syntaxHighlight(step.response)}</pre>
+          </div>
+        </div>
+      </div>`;
+  }
+  // api
+  const isNotFound = step.response.status === 404;
+  const methodClass = step.method === "GET" ? "get" : "post";
+  const statusClass = isNotFound ? "notfound" : "ok";
+  const statusLabel = isNotFound ? `${step.response.status} NOT FOUND` : `${step.response.status} ${step.response.status === 202 ? "ACCEPTED" : "OK"}`;
+  const nameLine = step.name ? `<div style="font-size:11px;color:#8a8683;margin-bottom:2px;">${step.name}</div>` : "";
+  const providerBadge = step.cls ? `<span class="badge-provider ${step.cls}">${step.cls}</span>` : "";
+  return `
+    <div class="evt api ${step.cls || ""}">
+      ${nameLine}
+      <div class="evt-top">
+        <span class="method ${methodClass}">${step.method}</span>
+        ${providerBadge}
+        <span class="endpoint">${step.endpoint}</span>
+        <span class="status ${statusClass}">${statusLabel}</span>
+      </div>
+      <div class="evt-desc">${step.desc}</div>
+      <div class="jsonrow">
+        <div class="jsonblock">
+          <div class="jsonlabel">Request</div>
+          <pre class="json">${syntaxHighlight(step.request)}</pre>
+        </div>
+        <div class="jsonblock">
+          <div class="jsonlabel">Response</div>
+          <pre class="json">${syntaxHighlight(step.response)}</pre>
+        </div>
+      </div>
+    </div>`;
+}
+
+function runFlow() {
+  if (running) return;
+  if (TOUCHPOINTS[activeIndex].isVisualJourney) return;
+  running = true;
+  runBtn.classList.add("running");
+  runLabel.textContent = "Running…";
+  runBtn.disabled = true;
+
+  const steps = resolve(TOUCHPOINTS[activeIndex].steps, consumerPrequalified);
+  consoleBody.innerHTML = "";
+  let i = 0;
+
+  function next() {
+    if (i >= steps.length) {
+      running = false;
+      runBtn.classList.remove("running");
+      runLabel.textContent = "Run again";
+      runBtn.disabled = false;
+      return;
+    }
+    const wrap = document.createElement("div");
+    wrap.innerHTML = eventMarkup(steps[i]);
+    consoleBody.appendChild(wrap.firstElementChild);
+    consoleBody.scrollTop = consoleBody.scrollHeight;
+    i++;
+    setTimeout(next, i === 1 ? 250 : 650);
+  }
+  next();
+}
+
+runBtn.addEventListener("click", runFlow);
+segNo.addEventListener("click", () => setPrequalified(false));
+segYes.addEventListener("click", () => setPrequalified(true));
+
+renderScenarioToggle();
+renderTabs();
+selectTab(0);
 </script>
-
 </body>
 </html>
