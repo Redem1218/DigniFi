@@ -194,12 +194,12 @@
 <div class="wrap">
 
   <div class="page-header">
-    <h1>Endurance VSC add-on — full DigniFi journey, three ways</h1>
+    <h1>Endurance VSC add-on — full DigniFi journey, two ways</h1>
     <p>Scenario: consumer enters via DigniFi Invite to Checkout <b>Option 1 — Fastest Path to Integration</b> (DigniFi controls the full consumer experience; partner integrates only the Checkout API and webhooks, no PII passed upfront) — so account, address, and vehicle info below are all collected fresh, not pre-filled. Repair cost $4,890.00 against a $7,211.53 approval, leaving $2,430.00 in leftover funds. Consumer wants Advantage ($2,890.00), which exceeds what's available. Loan terms shown are 12, 18, 24, and 36 months — VSC monthly deltas below assume the 36-month term is selected; a shorter term raises the added monthly cost of any VSC plan.</p>
   </div>
 
   <div class="tabs">
-    <button class="tab-btn active" data-tab="t0">Overview<span class="sub">All 3 paths compared</span></button>
+    <button class="tab-btn active" data-tab="t0">Overview<span class="sub">Both paths compared</span></button>
     <button class="tab-btn" data-tab="t1">Option 1<span class="sub">Only show what fits</span></button>
     <button class="tab-btn" data-tab="t2">Option 2<span class="sub">Native Stripe payment (concept, not built)</span></button>
     <button class="tab-btn" data-tab="t4">API needs<span class="sub">What each option requires to build</span></button>
@@ -207,7 +207,7 @@
 
   <!-- TAB 0 -->
   <div class="panel active" id="t0">
-    <div class="flow-note"><b>Same starting point, three different resolutions.</b> All three options share the same trunk — consumer picks a plan that costs more than their leftover funds — and only diverge once that shortfall has to be resolved.</div>
+    <div class="flow-note"><b>Same starting point, two different resolutions.</b> Both options share the same trunk — consumer picks a plan that costs more than their leftover funds — and only diverge once that shortfall has to be resolved.</div>
     <div class="flow-diagram">
       <div class="flow-trunk">
         <div class="flow-box tan"><p class="fb-title">Consumer selects Advantage</p><p class="fb-sub">$2,890.00 — exceeds $2,430.00 available</p></div>
@@ -498,7 +498,7 @@
     </div>
   </div>
 
-  <!-- TAB 3 -->
+  <!-- TAB 2 -->
   <div class="panel" id="t2">
     <div class="flow-note"><b>Warranty presentation first, then native Stripe.</b> Same plan-selection screen as Option 1, but here Advantage is selectable. DigniFi collects the $460.00 balance itself rather than filtering it out or redirecting elsewhere.</div>
     <div class="flow-note" style="border:1px dashed var(--coral);background:var(--coral-light);">
